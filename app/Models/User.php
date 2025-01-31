@@ -22,8 +22,6 @@ use Throwable;
  * @property string|null $password
  * @property Carbon|null $email_verified_at
  * @property Carbon|null $phone_verified_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
  *
  * @property Company[]|Collection $companies
  *

@@ -19,8 +19,6 @@ use Illuminate\Support\Collection;
  * @property string|null $plan
  * @property object|null $metadata
  * @property Carbon|null $deactivated_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
  *
  * @property Company|null $parent
  * @property User[]|Collection $users

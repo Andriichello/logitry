@@ -14,8 +14,6 @@ use Illuminate\Support\Carbon;
  * @property int $user_id
  * @property Role $role
  * @property Carbon|null $deactivated_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
  *
  * @property Company $company
  * @property User $user

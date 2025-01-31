@@ -6,7 +6,7 @@ use App\Enum\Realm;
 use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -74,11 +74,17 @@ class Company extends BaseModel
     /**
      * Users associated with the model.
      *
-     * @return HasManyThrough
+     * @return BelongsToMany
      */
-    public function users(): HasManyThrough
+    public function users(): BelongsToMany
     {
-        return $this->hasManyThrough(User::class, CompanyUser::class);
+        return $this->belongsToMany(
+            User::class,
+            'company_user',
+            'company_id',
+            'user_id'
+        )
+            ->withPivot(['role', 'deactivated_at']);
     }
 
     /**

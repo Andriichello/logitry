@@ -7,7 +7,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -77,11 +77,17 @@ class User extends BaseModel implements
     /**
      * Companies associated with the model.
      *
-     * @return HasManyThrough
+     * @return BelongsToMany
      */
-    public function companies(): HasManyThrough
+    public function companies(): BelongsToMany
     {
-        return $this->hasManyThrough(Company::class, CompanyUser::class);
+        return $this->belongsToMany(
+            User::class,
+            'company_user',
+            'user_id',
+            'company_id'
+        )
+            ->withPivot(['role', 'deactivated_at']);
     }
 
     /**

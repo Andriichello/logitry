@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\Realm;
 use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +15,7 @@ use Illuminate\Support\Collection;
  *
  * @property int|null $parent_id
  * @property string $name
- * @property string|null $realm
+ * @property Realm|null $realm
  * @property string|null $plan
  * @property object|null $metadata
  * @property Carbon|null $deactivated_at
@@ -57,6 +58,7 @@ class Company extends BaseModel
      * @var array
      */
     protected $casts = [
+        'realm' => Realm::class,
         'metadata' => 'object',
         'deactivated_at' => 'datetime',
     ];

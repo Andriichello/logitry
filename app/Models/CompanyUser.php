@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\Role;
 use Database\Factories\CompanyUserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
@@ -11,7 +12,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $company_id
  * @property int $user_id
- * @property string $role
+ * @property Role $role
  * @property Carbon|null $deactivated_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -50,6 +51,7 @@ class CompanyUser extends BaseModel
      * @var array
      */
     protected $casts = [
+        'role' => Role::class,
         'deactivated_at' => 'datetime',
     ];
 }

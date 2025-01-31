@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
+            $table->string('abbreviation', 50)->unique();
             $table->string('name')->unique();
             $table->string('realm')->nullable();
             $table->string('plan')->nullable();

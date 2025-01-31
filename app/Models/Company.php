@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
  * Class Company.
  *
  * @property int|null $parent_id
+ * @property string $abbreviation
  * @property string $name
  * @property Realm|null $realm
  * @property string|null $plan
@@ -43,6 +44,7 @@ class Company extends BaseModel
      */
     protected $fillable = [
         'parent_id',
+        'abbreviation',
         'name',
         'realm',
         'plan',

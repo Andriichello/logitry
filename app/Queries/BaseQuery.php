@@ -43,51 +43,6 @@ class BaseQuery extends EloquentBuilder implements IndexableInterface
      * Where column is like the given value.
      *
      * @param string $column
-     * @param mixed $value
-     * @param bool $caseSensitive
-     * @param string $boolean
-     * @param bool $not
-     *
-     * @return BaseQuery
-     */
-    public function whereLike(
-        $column,
-        $value,
-        $caseSensitive = false,
-        $boolean = 'and',
-        $not = false
-    ): BaseQuery {
-        $operator = $caseSensitive ? 'like' : 'ilike';
-        $this->where($column, $operator, "%$value%");
-
-        return $this;
-    }
-
-    /**
-     * Where column is not like the given value.
-     *
-     * @param string $column
-     * @param mixed $value
-     * @param bool $caseSensitive
-     * @param string $boolean
-     *
-     * @return BaseQuery
-     */
-    public function whereNotLike(
-        $column,
-        $value,
-        $caseSensitive = false,
-        $boolean = 'and'
-    ): BaseQuery {
-        $this->whereNot(fn(BaseQuery $q) => $q->whereLike($column, $value, $case));
-
-        return $this;
-    }
-
-    /**
-     * Where column is like the given value.
-     *
-     * @param string $column
      * @param array $values
      * @param bool $case
      *
@@ -100,20 +55,15 @@ class BaseQuery extends EloquentBuilder implements IndexableInterface
         bool $case = false
     ): BaseQuery {
         $values = array_map(
-            fn($val) => "'%$val%'",
+            fn($val) => "%$val%",
             $values
         );
 
-        $operator = $case ? 'like any' : 'ilike any';
-
-        $sql = sprintf(
-            '%s::text %s (array[%s])',
-            $column,
-            $operator,
-            implode(', ', $values)
-        );
-
-        $this->whereRaw($sql);
+        $this->where(function (BaseQuery $q) use ($column, $values, $case) {
+            foreach ($values as $value) {
+                $q->orWhereLike($column, $value, $case);
+            }
+        });
 
         return $this;
     }

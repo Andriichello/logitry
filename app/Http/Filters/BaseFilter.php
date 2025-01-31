@@ -53,8 +53,8 @@ class BaseFilter
                 $value[0] = ltrim($value[0], '~');
 
                 empty($not)
-                    ? $query->whereLikeAny($column, $value)
-                    : $query->whereNotLikeAny($column, $value);
+                    ? $query->whereLikeAny("%$column%", $value)
+                    : $query->whereNotLikeAny("%$column%", $value);
 
                 return;
             }

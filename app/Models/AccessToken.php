@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enum\Role;
+use App\Models\Interfaces\IdentifiesCompanyInterface;
+use App\Models\Traits\IdentifiesCompany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -28,8 +30,11 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property User|BaseModel $tokenable
  * @property Company|null $company
  */
-class AccessToken extends PersonalAccessToken
+class AccessToken extends PersonalAccessToken implements
+    IdentifiesCompanyInterface
 {
+    use IdentifiesCompany;
+
     /**
      * The table associated with the model.
      *

@@ -101,7 +101,7 @@ class User extends BaseModel implements
     }
 
     /**
-     * Get the corresponding company id.
+     * Company id associated with the model.
      *
      * @return int|null
      */

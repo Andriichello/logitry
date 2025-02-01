@@ -98,4 +98,39 @@ class Company extends BaseModel
     {
         return $this->id;
     }
+
+    /**
+     * Finds company by given `id`, `abbreviation` or `name`.
+     *
+     * @param int|null $id
+     * @param string|null $abb abbreviation
+     * @param string|null $name
+     *
+     * @return BaseModel|null
+     */
+    public static function findBy(
+        ?int $id = null,
+        ?string $abb = null,
+        ?string $name = null
+    ): ?BaseModel {
+        if ($id !== null) {
+            return static::query()
+                ->where('id', $id)
+                ->first();
+        }
+
+        if ($abb !== null) {
+            return static::query()
+                ->where('abbreviation', strtolower($abb))
+                ->first();
+        }
+
+        if ($name !== null) {
+            return static::query()
+                ->where('name', $name)
+                ->first();
+        }
+
+        return null;
+    }
 }

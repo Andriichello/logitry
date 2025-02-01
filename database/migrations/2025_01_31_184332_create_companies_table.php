@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('abbreviation', 50)->unique();
             $table->string('name')->unique();
-            $table->string('realm')->nullable();
-            $table->string('plan')->nullable();
+            $table->string('realm', 50)->nullable();
+            $table->string('plan', 50)->nullable();
             $table->json('metadata')->nullable();
             $table->timestamp('deactivated_at')->nullable();
             $table->timestamps();

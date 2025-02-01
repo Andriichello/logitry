@@ -268,7 +268,23 @@ class User extends BaseModel implements
                 $roles[$company->id] = $roles[$company->parent_id] ?? null;
             });
 
-        return array_unique(array_filter($roles));
+        return array_filter($roles);
+    }
+
+    /**
+     * Role of current user in given company.
+     *
+     * @param Company|int $companyId
+     *
+     * @return Role|string|null
+     */
+    public function roleInCompany(Company|int $companyId): Role|string|null
+    {
+        if ($companyId instanceof Company) {
+            $companyId = $companyId->id;
+        }
+
+        return data_get($this->companyRoles(), $companyId);
     }
 
     /**

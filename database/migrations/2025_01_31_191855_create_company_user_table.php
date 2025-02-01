@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->index();
             $table->foreignId('user_id')->index();
-            $table->string('role');
+            $table->string('role', 50);
             $table->timestamp('deactivated_at')->nullable();
             $table->timestamps();
         });

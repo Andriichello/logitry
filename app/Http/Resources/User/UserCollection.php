@@ -1,14 +1,11 @@
 <?php
 
-namespace Speedgoat\Skeleton\Http\Resources\Api;
+namespace App\Http\Resources\User;
 
-use Speedgoat\Skeleton\Http\Resources\BaseCollection;
+use App\Http\Resources\BaseCollection;
 
 /**
  * Class UserCollection.
- *
- * @author Andrii Prykhodko <andriichello@gmail.com>
- * @package Speedgoat\Skeleton\Http\Resources\Api
  */
 class UserCollection extends BaseCollection
 {

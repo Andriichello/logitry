@@ -7,11 +7,16 @@ use App\Models\Interfaces\IdentifiesCompanyInterface;
 use App\Queries\BaseQuery;
 use Database\Factories\UserFactory;
 use DateTimeInterface;
+use Exception;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -29,6 +34,9 @@ use Throwable;
  * @property Carbon|null $email_verified_at
  * @property Carbon|null $phone_verified_at
  *
+ * @property int|null $company_id Dynamic (not saved)
+ *
+ * @property-read Company|null $company
  * @property Company[]|Collection $companies
  *
  * @method static UserFactory factory(...$parameters)
@@ -82,6 +90,25 @@ class User extends BaseModel implements
         'email_verified_at' => 'datetime',
         'phone_verified_at' => 'datetime',
     ];
+
+    /**
+     * Company associated with the model.
+     * Important: this is a dynamic read-only relationship,
+     * which is being resolved using `companyId()`.
+     *
+     * @return HasOneThrough
+     */
+    public function company(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Company::class,
+            CompanyUser::class,
+            'user_id',
+            'id',
+            'id',
+            'company_id'
+        );
+    }
 
     /**
      * Companies associated with the model.
@@ -167,6 +194,32 @@ class User extends BaseModel implements
     }
 
     /**
+     * Accessor for `company_id` attribute.
+     *
+     * @return int|null
+     */
+    public function getCompanyIdAttribute(): ?int
+    {
+        if (!array_key_exists('company_id', $this->attributes)) {
+            $this->attributes['company_id'] = $this->companyId();
+        }
+
+        return $this->attributes['company_id'];
+    }
+
+    /**
+     * Mutator for `company_id` attribute.
+     *
+     * @param int|null $companyId
+     *
+     * @return void
+     */
+    public function setCompanyIdAttribute(?int $companyId): void
+    {
+        $this->attributes['company_id'] = $companyId;
+    }
+
+    /**
      * Company id associated with the model.
      *
      * @return int|null
@@ -190,6 +243,10 @@ class User extends BaseModel implements
             }
         } catch (Throwable) {
             //
+        }
+
+        if (empty($companyId) && !empty($this->attributes['company_id'])) {
+            $companyId = $this->attributes['company_id'];
         }
 
         if (empty($companyId)) {
@@ -296,8 +353,11 @@ class User extends BaseModel implements
      *
      * @return NewAccessToken
      */
-    public function createToken(string $name, array $abilities = ['*'], DateTimeInterface $expiresAt = null): NewAccessToken
-    {
+    public function createToken(
+        string $name,
+        array $abilities = ['*'],
+        DateTimeInterface $expiresAt = null
+    ): NewAccessToken {
         if (empty($expiresAt)) {
             $minutes = config('sanctum.expiration');
 

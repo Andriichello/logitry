@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Http\Resources\BaseResource;
+use App\Http\Resources\Company\CompanyResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,6 +15,16 @@ use Illuminate\Http\Request;
  */
 class UserResource extends BaseResource
 {
+    /**
+     * List of columns that are allowed as
+     * includes on request.
+     *
+     * @var array<int|string, string>
+     */
+    protected array $allowedIncludes = [
+        'company' => CompanyResource::class,
+    ];
+
     /**
      * Transform the resource into an array.
      *

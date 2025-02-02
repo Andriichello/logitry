@@ -3,7 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Http\Resources\BaseResource;
-use App\Models\Company;
+use App\Http\Resources\Company\CompanyResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,21 +21,14 @@ class MeResource extends BaseResource
     protected ?int $companyId;
 
     /**
-     * MeResource constructor.
+     * List of columns that are allowed as
+     * includes on request.
      *
-     * @param $resource
-     * @param Company|int|null $companyId
+     * @var array<int|string, string>
      */
-    public function __construct($resource, Company|int|null $companyId = null)
-    {
-        parent::__construct($resource);
-
-        if ($companyId instanceof Company) {
-            $companyId = $companyId->id;
-        }
-
-        $this->companyId = $companyId;
-    }
+    protected array $allowedIncludes = [
+        'company' => CompanyResource::class,
+    ];
 
     /**
      * Transform the resource into an array.
@@ -46,21 +39,13 @@ class MeResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
-        if (empty($this->companyId)) {
-            $user = $request->user();
-
-            if ($user instanceof User && $user->id === $this->id) {
-                $this->companyId = $user->companyId();
-            }
-        }
-
         return [
             'id' => $this->id,
-            'company_id' => $this->companyId,
-            'role' => $this->roleInCompany($this->companyId),
+            'company_id' => $this->company_id,
+            'role' => $this->roleInCompany($this->company_id),
             'name' => $this->name,
             'email' => $this->email,
-            'phone' => $this->email,
+            'phone' => $this->phone,
             'email_verified_at' => $this->email_verified_at,
             'phone_verified_at' => $this->email_verified_at,
             'created_at' => $this->created_at,

@@ -23,4 +23,21 @@ class CompanyFactory extends Factory
             'name' => fake()->title(),
         ];
     }
+
+    /** Indicate company.
+     *
+     * @param Company|null $company
+     *
+     * @return static
+     */
+    public function withParent(?Company $company): static
+    {
+        return $this->state(
+            function (array $attributes) use ($company) {
+                $attributes['parent_id'] = $company?->id;
+
+                return $attributes;
+            }
+        );
+    }
 }

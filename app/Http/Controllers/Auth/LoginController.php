@@ -27,13 +27,15 @@ class LoginController extends BaseController
     public function login(LoginRequest $request): ApiResponse
     {
         $user = $this->findUserByCredentials($credentials = $request->credentials());
-        $token = $user->createToken($request->userAgent());
+        $token = $user->createToken($request->userAgent() ?? 'Unknown');
 
         /** @var AccessToken $accessToken */
         $accessToken = $token->accessToken;
         $accessToken->company_id = $credentials['company_id'];
         $accessToken->role = $user->roleInCompany($credentials['company_id']);
         $accessToken->save();
+
+        $user->company_id = $credentials['company_id'];
 
         return ApiResponse::ok([
             'data' => [
@@ -42,7 +44,7 @@ class LoginController extends BaseController
                 'expires_at' => $accessToken->expires_at,
                 'expires_in' => $accessToken->expires_at
                     ? (int) now()->diffInSeconds($accessToken->expires_at) : null,
-                'user' => new MeResource($user, $credentials['company_id']),
+                'user' => new MeResource($user),
             ],
         ]);
     }

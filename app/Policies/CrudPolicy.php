@@ -64,7 +64,7 @@ class CrudPolicy extends BasePolicy
      * @param BaseModel $model
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD)
      */
     public function view(mixed $user, mixed $model): bool
     {
@@ -77,7 +77,7 @@ class CrudPolicy extends BasePolicy
      * @param User|null $user
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD)
      */
     public function viewAny(mixed $user): bool
     {

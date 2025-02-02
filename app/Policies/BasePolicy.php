@@ -70,7 +70,7 @@ abstract class BasePolicy
      * @param mixed ...$args
      *
      * @return bool
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD)
      */
     public function determineMissing(string $ability, mixed ...$args): bool
     {

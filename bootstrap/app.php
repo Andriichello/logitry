@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ForceJsonOnApi;
+use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -49,38 +50,20 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /** Global */
         $middleware->append([
-            TrustProxies::class,
-            HandleCors::class,
-            PreventRequestsDuringMaintenance::class,
-            ValidatePostSize::class,
-            TrimStrings::class,
-            ConvertEmptyStringsToNull::class,
-            /** Custom */
             ForceJsonOnApi::class,
         ]);
 
-        /** API */
-        $middleware->group(
-            'api',
-            [
-                EnsureFrontendRequestsAreStateful::class,
-                ThrottleRequests::with(100, 1),
-                SubstituteBindings::class,
-            ]
-        );
+        /** Api */
+        $middleware->api(append: [
+            EnsureFrontendRequestsAreStateful::class,
+            ThrottleRequests::with(100, 1),
+            SubstituteBindings::class,
+        ]);
 
         /** Web */
-        $middleware->group(
-            'web',
-            [
-                EncryptCookies::class,
-                AddQueuedCookiesToResponse::class,
-                StartSession::class,
-                ShareErrorsFromSession::class,
-                VerifyCsrfToken::class,
-                SubstituteBindings::class,
-            ]
-        );
+        $middleware->web(append: [
+            HandleInertiaRequests::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->dontFlash([

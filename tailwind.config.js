@@ -16,5 +16,16 @@ export default {
             },
         },
     },
-    plugins: [],
+    plugins: [
+        require("daisyui"),
+    ],
+    daisyui: {
+        styled: true,
+        themes: ['light', 'dark'],
+        darkTheme: 'dark',
+        base: true,
+        utils: true,
+        logs: true,
+        rtl: false,
+    },
 };

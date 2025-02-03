@@ -103,7 +103,7 @@ class LoginRequest extends BaseRequest
      *   @OA\Property(
      *     property="phone",
      *     type="string",
-     *     example="+123456789012",
+     *     example="+380991234567",
      *     description="Phone number of the user. Required if 'email' is not provided."
      *   ),
      *   @OA\Property(

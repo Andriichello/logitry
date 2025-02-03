@@ -56,7 +56,7 @@
                                                     "nullable": true
                                                 },
                                                 "user": {
-                                                    "$ref": "#/components/schemas/MeResource"
+                                                    "$ref": "#/components/schemas/Me"
                                                 }
                                             },
                                             "type": "object"
@@ -117,7 +117,7 @@
                                 "schema": {
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/components/schemas/MeResource"
+                                            "$ref": "#/components/schemas/Me"
                                         }
                                     },
                                     "type": "object"
@@ -132,10 +132,104 @@
                     }
                 ]
             }
+        },
+        "/api/sign-ins": {
+            "get": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Retrieve a list of sign-in methods for a user based on email or phone.",
+                "operationId": "signIns",
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "The phone number of the user. Is required without `email`.\n                  Takes precedence over `email` if both are present.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "+380991234567"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "The email address of the user. Is required without `phone`.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "email",
+                            "example": "user@example.com"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of available sign-ins.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "user@example.com",
+                                                    "nullable": true
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "+380991234567",
+                                                    "nullable": true
+                                                },
+                                                "sign_ins": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/AvailableSignIn"
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
         "schemas": {
+            "AvailableSignIn": {
+                "description": "Available sign-in object.",
+                "required": [
+                    "company",
+                    "with_password",
+                    "role"
+                ],
+                "properties": {
+                    "project": {
+                        "$ref": "#/components/schemas/Company"
+                    },
+                    "with_password": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "Owner",
+                            "Admin",
+                            "Manager"
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "PageSize": {
                 "description": "Max number of results on page.",
                 "type": "integer",
@@ -267,7 +361,7 @@
                     "phone": {
                         "description": "Phone number of the user. Required if 'email' is not provided.",
                         "type": "string",
-                        "example": "+123456789012"
+                        "example": "+380991234567"
                     },
                     "password": {
                         "description": "User's password. Is required.",
@@ -287,7 +381,7 @@
                 "type": "string",
                 "example": ""
             },
-            "CompanyResource": {
+            "Company": {
                 "description": "Company resource representation",
                 "properties": {
                     "id": {
@@ -348,7 +442,7 @@
                 "type": "string",
                 "example": "company"
             },
-            "MeResource": {
+            "Me": {
                 "title": "Logged-in User (me) Resource",
                 "description": "Representation of a logged-in User (me) model.",
                 "properties": {
@@ -390,7 +484,7 @@
                     "phone": {
                         "description": "The phone number of the user.",
                         "type": "string",
-                        "example": "+1234567890",
+                        "example": "+380991234567",
                         "nullable": true
                     },
                     "email_verified_at": {
@@ -424,7 +518,7 @@
                     "company": {
                         "oneOf": [
                             {
-                                "$ref": "#/components/schemas/CompanyResource"
+                                "$ref": "#/components/schemas/Company"
                             }
                         ],
                         "nullable": true
@@ -442,7 +536,7 @@
                 "type": "string",
                 "example": "company"
             },
-            "UserResource": {
+            "User": {
                 "description": "Representation of a User model.",
                 "properties": {
                     "id": {
@@ -465,7 +559,7 @@
                     "phone": {
                         "description": "The phone number of the user.",
                         "type": "string",
-                        "example": "+1234567890",
+                        "example": "+380991234567",
                         "nullable": true
                     },
                     "email_verified_at": {

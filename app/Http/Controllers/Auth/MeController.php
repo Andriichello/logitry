@@ -61,7 +61,7 @@ class MeController extends BaseController
      *             @OA\Property(
      *                 property="data",
      *                 type="object",
-     *                 ref ="#/components/schemas/MeResource"
+     *                 ref ="#/components/schemas/Me"
      *             )
      *         )
      *     )

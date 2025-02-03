@@ -55,7 +55,7 @@ class CompanyResource extends BaseResource
 
     /**
      * @OA\Schema(
-     *     schema="CompanyResource",
+     *     schema="Company",
      *     type="object",
      *     description="Company resource representation",
      *     @OA\Property(

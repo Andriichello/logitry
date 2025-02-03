@@ -57,7 +57,7 @@ class UserResource extends BaseResource
 
     /**
      * @OA\Schema(
-     *     schema="UserResource",
+     *     schema="User",
      *     type="object",
      *     description="Representation of a User model.",
      *     @OA\Property(
@@ -85,7 +85,7 @@ class UserResource extends BaseResource
      *         type="string",
      *         nullable=true,
      *         description="The phone number of the user.",
-     *         example="+1234567890"
+     *         example="+380991234567"
      *     ),
      *     @OA\Property(
      *         property="email_verified_at",

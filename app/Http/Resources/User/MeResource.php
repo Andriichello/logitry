@@ -77,7 +77,7 @@ class MeResource extends BaseResource
 
     /**
      * @OA\Schema(
-     *     schema="MeResource",
+     *     schema="Me",
      *     type="object",
      *     title="Logged-in User (me) Resource",
      *     description="Representation of a logged-in User (me) model.",
@@ -122,7 +122,7 @@ class MeResource extends BaseResource
      *         type="string",
      *         nullable=true,
      *         description="The phone number of the user.",
-     *         example="+1234567890"
+     *         example="+380991234567"
      *     ),
      *     @OA\Property(
      *         property="email_verified_at",
@@ -161,7 +161,7 @@ class MeResource extends BaseResource
      *         type="object",
      *         nullable=true,
      *         description="The company associated with the user.",
-     *         ref="#/components/schemas/CompanyResource"
+     *         ref="#/components/schemas/Company"
      *     )
      * )
      */

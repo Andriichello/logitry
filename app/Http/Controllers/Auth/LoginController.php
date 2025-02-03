@@ -98,10 +98,12 @@ class LoginController extends BaseController
      *     operationId="login",
      *     summary="Log in using email/phone and password",
      *     tags={"auth"},
+     *
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref = "#/components/schemas/LoginRequest")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="Logged in successfully",
@@ -112,10 +114,11 @@ class LoginController extends BaseController
      *                 @OA\Property(property="expires_at", type="string", format="date-time",
      *                     example="2023-12-31T23:59:59.000Z"),
      *                 @OA\Property(property="expires_in", type="integer", nullable=true, example=3600),
-     *                 @OA\Property(property="user", ref = "#/components/schemas/MeResource")
+     *                 @OA\Property(property="user", ref = "#/components/schemas/Me")
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=401,
      *         description="Invalid credentials",

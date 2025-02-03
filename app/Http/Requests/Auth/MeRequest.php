@@ -6,9 +6,6 @@ use App\Http\Requests\BaseRequest;
 
 /**
  * Class MeRequest.
- *
- * @author Andrii Prykhodko <andriichello@gmail.com>
- * @package App\Http\Requests\Auth
  */
 class MeRequest extends BaseRequest
 {

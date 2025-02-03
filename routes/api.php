@@ -1,16 +1,22 @@
 <?php
 
 use App\Http\Controllers\Auth as Auth;
-use App\Http\Resources\User\MeResource;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['as' => 'api.'], function () {
-    Route::post('/login', [Auth\LoginController::class, 'login']);
+    Route::post('/login', [Auth\LoginController::class, 'login'])
+        ->name('login');
 
-    Route::get('/example', fn() => ApiResponse::ok());
+    Route::get('/sign-ins', [Auth\SignInsController::class, 'signIns'])
+        ->middleware('throttle:12,1')
+        ->name('sign-ins');
+
+    Route::get('/example', fn() => ApiResponse::ok())
+        ->name('example');
 });
 
 Route::group(['as' => 'api.', 'middleware' => ['auth:sanctum']], function () {
-    Route::get('/me', [Auth\MeController::class, 'me']);
+    Route::get('/me', [Auth\MeController::class, 'me'])
+        ->name('me');
 });

@@ -8,25 +8,13 @@ use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Auth\Middleware\RequirePassword;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance;
-use Illuminate\Foundation\Http\Middleware\TrimStrings;
-use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Http\Middleware\HandleCors;
 use Illuminate\Http\Middleware\SetCacheHeaders;
-use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -55,7 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /** Api */
         $middleware->api(append: [
-            EnsureFrontendRequestsAreStateful::class,
+            // EnsureFrontendRequestsAreStateful::class,
             ThrottleRequests::with(100, 1),
             SubstituteBindings::class,
         ]);

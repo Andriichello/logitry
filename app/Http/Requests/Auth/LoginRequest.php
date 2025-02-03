@@ -22,6 +22,11 @@ class LoginRequest extends BaseRequest
     public function rules(): array
     {
         return [
+            'abbreviation' => [
+                'required',
+                'string',
+                Rule::exists(Company::class, 'abbreviation')
+            ],
             'email' => [
                 'required_without:phone',
                 'email',
@@ -33,11 +38,6 @@ class LoginRequest extends BaseRequest
             'password' => [
                 'required',
                 'string',
-            ],
-            'abbreviation' => [
-                'required',
-                'string',
-                Rule::exists(Company::class, 'abbreviation')
             ],
         ];
     }
@@ -80,4 +80,38 @@ class LoginRequest extends BaseRequest
             'password' => $this->get('password'),
         ];
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="LoginRequest",
+     *   type="object",
+     *   description="Request schema for logging in using credentials.",
+     *   required={"abbreviation", "password"},
+     *   @OA\Property(
+     *     property="abbreviation",
+     *     type="string",
+     *     example="company",
+     *     description="Abbreviation of the company. Is required."
+     *   ),
+     *   @OA\Property(
+     *     property="email",
+     *     type="string",
+     *     format="email",
+     *     example="user@example.com",
+     *     description="Email of the user. Required if 'phone' is not provided."
+     *   ),
+     *   @OA\Property(
+     *     property="phone",
+     *     type="string",
+     *     example="+123456789012",
+     *     description="Phone number of the user. Required if 'email' is not provided."
+     *   ),
+     *   @OA\Property(
+     *     property="password",
+     *     type="string",
+     *     format="password",
+     *     description="User's password. Is required."
+     *   )
+     * )
+     */
 }

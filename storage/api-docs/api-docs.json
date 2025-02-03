@@ -1,0 +1,510 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "logitry",
+        "version": "0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Log in using email/phone and password",
+                "operationId": "login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Logged in successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "token_type": {
+                                                    "type": "string",
+                                                    "example": "Bearer"
+                                                },
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "eyJ0eXAiOiJ..."
+                                                },
+                                                "expires_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2023-12-31T23:59:59.000Z"
+                                                },
+                                                "expires_in": {
+                                                    "type": "integer",
+                                                    "example": 3600,
+                                                    "nullable": true
+                                                },
+                                                "user": {
+                                                    "$ref": "#/components/schemas/MeResource"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to authenticate."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Get currently logged-in user",
+                "operationId": "me",
+                "parameters": [
+                    {
+                        "name": "includes",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/MeIncludes"
+                        }
+                    },
+                    {
+                        "name": "appends",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/MeAppends"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully returned logged-in user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/MeResource"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "PageSize": {
+                "description": "Max number of results on page.",
+                "type": "integer",
+                "example": 25
+            },
+            "PageNumber": {
+                "description": "Page number to be returned.",
+                "type": "integer",
+                "example": 1
+            },
+            "PageOmit": {
+                "description": "Determines if pagination should be omitted.\n            The size parameter would be set to 1 million.",
+                "type": "integer"
+            },
+            "PaginationLinks": {
+                "description": "Pagination meta links object.",
+                "required": [
+                    "first",
+                    "prev",
+                    "self",
+                    "next",
+                    "last"
+                ],
+                "properties": {
+                    "first": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/resource?page[size]=10&page[number]=1"
+                    },
+                    "prev": {
+                        "type": "string",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "self": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/resource?page[size]=10&page[number]=1"
+                    },
+                    "next": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/resource?page[size]=10&page[number]=2",
+                        "nullable": true
+                    },
+                    "last": {
+                        "type": "string",
+                        "example": "http://localhost:8000/api/resource?page[size]=10&page[number]=5",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationMeta": {
+                "description": "Pagination meta object.",
+                "required": [
+                    "from",
+                    "to",
+                    "total",
+                    "path",
+                    "per_page",
+                    "current_page",
+                    "last_page",
+                    "links"
+                ],
+                "properties": {
+                    "from": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "to": {
+                        "type": "integer",
+                        "example": 10,
+                        "nullable": true
+                    },
+                    "total": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "path": {
+                        "type": "integer",
+                        "example": "http://localhost:8000/api/resource",
+                        "nullable": true
+                    },
+                    "per_page": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "current_page": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "last_page": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/PaginationLinks"
+                    }
+                },
+                "type": "object"
+            },
+            "Filter": {
+                "description": "A comma-separated list of values used for filtering records.\n            <br><br>Exact Match:<br>\n            - By default, values are compared exactly.\n            <br>Example:<br> `filter[column]=1` searches for records where `column` equals exactly to `1`.\n            <br>Example:<br> `filter[column]=1,2` searches for records where `column` equals exactly to `1` or `2`.\n            <br><br>Partial Match:<br>\n            - Prefix values with `~` to compare them partially.\n            <br>Example:<br> `filter[column]=~1` searches for records where `column` contains `1`.\n            <br>Example:<br> `filter[column]=~1,2` searches for records where `column` contains `1` or `2`.\n            <br><br>Exclusion:<br>\n            - Prefix values with `!` to filter them out.\n            <br>Example:<br> `filter[column]=!1` filters out records where `column` equals exactly to `1`.\n            <br>Example:<br> `filter[column]=!1,2` filters out records where `column` equals exactly to `1` or `2`.\n            <br><br>Partial Exclusion:<br>\n            - Combine `!` and `~` to exclude partial matches.\n            <br>Example:<br> `filter[column]=!~1` filters out records where `column` contains `1`.\n            <br>Example:<br> `filter[column]=!~1,2` filters out records where `column` contains `1` or `2`.\n            <br><br>Note: `!` must be used before any other flags (`~`).",
+                "type": "string",
+                "example": ""
+            },
+            "Sort": {
+                "description": "A comma-separated list of column names used for sorting results.\n            <br><br>Ascending Order:<br>\n            - Specify the column name directly (e.g., `sort=column`).\n            <br>Example:<br> `sort=column` sorts by `column` in ascending order.\n            <br><br>Multiple Columns:<br>\n            - Specify multiple column names, separated by commas.\n            <br>Example: `sort=column_one,column_two` sorts by `column_one` in ascending order,\n            and then by `column_two` for records with identical `column_one` values.\n            <br><br>Descending Order:<br>\n            - Prefix the column name with a hyphen (`-`).\n            <br>Example: `sort=-column` sorts by `column` in descending order.\n            <br><br>Mixed Order:<br>\n            - Use a combination of ascending and descending orders.\n            <br>Example: `sort=column_one,-column_two` sorts by `column_one` in ascending order\n            and then by `column_two` in descending order for records with identical `column_one` values.",
+                "type": "string",
+                "example": ""
+            },
+            "LoginRequest": {
+                "description": "Request schema for logging in using credentials.",
+                "required": [
+                    "abbreviation",
+                    "password"
+                ],
+                "properties": {
+                    "abbreviation": {
+                        "description": "Abbreviation of the company. Is required.",
+                        "type": "string",
+                        "example": "company"
+                    },
+                    "email": {
+                        "description": "Email of the user. Required if 'phone' is not provided.",
+                        "type": "string",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "phone": {
+                        "description": "Phone number of the user. Required if 'email' is not provided.",
+                        "type": "string",
+                        "example": "+123456789012"
+                    },
+                    "password": {
+                        "description": "User's password. Is required.",
+                        "type": "string",
+                        "format": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyAppends": {
+                "description": "Comma-separated list of fields to append to the resource.\n              Available appends:",
+                "type": "string",
+                "example": ""
+            },
+            "CompanyIncludes": {
+                "description": "Comma-separated list of related resources to include with the resource.\n              Available includes:",
+                "type": "string",
+                "example": ""
+            },
+            "CompanyResource": {
+                "description": "Company resource representation",
+                "properties": {
+                    "id": {
+                        "description": "The unique identifier of the company",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "abbreviation": {
+                        "description": "The abbreviation of the company",
+                        "type": "string",
+                        "example": "ABC"
+                    },
+                    "name": {
+                        "description": "The name of the company",
+                        "type": "string",
+                        "example": "ABC Corporation"
+                    },
+                    "realm": {
+                        "description": "The realm associated with the company",
+                        "type": "string",
+                        "enum": [
+                            "Logistics",
+                            "Transfers"
+                        ],
+                        "example": "Logistics",
+                        "nullable": true
+                    },
+                    "plan": {
+                        "description": "The subscription plan of the company",
+                        "type": "string",
+                        "example": "Free",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "The date and time the company was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "The date and time the company was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-10T15:00:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "MeAppends": {
+                "description": "Comma-separated list of fields to append to the resource.\n              Available appends:",
+                "type": "string",
+                "example": ""
+            },
+            "MeIncludes": {
+                "description": "Comma-separated list of related resources to include with the resource.\n              Available includes: `company`",
+                "type": "string",
+                "example": "company"
+            },
+            "MeResource": {
+                "title": "Logged-in User (me) Resource",
+                "description": "Representation of a logged-in User (me) model.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the user.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "company_id": {
+                        "description": "Unique identifier of the company.",
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "role": {
+                        "description": "The name of the user.",
+                        "type": "string",
+                        "enum": [
+                            "Owner",
+                            "Admin",
+                            "Manager"
+                        ],
+                        "example": "Admin",
+                        "nullable": true
+                    },
+                    "name": {
+                        "description": "The name of the user.",
+                        "type": "string",
+                        "example": "John Doe",
+                        "nullable": true
+                    },
+                    "email": {
+                        "description": "The email address of the user.",
+                        "type": "string",
+                        "format": "email",
+                        "example": "johndoe@example.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "description": "The phone number of the user.",
+                        "type": "string",
+                        "example": "+1234567890",
+                        "nullable": true
+                    },
+                    "email_verified_at": {
+                        "description": "Timestamp when the user's email was verified. Null if not verified.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-12T14:00:00Z",
+                        "nullable": true
+                    },
+                    "phone_verified_at": {
+                        "description": "Timestamp when the user's phone was verified. Null if not verified.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-12T14:00:00Z",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the user was created.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the user was last updated.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-10T18:30:00Z",
+                        "nullable": true
+                    },
+                    "company": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/CompanyResource"
+                            }
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UserAppends": {
+                "description": "Comma-separated list of fields to append to the resource.\n              Available appends:",
+                "type": "string",
+                "example": ""
+            },
+            "UserIncludes": {
+                "description": "Comma-separated list of related resources to include with the resource.\n              Available includes: `company`",
+                "type": "string",
+                "example": "company"
+            },
+            "UserResource": {
+                "description": "Representation of a User model.",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the user.",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "The name of the user.",
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "description": "The email address of the user.",
+                        "type": "string",
+                        "format": "email",
+                        "example": "johndoe@example.com",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "description": "The phone number of the user.",
+                        "type": "string",
+                        "example": "+1234567890",
+                        "nullable": true
+                    },
+                    "email_verified_at": {
+                        "description": "Timestamp when the user's email was verified. Null if not verified.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-12T14:00:00Z",
+                        "nullable": true
+                    },
+                    "phone_verified_at": {
+                        "description": "Timestamp when the user's phone was verified. Null if not verified.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-12T14:00:00Z",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the user was created.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the user was last updated.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-10T18:30:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    }
+}

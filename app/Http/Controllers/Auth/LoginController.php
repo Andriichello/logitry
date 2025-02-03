@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends BaseController
 {
     /**
-     * Login user by credentials (email & password).
+     * Login user by credentials (email/phone & password).
      *
      * @param LoginRequest $request
      *
@@ -92,4 +92,37 @@ class LoginController extends BaseController
 
         return $user;
     }
+
+    /** @OA\Post(
+     *     path="/api/login",
+     *     operationId="login",
+     *     summary="Log in using email/phone and password",
+     *     tags={"auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref = "#/components/schemas/LoginRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Logged in successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="token_type", type="string", example="Bearer"),
+     *                 @OA\Property(property="token", type="string", example="eyJ0eXAiOiJ..."),
+     *                 @OA\Property(property="expires_at", type="string", format="date-time",
+     *                     example="2023-12-31T23:59:59.000Z"),
+     *                 @OA\Property(property="expires_in", type="integer", nullable=true, example=3600),
+     *                 @OA\Property(property="user", ref = "#/components/schemas/MeResource")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Failed to authenticate.")
+     *         )
+     *     )
+     * )
+     */
 }

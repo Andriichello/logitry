@@ -32,4 +32,39 @@ class MeController extends BaseController
 
         return ApiResponse::error();
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/me",
+     *     operationId="me",
+     *     summary="Get currently logged-in user",
+     *     security={{"bearerAuth": {}}},
+     *     tags={"auth"},
+     *
+     *     @OA\Parameter(
+     *         name="includes",
+     *         in="query",
+     *         @OA\Schema(ref ="#/components/schemas/MeIncludes")
+     *     ),
+     *
+     *     @OA\Parameter(
+     *          name="appends",
+     *          in="query",
+     *          @OA\Schema(ref ="#/components/schemas/MeAppends")
+     *      ),
+     *
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successfully returned logged-in user",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="data",
+     *                 type="object",
+     *                 ref ="#/components/schemas/MeResource"
+     *             )
+     *         )
+     *     )
+     * )
+     */
 }

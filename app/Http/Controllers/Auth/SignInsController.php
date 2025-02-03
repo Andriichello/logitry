@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\Interfaces\SignInsHelperInterface;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Auth\SignInsRequest;
+use App\Http\Resources\Company\CompanyResource;
 use App\Http\Responses\ApiResponse;
 
 /**
@@ -43,6 +44,10 @@ class SignInsController extends BaseController
             ? $this->helper->byEmail($email)
             : $this->helper->byPhone($phone);
 
+        foreach ($signIns as &$signIn) {
+            $signIn['company'] = new CompanyResource($signIn['company']);
+        }
+
         return ApiResponse::ok([
             'data' => [
                 'email' => $email,
@@ -59,7 +64,7 @@ class SignInsController extends BaseController
      *     summary="Retrieve a list of sign-in methods for a user based on email or phone.",
      *     tags={"auth"},
      *
-      *     @OA\Parameter(
+     *     @OA\Parameter(
      *         name="phone",
      *         in="query",
      *         required=false,
@@ -96,7 +101,7 @@ class SignInsController extends BaseController
      *     schema="AvailableSignIn",
      *     description="Available sign-in object.",
      *     required = {"company", "with_password", "role"},
-     *     @OA\Property(property="project", ref ="#/components/schemas/Company"),
+     *     @OA\Property(property="company", ref ="#/components/schemas/Company"),
      *     @OA\Property(property="with_password", type="boolean", example=true),
      *     @OA\Property(property="role", type="string", nullable=true,
      *        enum={ "Owner", "Admin", "Manager" }),

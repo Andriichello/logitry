@@ -211,7 +211,7 @@
                     "role"
                 ],
                 "properties": {
-                    "project": {
+                    "company": {
                         "$ref": "#/components/schemas/Company"
                     },
                     "with_password": {

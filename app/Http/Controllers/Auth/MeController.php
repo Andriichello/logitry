@@ -26,7 +26,7 @@ class MeController extends BaseController
 
         if ($user instanceof User) {
             return ApiResponse::ok([
-                'data' => new MeResource($user)
+                'data' => new MeResource($user),
             ]);
         }
 

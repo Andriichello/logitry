@@ -26,6 +26,14 @@ class MeResource extends BaseResource
     ];
 
     /**
+     * List of includes that were passed from parent
+     * resource. Needed for nested includes.
+     *
+     * @var array<int|string, string>
+     */
+    protected ?array $passedIncludes = ['company'];
+
+    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>

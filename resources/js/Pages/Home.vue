@@ -1,15 +1,15 @@
-<script setup>
+<script setup lang="ts">
+    import { PropType } from 'vue';
+    import Me = Models.Me;
+
     defineProps({
-        me: Object,
+        me: Object as PropType<Me>,
     });
 </script>
 
 <template>
-    <Layout>
-
-    </Layout>
     <div>
         <h1>Hello from Home...</h1>
-        <p>{{ me?.name ?? 'Guest' }}</p>
+        <p class="badge badge-accent">{{ me?.name ?? 'Guest' }}</p>
     </div>
 </template>

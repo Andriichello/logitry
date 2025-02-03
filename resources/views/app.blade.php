@@ -6,7 +6,7 @@
 
     <title>Logitry</title>
 
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.ts', 'resources/css/app.scss'])
 
     @inertiaHead
   </head>

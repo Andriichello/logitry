@@ -7,4 +7,3 @@ parameters:
 		- database
 	excludePaths:
 	    - database/migrations/*
-	    - app/Http/OpenApi/Analysis.php

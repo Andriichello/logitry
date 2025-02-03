@@ -7,6 +7,7 @@ use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -22,6 +23,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deactivated_at
  *
  * @property Company|null $parent
+ * @property Company[]|Collection $subCompanies
  * @property User[]|Collection $users
  *
  * @method static CompanyFactory factory(...$parameters)
@@ -71,6 +73,16 @@ class Company extends BaseModel
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'parent_id');
+    }
+
+    /**
+     * Sub-companies associated with the model.
+     *
+     * @return HasMany
+     */
+    public function subCompanies(): HasMany
+    {
+        return $this->hasMany(static::class, 'parent_id');
     }
 
     /**

@@ -1,9 +1,11 @@
 @use "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @plugin "daisyui" {
     themes: light --default, dark --prefersdark;
     root: ":root";
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;

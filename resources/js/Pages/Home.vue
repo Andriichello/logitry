@@ -29,6 +29,8 @@
 
 <template>
   <div>
+    <input type="checkbox" value="light" class="toggle theme-controller" checked hidden/>
+
     <h1>Hello from Home...</h1>
     <p class="badge badge-primary">{{ me?.name ?? 'Guest' }}</p>
   </div>

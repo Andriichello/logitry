@@ -94,20 +94,14 @@ class User extends BaseModel implements
     /**
      * Company associated with the model.
      * Important: this is a dynamic read-only relationship,
-     * which is being resolved using `companyId()`.
+     * which is being resolved using `company_id` dynamic
+     * attribute, which by default is equal to `companyId()`.
      *
-     * @return HasOneThrough
+     * @return BelongsTo
      */
-    public function company(): HasOneThrough
+    public function company(): BelongsTo
     {
-        return $this->hasOneThrough(
-            Company::class,
-            CompanyUser::class,
-            'user_id',
-            'id',
-            'id',
-            'company_id'
-        );
+        return $this->belongsTo(Company::class, 'company_id');
     }
 
     /**

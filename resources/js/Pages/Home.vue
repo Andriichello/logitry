@@ -10,6 +10,6 @@
 <template>
   <div>
     <h1>Hello from Home...</h1>
-    <p class="badge badge-accent">{{ me?.name ?? 'Guest' }}</p>
+    <p class="badge badge-primary">{{ me?.name ?? 'Guest' }}</p>
   </div>
 </template>

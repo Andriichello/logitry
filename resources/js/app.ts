@@ -1,6 +1,6 @@
 import { createApp, DefineComponent, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3'
-import Toast from "vue-toastification";
+import Toast, {POSITION} from "vue-toastification";
 
 createInertiaApp({
     resolve: name => {
@@ -11,7 +11,7 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(Toast, {
               hideProgressBar: true,
-              position: 'bottom-center',
+              position: POSITION.BOTTOM_CENTER,
             })
             .use(plugin)
             .mount(el)

@@ -41,6 +41,7 @@ class LoginRequest extends BaseRequest
             'email' => [
                 'required_without:phone',
                 'sometimes',
+                'nullable',
                 'string',
                 'email',
             ],

@@ -1,14 +1,23 @@
 <script setup lang="ts">
-  import { onMounted, onUpdated, PropType, ref, watch } from 'vue';
-  import { AvailableSignIn, LoginRequest, Me, signIns, SignInsParams, SignInsResult } from '../../api';
-  import Company from '../../Components/Auth/Company.vue';
-  import { useForm } from '@inertiajs/vue3';
-  import { useToast } from 'vue-toastification';
+import {onMounted, PropType, ref, watch} from 'vue';
+import {
+  AvailableSignIn,
+  Company as CompanyModel,
+  LoginRequest,
+  Me,
+  signIns,
+  SignInsParams,
+  SignInsResult
+} from '../../api';
+import Company from '../../Components/Auth/Company.vue';
+import {useForm} from '@inertiajs/vue3';
+import {POSITION, useToast} from 'vue-toastification';
 
-  const props = defineProps({
+const props = defineProps({
     me: Object as PropType<Me> | null,
     error: String as PropType<string> | null,
     success: String as PropType<string> | null,
+    errors: Object as PropType<Record<string, string[]>>,
   });
 
   const error = ref(null as string | null);
@@ -21,10 +30,25 @@
       if (error.value !== props.error) {
         error.value = props.error;
         toast.error(error.value, {
-          position: 'bottom-center',
+          position: POSITION.BOTTOM_CENTER,
           timeout: 3000,
         });
       }
+    } else if (props.errors) {
+      Object.keys(props.errors)
+        .some((key) => {
+          if (props.errors[key]) {
+            error.value = typeof props.errors[key] === 'string' || props.errors[key] instanceof String
+              ? props.errors[key] : props.errors[key]?.[0];
+
+            toast.error(error.value, {
+              position: POSITION.BOTTOM_CENTER,
+              timeout: 3000,
+            });
+            return true;
+          }
+          return false;
+        })
     } else {
       if (error.value !== props.error) {
         error.value = props.error;
@@ -35,7 +59,7 @@
       if (success.value !== props.success) {
         success.value = props.success;
         toast.info(success.value, {
-          position: 'bottom-center',
+          position: POSITION.BOTTOM_CENTER,
           timeout: 3000,
         });
       }
@@ -57,8 +81,8 @@
   const abbreviation = ref(null as string | null);
   const password = ref('pa$$w0rd' as string | null);
 
-  const company = ref(null as Company | null);
-  const companies = ref(null as AvailableSignIn[] | null) ;
+  const company = ref(null as CompanyModel | null);
+  const companies = ref(null as AvailableSignIn[] | boolean | null) ;
   const isLoadingCompanies = ref(null);
 
   const isLoggingIn = ref(null);
@@ -81,7 +105,7 @@
     } else {
       abbreviation.value = null;
 
-      if (company.value?.length === 1) {
+      if (companies.value === false || companies.value?.length === 1) {
         on.value = 'username';
       } else {
         on.value = 'companies';
@@ -95,12 +119,12 @@
     if (newValue !== oldValue) {
       if (newValue === false) {
         toast.error('Failed to check companies. Please try again later.', {
-          position: 'bottom-center',
+          position: POSITION.BOTTOM_CENTER,
           timeout: 3000,
         });
       } else if (newValue?.length === 0) {
         toast.error('No such user found.', {
-          position: 'bottom-center',
+          position: POSITION.BOTTOM_CENTER,
           timeout: 3000,
         });
       } else if (newValue?.length === 1) {
@@ -121,6 +145,7 @@
       request.email = username.value;
       email.value = username.value;
     } else {
+      request.email = null;
       email.value = null;
     }
 
@@ -130,10 +155,15 @@
       request.phone = username.value;
       phone.value = username.value;
     } else {
+      request.phone = null;
       phone.value = null;
     }
 
     if (!isEmail && !isPhone) {
+      toast.error('Username must be a valid email or phone number.', {
+        timeout: 2000,
+        position: POSITION.BOTTOM_CENTER,
+      })
       return;
     }
 
@@ -143,8 +173,16 @@
       .then((result: SignInsResult) => {
         companies.value = result.data.data.sign_ins ?? [];
       })
-      .catch(() => {
-        companies.value = false;
+      .catch((error) => {
+        if (error.response.data.message) {
+          toast.error(error.response.data.message, {
+            timeout: 3000,
+            position: POSITION.BOTTOM_CENTER,
+          });
+          isLoadingCompanies.value = false;
+        } else {
+          companies.value = true;
+        }
       });
   }
 
@@ -182,9 +220,9 @@
       <template v-if="on === 'username'">
         <legend class="fieldset-legend text-lg">Welcome</legend>
 
-        <form v-on:keydown.enter.prevent="submitUsername">
+        <form v-on:keydown.enter.prevent="submitUsername" @submit.prevent="submitUsername">
           <label class="fieldset-label mb-1">Username<span class="text-error translate-x-[-4px]">*</span></label>
-          <input v-model="username" type="email" required
+          <input v-model="username" type="text" required
                  class="input"
                  placeholder="Type here"/>
 
@@ -230,7 +268,7 @@
           {{ company?.name }}
         </span>
 
-        <form v-on:keydown.enter.prevent="submitLogIn">
+        <form v-on:keydown.enter.prevent="submitLogIn" @submit.prevent="submitLogIn">
           <label class="fieldset-label mb-1">Password<span class="text-error translate-x-[-4px]">*</span></label>
           <input v-model="password" type="password" required
                  class="input"

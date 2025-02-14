@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AuthenticateSession;
 use App\Http\Middleware\ForceJsonOnApi;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -12,10 +13,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\SetCacheHeaders;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -39,23 +37,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->statefulApi();
         $middleware->api(ForceJsonOnApi::class);
+        $middleware->api('throttle:150,1');
 
+        $middleware->authenticateSessions();
         $middleware->web(HandleInertiaRequests::class);
-
-
-//        /** Api */
-//        $middleware->api(append: [
-//            ForceJsonOnApi::class,
-//            EnsureFrontendRequestsAreStateful::class,
-//            ThrottleRequests::with(100, 1),
-//            SubstituteBindings::class,
-//        ]);
-//
-//        /** Web */
-//        $middleware->web(append: [
-//            HandleInertiaRequests::class,
-//            AuthenticateSession::class,
-//        ]);
+        $middleware->web(remove: \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class);
+        $middleware->api('throttle:150,1');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->dontFlash([

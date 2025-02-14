@@ -1,17 +1,45 @@
 <script setup lang="ts">
-  import { PropType, ref, watch } from 'vue';
+  import { onMounted, onUpdated, PropType, ref, watch } from 'vue';
   import { AvailableSignIn, LoginRequest, Me, signIns, SignInsParams, SignInsResult } from '../../api';
   import Company from '../../Components/Auth/Company.vue';
   import { useForm } from '@inertiajs/vue3';
 
   const props = defineProps({
     me: Object as PropType<Me> | null,
+    error: String as PropType<string> | null,
     success: String as PropType<string> | null,
   });
 
-  if (props.success) {
-    alert(props.success);
+  const error = ref(null as string | null);
+  const success = ref(null as string | null);
+
+  function messages() {
+    if (props.error) {
+      if (error.value !== props.error) {
+        error.value = props.error;
+        alert(error.value);
+      }
+    } else {
+      if (error.value !== props.error) {
+        error.value = props.error;
+      }
+    }
+
+    if (props.success) {
+      if (success.value !== props.success) {
+        success.value = props.success;
+        alert(success.value);
+      }
+    } else {
+      if (success.value !== props.success) {
+        success.value = props.success;
+      }
+    }
   }
+
+  onMounted(() => {
+    messages();
+  });
 
   const on = ref('username' as string);
   const username = ref('john@email.com' as string);
@@ -25,6 +53,17 @@
   const isLoadingCompanies = ref(null);
 
   const isLoggingIn = ref(null);
+
+  watch(isLoggingIn, (newValue, oldValue) => {
+    if (newValue === true && oldValue === false) {
+      success.value = null;
+      error.value = null;
+    }
+
+    if (newValue === false && oldValue === true) {
+      messages()
+    }
+  });
 
   watch(company, async (newValue) => {
     if (newValue !== null) {
@@ -104,7 +143,14 @@
       password: password.value,
     } as LoginRequest;
 
-    useForm(request).post('/login');
+    useForm(request).post('/login', {
+      onSuccess: () => {
+        isLoggingIn.value = false;
+      },
+      onError: () => {
+        isLoggingIn.value = false;
+      }
+    });
   }
 
 </script>
@@ -169,7 +215,7 @@
           {{ company?.name }}
         </span>
 
-        <form v-on:keydown.enter.prevent="submitUsername">
+        <form v-on:keydown.enter.prevent="submitLogIn">
           <label class="fieldset-label mb-1">Password<span class="text-error translate-x-[-4px]">*</span></label>
           <input v-model="password" type="password" required
                  class="input"

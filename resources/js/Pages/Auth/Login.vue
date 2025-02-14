@@ -3,6 +3,7 @@
   import { AvailableSignIn, LoginRequest, Me, signIns, SignInsParams, SignInsResult } from '../../api';
   import Company from '../../Components/Auth/Company.vue';
   import { useForm } from '@inertiajs/vue3';
+  import { useToast } from 'vue-toastification';
 
   const props = defineProps({
     me: Object as PropType<Me> | null,
@@ -13,11 +14,16 @@
   const error = ref(null as string | null);
   const success = ref(null as string | null);
 
+  const toast = useToast();
+
   function messages() {
     if (props.error) {
       if (error.value !== props.error) {
         error.value = props.error;
-        alert(error.value);
+        toast.error(error.value, {
+          position: 'bottom-center',
+          timeout: 3000,
+        });
       }
     } else {
       if (error.value !== props.error) {
@@ -28,7 +34,10 @@
     if (props.success) {
       if (success.value !== props.success) {
         success.value = props.success;
-        alert(success.value);
+        toast.info(success.value, {
+          position: 'bottom-center',
+          timeout: 3000,
+        });
       }
     } else {
       if (success.value !== props.success) {
@@ -85,9 +94,15 @@
 
     if (newValue !== oldValue) {
       if (newValue === false) {
-        alert('Failed to check companies. Please try again later.');
+        toast.error('Failed to check companies. Please try again later.', {
+          position: 'bottom-center',
+          timeout: 3000,
+        });
       } else if (newValue?.length === 0) {
-        alert('No such user found.');
+        toast.error('No such user found.', {
+          position: 'bottom-center',
+          timeout: 3000,
+        });
       } else if (newValue?.length === 1) {
         company.value = newValue[0].company;
         on.value = 'credentials';

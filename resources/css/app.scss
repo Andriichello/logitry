@@ -4,8 +4,9 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "vue-toastification/dist/index.css";
+
 @plugin "daisyui" {
     themes: light --default, dark --prefersdark;
     root: ":root";
 }
-

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { PropType } from 'vue';
-  import { Me } from '../api';
+  import { Me } from '@/api';
   import { router } from '@inertiajs/vue3';
 
   const props = defineProps({

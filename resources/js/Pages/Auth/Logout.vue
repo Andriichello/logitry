@@ -1,6 +1,14 @@
+<script lang="ts">
+  import AuthLayout from "@/Layouts/AuthLayout.vue";
+
+  export default {
+    layout: AuthLayout,
+  };
+</script>
+
 <script setup lang="ts">
   import { ref, onMounted, PropType } from 'vue';
-  import { Me } from '../../api';
+  import { Me } from '@/api';
   import { router, useForm } from '@inertiajs/vue3';
 
   const props = defineProps({
@@ -26,12 +34,7 @@
 </script>
 
 <template>
-  <div class="w-full min-h-screen flex flex-col justify-start items-center p-10">
-    <div class="w-full flex flex-row justify-center items-center p-10">
-      <input type="checkbox" value="light" class="toggle theme-controller" checked/>
-      <h3 class="text-4xl font-bold p-4">Logitry</h3>
-    </div>
-
+  <div class="w-full flex flex-col justify-start items-center">
     <div class="w-full flex flex-col justify-center items-center gap-2" v-if="isLoggingOut">
       <h3>
         Logging Out

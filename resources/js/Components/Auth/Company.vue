@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { PropType } from 'vue';
-  import { AvailableSignInRole, Company } from '../../api';
+  import { AvailableSignInRole, Company } from '@/api';
 
   defineProps({
     company: Object as PropType<Company>,

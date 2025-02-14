@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "resources/js"
+    "baseUrl": "./resources/js",
+      "paths": {
+          "@/*": ["./resources/js/*"],
+          "@api/*": ["./resources/js/api/*"]
+      }
   }
 }

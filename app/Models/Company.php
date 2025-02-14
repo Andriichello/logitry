@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enum\Realm;
+use App\Queries\CompanyQuery;
 use Database\Factories\CompanyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -26,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property Company[]|Collection $subCompanies
  * @property User[]|Collection $users
  *
+ * @method static CompanyQuery query()
  * @method static CompanyFactory factory(...$parameters)
  */
 class Company extends BaseModel
@@ -118,13 +121,13 @@ class Company extends BaseModel
      * @param string|null $abb abbreviation
      * @param string|null $name
      *
-     * @return BaseModel|null
+     * @return Company|null
      */
     public static function findBy(
         ?int $id = null,
         ?string $abb = null,
         ?string $name = null
-    ): ?BaseModel {
+    ): ?Company {
         if ($id !== null) {
             return static::query()
                 ->where('id', $id)
@@ -144,5 +147,15 @@ class Company extends BaseModel
         }
 
         return null;
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return CompanyQuery
+     */
+    public function newEloquentBuilder($query): CompanyQuery
+    {
+        return new CompanyQuery($query);
     }
 }

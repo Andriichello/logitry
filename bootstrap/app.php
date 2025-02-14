@@ -15,6 +15,7 @@ use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Session\Middleware\AuthenticateSession;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -36,22 +37,25 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => EnsureEmailIsVerified::class,
         ]);
 
-        /** Global */
-        $middleware->append([
-            ForceJsonOnApi::class,
-        ]);
+        $middleware->statefulApi();
+        $middleware->api(ForceJsonOnApi::class);
 
-        /** Api */
-        $middleware->api(append: [
-            // EnsureFrontendRequestsAreStateful::class,
-            ThrottleRequests::with(100, 1),
-            SubstituteBindings::class,
-        ]);
+        $middleware->web(HandleInertiaRequests::class);
 
-        /** Web */
-        $middleware->web(append: [
-            HandleInertiaRequests::class,
-        ]);
+
+//        /** Api */
+//        $middleware->api(append: [
+//            ForceJsonOnApi::class,
+//            EnsureFrontendRequestsAreStateful::class,
+//            ThrottleRequests::with(100, 1),
+//            SubstituteBindings::class,
+//        ]);
+//
+//        /** Web */
+//        $middleware->web(append: [
+//            HandleInertiaRequests::class,
+//            AuthenticateSession::class,
+//        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->dontFlash([

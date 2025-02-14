@@ -24,6 +24,13 @@ class BaseResource extends JsonResource implements
     use AllowsIncludes;
 
     /**
+     * The "data" wrapper that should be applied.
+     *
+     * @var string|null
+     */
+    public static $wrap = null;
+
+    /**
      * List of columns that are allowed as
      * appends on request.
      *

@@ -9,7 +9,7 @@ Route::group(['as' => 'api.'], function () {
         ->name('login');
 
     Route::get('/sign-ins', [Auth\SignInsController::class, 'signIns'])
-        ->middleware('throttle:12,1')
+        ->middleware('throttle:30,1')
         ->name('sign-ins');
 
     Route::get('/example', fn() => ApiResponse::ok())

@@ -51,6 +51,8 @@ class HandleInertiaRequests extends Middleware
             parent::share($request),
             [
                 'me' => $me ?? null,
+                'error' => $request->session()->get('error'),
+                'success' => $request->session()->get('success'),
             ]
         );
     }

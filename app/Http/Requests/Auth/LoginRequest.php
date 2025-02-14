@@ -4,6 +4,10 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\BaseRequest;
 use App\Models\Company;
+use App\Models\User;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 /**
@@ -14,6 +18,13 @@ use Illuminate\Validation\Rule;
  */
 class LoginRequest extends BaseRequest
 {
+    /**
+     * Last loaded company.
+     *
+     * @var Company|null
+     */
+    protected ?Company $company;
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,10 +40,15 @@ class LoginRequest extends BaseRequest
             ],
             'email' => [
                 'required_without:phone',
+                'sometimes',
+                'string',
                 'email',
             ],
             'phone' => [
                 'required_without:email',
+                'sometimes',
+                'nullable',
+                'string',
                 'regex:/^\+?[0-9]{10,15}$/',
             ],
             'password' => [
@@ -61,9 +77,12 @@ class LoginRequest extends BaseRequest
      */
     public function companyId(): ?int
     {
-        $abb = $this->get('abbreviation');
+        if (empty($this->company)) {
+            $abb = $this->get('abbreviation');
+            $this->company = Company::findBy(abb: $abb);
+        }
 
-        return Company::findBy(abb: $abb)?->id;
+        return $this->company?->id;
     }
 
     /**
@@ -79,6 +98,60 @@ class LoginRequest extends BaseRequest
             'phone' => $this->get('phone'),
             'password' => $this->get('password'),
         ];
+    }
+
+    /**
+     * Attempts to log user in by given credentials.
+     *
+     * @param array $credentials
+     * @param bool $remember
+     *
+     * @return User|null
+     * @SuppressWarnings(PHPMD)
+     */
+    public function attempt(array $credentials, bool $remember = false): ?User
+    {
+        /** @var SessionGuard $guard */
+        $guard = Auth::guard('web');
+
+        if ($guard->attempt($credentials, $remember)) {
+            /** @var User $user */
+            $user = $guard->user();
+        }
+
+        return $user ?? null;
+    }
+
+    /**
+     * Attempts to log user in and throws an exception if can't.
+     *
+     * @return User
+     * @throws AuthenticationException
+     */
+    public function authenticate(): User
+    {
+        $credentials = $this->credentials();
+
+        $means = empty($credentials['phone'])
+            ? 'email' : 'phone';
+
+        $params = [
+            $means => $credentials[$means],
+            'password' => $credentials['password'],
+        ];
+
+        $user = $this->attempt($params);
+
+        if (!$user) {
+            throw new AuthenticationException('Failed to authenticate.');
+        }
+
+        if (!$user->isPartOf($credentials['company_id'])) {
+            session()->invalidate();
+            throw new AuthenticationException('You are not part of this company.');
+        }
+
+        return $user;
     }
 
     /**

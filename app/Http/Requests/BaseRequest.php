@@ -15,7 +15,7 @@ use Throwable;
 /**
  * Class BaseRequest.
  */
-abstract class BaseRequest extends FormRequest
+class BaseRequest extends FormRequest
 {
     /**
      * Message, which should be displayed on failed authorization attempt.

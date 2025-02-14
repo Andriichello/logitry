@@ -9,6 +9,7 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
   Login200,
   LoginRequest,
+  Logout200,
   Me200,
   MeParams,
   SignIns200,
@@ -23,6 +24,14 @@ export const login = <TData = AxiosResponse<Login200>>(
   options?: AxiosRequestConfig,
 ): Promise<TData> => {
   return axios.default.post(`/api/login`, loginRequest, options);
+};
+/**
+ * @summary Log out using an access token
+ */
+export const logout = <TData = AxiosResponse<Logout200>>(
+  options?: AxiosRequestConfig,
+): Promise<TData> => {
+  return axios.default.delete(`/api/logout`, options);
 };
 /**
  * @summary Get currently logged-in user
@@ -49,5 +58,6 @@ export const signIns = <TData = AxiosResponse<SignIns200>>(
   });
 };
 export type LoginResult = AxiosResponse<Login200>;
+export type LogoutResult = AxiosResponse<Logout200>;
 export type MeResult = AxiosResponse<Me200>;
 export type SignInsResult = AxiosResponse<SignIns200>;

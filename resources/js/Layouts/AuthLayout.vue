@@ -1,8 +1,7 @@
 <script setup>
-import {useThemeStore} from "@/stores/theme";
+  import {useThemeStore} from "@/stores/theme";
 
-const theme = useThemeStore();
-
+  const theme = useThemeStore();
 </script>
 
 <template>

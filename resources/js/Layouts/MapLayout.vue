@@ -2,8 +2,9 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import {useThemeStore} from "@/stores/theme";
-  import { onMounted, PropType, provide, ref } from 'vue';
+  import { computed, onMounted, PropType, provide, ref } from 'vue';
   import { MapBounds, Trip } from '../api';
+  import FitBoundsButton from '../Components/Map/FitBoundsButton.vue';
 
   const props = defineProps({
     bounds: Object as PropType<MapBounds> | null,
@@ -23,19 +24,32 @@
     map.value = L.map('map', { zoomControl: false })
       .setView(center, 6);
 
-    if (props.bounds) {
-      const bounds = L.latLngBounds(
-        [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
-        [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
-      );
-
-      map.value.fitBounds(bounds);
-    }
+    fitBounds();
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map.value);
   });
+
+  const bounds = computed(() => {
+    if (props?.bounds) {
+      return L.latLngBounds(
+        [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
+        [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
+      );
+    }
+
+    return null;
+  });
+
+  function fitBounds() {
+    console.log('fitBounds', {map, bounds: bounds.value});
+
+    if (map.value && bounds.value) {
+      map.value.fitBounds(bounds.value);
+    }
+  }
+
 </script>
 
 <template>
@@ -45,10 +59,12 @@
              :checked="!theme.isDark"
              @change="theme.toggle" hidden/>
 
-      <div class="w-full h-full flex-col justify-start items-center">
+      <div class="w-full h-full absolute">
         <div id="map">
           <slot/>
         </div>
+        <FitBoundsButton class="absolute bottom-6 right-2 z-[400] opacity-75"
+          @click="fitBounds"/>
       </div>
     </article>
   </main>

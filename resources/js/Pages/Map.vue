@@ -25,9 +25,9 @@
 <template>
   <div>
     <template v-for="trip in trips" :key="trip.id" v-if="map">
-      <<Line :map="map"
-             :points="trip.points"
-             :color="'black'"/>
+      <Line :map="map"
+            :points="trip.points"
+            :color="'black'"/>
 
       <template v-for="point in trip.points" :key="point.id">
         <Marker :map="map"

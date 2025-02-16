@@ -1,7 +1,11 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted, PropType, ref, watch } from 'vue';
 
-  const emits = defineEmits(['created', 'removed']);
+  const emits = defineEmits([
+    'created',
+    'removed',
+    'clicked',
+  ]);
 
   const props = defineProps({
     points: {
@@ -25,7 +29,16 @@
       const options = { color: props.color };
       const positions = props.points.map((p) => [p.latitude, p.longitude]);
 
-      line.value = L.polyline(positions, options);
+      line.value = L.polyline(positions, options)
+        .bindPopup(props.label ?? 'default')
+        .on('click', () => {
+          if (line.value) {
+            emits('clicked', {
+              line: line.value,
+              isPopupOpen: line.value.isPopupOpen()
+            });
+          }
+      });
 
       emits('created', line.value);
     }

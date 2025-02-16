@@ -1,7 +1,12 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted, ref, watch } from 'vue';
 
-  const emits = defineEmits(['created', 'removed']);
+  const emits = defineEmits([
+    'created',
+    'removed',
+    'clicked',
+    'popup-closed',
+  ]);
 
   const props = defineProps({
     latitude: {
@@ -28,7 +33,24 @@
   onMounted(() => {
     if (!marker.value) {
       marker.value = L.marker([props.latitude, props.longitude])
-        .bindPopup(props.label ?? 'default');
+        .setOpacity(0.6)
+        .bindPopup(props.label ?? 'default', { closeOnClick: false, autoClose: false, autoPan: false })
+        .on('click', () => {
+          if (marker.value) {
+            emits('clicked', {
+              marker: marker.value,
+              isPopupOpen: marker.value.isPopupOpen()
+            });
+          }
+        })
+        .on('popupclose', () => {
+          if (marker.value) {
+            emits('popup-closed', {
+              marker: marker.value,
+              isPopupOpen: marker.value.isPopupOpen()
+            });
+          }
+        });
 
       emits('created', marker.value);
     }

@@ -2,7 +2,13 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import {useThemeStore} from "@/stores/theme";
-  import { onMounted, provide, ref } from 'vue';
+  import { onMounted, PropType, provide, ref } from 'vue';
+  import { MapBounds, Trip } from '../api';
+
+  const props = defineProps({
+    bounds: Object as PropType<MapBounds> | null,
+    trips: Array as PropType<Trip[]> | null,
+  });
 
   const theme = useThemeStore();
 
@@ -11,12 +17,20 @@
   provide('map', map);
 
   onMounted(() => {
-    // const p = props?.trips?.[0]?.points?.[0];
-    const p = null;
+    const p = props?.trips?.[0]?.points?.[0];
     const center = p ? [p.latitude, p.longitude] : [51.505, -0.09];
 
-    map.value = L.map('map', {zoomControl: false})
+    map.value = L.map('map', { zoomControl: false })
       .setView(center, 6);
+
+    if (props.bounds) {
+      const bounds = L.latLngBounds(
+        [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
+        [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
+      );
+
+      map.value.fitBounds(bounds);
+    }
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

@@ -326,6 +326,203 @@
                 },
                 "type": "object"
             },
+            "Trip": {
+                "description": "Trip details",
+                "required": [
+                    "id",
+                    "type",
+                    "status",
+                    "name",
+                    "description",
+                    "date",
+                    "points",
+                    "vehicle",
+                    "driver",
+                    "seats",
+                    "seats_booked",
+                    "price",
+                    "currency",
+                    "contact"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the trip.",
+                        "type": "integer"
+                    },
+                    "type": {
+                        "description": "Type of the trip, e.g., Transfer.",
+                        "type": "string"
+                    },
+                    "status": {
+                        "description": "Current status of the trip.",
+                        "type": "string",
+                        "enum": [
+                            "Available",
+                            "Sold-Out",
+                            "Cancelled",
+                            "Unavailable"
+                        ]
+                    },
+                    "name": {
+                        "description": "Name of the trip.",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the trip.",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Date of the trip.",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "points": {
+                        "description": "List of points in the trip route.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TripPoint"
+                        }
+                    },
+                    "vehicle": {
+                        "$ref": "#/components/schemas/TripVehicle"
+                    },
+                    "driver": {
+                        "$ref": "#/components/schemas/TripDriver"
+                    },
+                    "seats": {
+                        "description": "Total number of seats in the vehicle.",
+                        "type": "integer"
+                    },
+                    "seats_booked": {
+                        "description": "Number of already booked seats.",
+                        "type": "integer"
+                    },
+                    "price": {
+                        "description": "Price per seat.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "currency": {
+                        "description": "Currency for the price.",
+                        "type": "string"
+                    },
+                    "contact": {
+                        "$ref": "#/components/schemas/TripContact"
+                    }
+                },
+                "type": "object"
+            },
+            "TripPoint": {
+                "description": "Point of the trip route",
+                "required": [
+                    "city",
+                    "country",
+                    "street",
+                    "time",
+                    "longitude",
+                    "latitude"
+                ],
+                "properties": {
+                    "city": {
+                        "description": "City of the point.",
+                        "type": "string"
+                    },
+                    "country": {
+                        "description": "Country of the point.",
+                        "type": "string"
+                    },
+                    "street": {
+                        "description": "Street address of the point.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "time": {
+                        "description": "Scheduled time at this point.",
+                        "type": "string",
+                        "format": "time"
+                    },
+                    "longitude": {
+                        "description": "Longitude coordinate.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "latitude": {
+                        "description": "Latitude coordinate.",
+                        "type": "number",
+                        "format": "float"
+                    }
+                },
+                "type": "object"
+            },
+            "TripVehicle": {
+                "description": "Details of the trip's vehicle",
+                "required": [
+                    "id",
+                    "manufacturer",
+                    "model",
+                    "year",
+                    "color"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Vehicle identifier.",
+                        "type": "integer"
+                    },
+                    "manufacturer": {
+                        "description": "Manufacturer of the vehicle.",
+                        "type": "string"
+                    },
+                    "model": {
+                        "description": "Model of the vehicle.",
+                        "type": "string"
+                    },
+                    "year": {
+                        "description": "Year of manufacture.",
+                        "type": "string"
+                    },
+                    "color": {
+                        "description": "Color of the vehicle.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TripDriver": {
+                "description": "Information about the driver",
+                "required": [
+                    "id",
+                    "name",
+                    "phone"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Driver identifier.",
+                        "type": "integer"
+                    },
+                    "name": {
+                        "description": "Name of the driver.",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "description": "Driver contact number.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "TripContact": {
+                "description": "Contact details for the trip",
+                "required": [
+                    "phone"
+                ],
+                "properties": {
+                    "phone": {
+                        "description": "Contact phone number.",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "PageSize": {
                 "description": "Max number of results on page.",
                 "type": "integer",

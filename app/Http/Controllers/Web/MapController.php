@@ -140,4 +140,83 @@ class MapController extends BaseController
 
         return inertia('Map', $props);
     }
+
+
+    /**
+     * @OA\Schema(
+     *     schema="Trip",
+     *     type="object",
+     *     description="Trip details",
+     *     required={"id", "type", "status",
+     *     "name", "description", "date",
+     *     "points", "vehicle", "driver",
+     *     "seats", "seats_booked",
+     *     "price", "currency",
+     *     "contact"},
+     *     @OA\Property(property="id", type="integer", description="Unique identifier for the trip."),
+     *     @OA\Property(property="type", type="string", description="Type of the trip, e.g., Transfer."),
+     *     @OA\Property(property="status", type="string",
+     *     enum={"Available", "Sold-Out", "Cancelled", "Unavailable"},
+     *     description="Current status of the trip."),
+     *     @OA\Property(property="name", type="string", description="Name of the trip."),
+     *     @OA\Property(property="description", type="string", description="Description of the trip."),
+     *     @OA\Property(property="date", type="string", format="date", description="Date of the trip."),
+     *     @OA\Property(
+     *         property="points",
+     *         type="array",
+     *         description="List of points in the trip route.",
+     *         @OA\Items(ref="#/components/schemas/TripPoint")
+     *     ),
+     *     @OA\Property(property="vehicle", ref="#/components/schemas/TripVehicle"),
+     *     @OA\Property(property="driver", ref="#/components/schemas/TripDriver"),
+     *     @OA\Property(property="seats", type="integer", description="Total number of seats in the vehicle."),
+     *     @OA\Property(property="seats_booked", type="integer", description="Number of already booked seats."),
+     *     @OA\Property(property="price", type="number", format="float", description="Price per seat."),
+     *     @OA\Property(property="currency", type="string", description="Currency for the price."),
+     *     @OA\Property(property="contact", ref="#/components/schemas/TripContact")
+     * )
+     *
+     * @OA\Schema(
+     *     schema="TripPoint",
+     *     type="object",
+     *     description="Point of the trip route",
+     *     required={"city", "country", "street", "time", "longitude", "latitude"},
+     *     @OA\Property(property="city", type="string", description="City of the point."),
+     *     @OA\Property(property="country", type="string", description="Country of the point."),
+     *     @OA\Property(property="street", type="string", nullable=true, description="Street address of the point."),
+     *     @OA\Property(property="time", type="string", format="time", description="Scheduled time at this point."),
+     *     @OA\Property(property="longitude", type="number", format="float", description="Longitude coordinate."),
+     *     @OA\Property(property="latitude", type="number", format="float", description="Latitude coordinate.")
+     * )
+     *
+     * @OA\Schema(
+     *     schema="TripVehicle",
+     *     type="object",
+     *     description="Details of the trip's vehicle",
+     *     required={"id", "manufacturer", "model", "year", "color"},
+     *     @OA\Property(property="id", type="integer", description="Vehicle identifier."),
+     *     @OA\Property(property="manufacturer", type="string", description="Manufacturer of the vehicle."),
+     *     @OA\Property(property="model", type="string", description="Model of the vehicle."),
+     *     @OA\Property(property="year", type="string", description="Year of manufacture."),
+     *     @OA\Property(property="color", type="string", description="Color of the vehicle.")
+     * )
+     *
+     * @OA\Schema(
+     *     schema="TripDriver",
+     *     type="object",
+     *     description="Information about the driver",
+     *     required={"id", "name", "phone"},
+     *     @OA\Property(property="id", type="integer", description="Driver identifier."),
+     *     @OA\Property(property="name", type="string", description="Name of the driver."),
+     *     @OA\Property(property="phone", type="string", description="Driver contact number.")
+     * )
+     *
+     * @OA\Schema(
+     *     schema="TripContact",
+     *     type="object",
+     *     description="Contact details for the trip",
+     *     required={"phone"},
+     *     @OA\Property(property="phone", type="string", description="Contact phone number.")
+     * )
+     */
 }

@@ -136,11 +136,49 @@ class MapController extends BaseController
             'company' => ($company = $request->company())
                 ? new CompanyResource($company) : null,
             'trips' => $trips,
+            'bounds' => $this->bounds($trips),
         ];
 
         return inertia('Map', $props);
     }
 
+    /**
+     * Calculates lat/lng bounds for the given trips,
+     * so that it's easy to show it on frontend.
+     *
+     * @param array $trips
+     *
+     * @return array|null
+     */
+    protected function bounds(array $trips): ?array
+    {
+        $latitudes = [];
+        $longitudes = [];
+
+        foreach ($trips as $trip) {
+            if (isset($trip['points']) && is_array($trip['points'])) {
+                foreach ($trip['points'] as $point) {
+                    $latitudes[] = $point['latitude'];
+                    $longitudes[] = $point['longitude'];
+                }
+            }
+        }
+
+        if (!empty($latitudes) && !empty($longitudes)) {
+            $bounds = [
+                'northEast' => [
+                    'latitude' => max($latitudes),
+                    'longitude' => max($longitudes),
+                ],
+                'southWest' => [
+                    'latitude' => min($latitudes),
+                    'longitude' => min($longitudes),
+                ],
+            ];
+        }
+
+        return $bounds ?? null;
+    }
 
     /**
      * @OA\Schema(
@@ -217,6 +255,29 @@ class MapController extends BaseController
      *     description="Contact details for the trip",
      *     required={"phone"},
      *     @OA\Property(property="phone", type="string", description="Contact phone number.")
+     * )
+     *
+     * @OA\Schema(
+     *     schema="MapBounds",
+     *     type="object",
+     *     description="Latitude and longitude bounds for trips",
+     *     required={"northEast", "southWest"},
+     *     @OA\Property(
+     *         property="northEast",
+     *         type="object",
+     *         description="Northeast corner of the bounds",
+     *         required={"latitude", "longitude"},
+     *         @OA\Property(property="latitude", type="number", format="float", description="Maximum latitude value."),
+     *         @OA\Property(property="longitude", type="number", format="float", description="Maximum longitude value.")
+     *     ),
+     *     @OA\Property(
+     *         property="southWest",
+     *         type="object",
+     *         description="Southwest corner of the bounds",
+     *         required={"latitude", "longitude"},
+     *         @OA\Property(property="latitude", type="number", format="float", description="Minimum latitude value."),
+     *         @OA\Property(property="longitude", type="number", format="float", description="Minimum longitude value.")
+     *     )
      * )
      */
 }

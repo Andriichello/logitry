@@ -523,6 +523,56 @@
                 },
                 "type": "object"
             },
+            "MapBounds": {
+                "description": "Latitude and longitude bounds for trips",
+                "required": [
+                    "northEast",
+                    "southWest"
+                ],
+                "properties": {
+                    "northEast": {
+                        "description": "Northeast corner of the bounds",
+                        "required": [
+                            "latitude",
+                            "longitude"
+                        ],
+                        "properties": {
+                            "latitude": {
+                                "description": "Maximum latitude value.",
+                                "type": "number",
+                                "format": "float"
+                            },
+                            "longitude": {
+                                "description": "Maximum longitude value.",
+                                "type": "number",
+                                "format": "float"
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "southWest": {
+                        "description": "Southwest corner of the bounds",
+                        "required": [
+                            "latitude",
+                            "longitude"
+                        ],
+                        "properties": {
+                            "latitude": {
+                                "description": "Minimum latitude value.",
+                                "type": "number",
+                                "format": "float"
+                            },
+                            "longitude": {
+                                "description": "Minimum longitude value.",
+                                "type": "number",
+                                "format": "float"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "PageSize": {
                 "description": "Max number of results on page.",
                 "type": "integer",

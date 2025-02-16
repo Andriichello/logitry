@@ -1,11 +1,9 @@
 <script setup lang="ts">
-  import { onUnmounted, ref, watch } from 'vue';
+  import { onMounted, onUnmounted, ref, watch } from 'vue';
+
+  const emits = defineEmits(['created', 'removed']);
 
   const props = defineProps({
-    map: {
-      type: Object as L.Map | null,
-      required: true
-    },
     latitude: {
       type: Number as number,
       required: true
@@ -27,23 +25,18 @@
 
   const marker = ref(null as L.Marker | null);
 
-  // Watch for `map` being set before adding the marker
-  watch(
-    () => props.map,
-    (map) => {
-      if (map && !marker.value) {
-        const position = [props.latitude, props.longitude];
-        marker.value = L.marker(position)
-          .addTo(map)
-          .bindPopup(props.label ?? 'default');
-      }
-    },
-    { immediate: true } // Run this watcher immediately
-  );
+  onMounted(() => {
+    if (!marker.value) {
+      marker.value = L.marker([props.latitude, props.longitude])
+        .bindPopup(props.label ?? 'default');
+
+      emits('created', marker.value);
+    }
+  });
 
   onUnmounted(() => {
-    if (props.map && marker.value) {
-      props.map.removeLayer(marker.value);
+    if (marker.value) {
+      emits('removed', marker.value);
       marker.value = null;
     }
   });

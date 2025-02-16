@@ -43,8 +43,6 @@
   });
 
   function fitBounds() {
-    console.log('fitBounds', {map, bounds: bounds.value});
-
     if (map.value && bounds.value) {
       map.value.fitBounds(bounds.value);
     }

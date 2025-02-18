@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "resources/js"),
-      "@api": path.resolve(__dirname, "resources/api"),
+      "@api": path.resolve(__dirname, "resources/js/api"),
     },
   },
   server: {
@@ -17,7 +17,7 @@ export default defineConfig({
   plugins: [
     vue(),
     laravel({
-      input: ['resources/css/app.css', 'resources/js/app.js'],
+      input: ['resources/css/app.scss', 'resources/js/app.ts'],
       refresh: true,
     }),
     tailwindcss(),

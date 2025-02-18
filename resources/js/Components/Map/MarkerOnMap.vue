@@ -5,7 +5,6 @@
     'created',
     'removed',
     'clicked',
-    'popup-closed',
   ]);
 
   const props = defineProps({
@@ -23,31 +22,55 @@
     },
     color: {
       type: String as string,
-      default: 'black'
+      default: 'blue'
     },
     label: String as string | null,
+    selected: {
+      type: Boolean as boolean,
+      default: false,
+    },
   });
 
   const marker = ref(null as L.Marker | null);
 
+  watch(() => props.selected, (value, oldValue) => {
+    if (value === oldValue || !marker.value) {
+      return;
+    }
+
+    if (value) {
+      marker.value.setOpacity(1);
+
+      if (!marker.value.isPopupOpen()) {
+        marker.value.openPopup();
+      }
+    } else {
+      marker.value.setOpacity(0.6);
+
+      if (marker.value.isPopupOpen()) {
+        marker.value.closePopup();
+      }
+    }
+  })
+
   onMounted(() => {
     if (!marker.value) {
+      const label = props.label;
+
       marker.value = L.marker([props.latitude, props.longitude])
-        .setOpacity(0.6)
-        .bindPopup(props.label ?? 'default', { closeOnClick: false, autoClose: false, autoPan: false })
+        .setOpacity(props.selected ? 1 : 0.6)
+        .bindPopup(
+          label, {
+          closeOnClick: false,
+          autoClose: false,
+          autoPan: false,
+          closeButton: false,
+        })
         .on('click', () => {
           if (marker.value) {
             emits('clicked', {
               marker: marker.value,
-              isPopupOpen: marker.value.isPopupOpen()
-            });
-          }
-        })
-        .on('popupclose', () => {
-          if (marker.value) {
-            emits('popup-closed', {
-              marker: marker.value,
-              isPopupOpen: marker.value.isPopupOpen()
+              isPopupOpen: marker.value.isPopupOpen(),
             });
           }
         });

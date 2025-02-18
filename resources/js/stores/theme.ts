@@ -5,7 +5,7 @@ interface ThemeState {
 }
 
 export const useThemeStore = defineStore('theme', {
-  state: () => {
+  state: (): ThemeState => {
     let theme = localStorage.getItem('data-theme');
 
     if (!theme) {

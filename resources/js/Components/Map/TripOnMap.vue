@@ -1,9 +1,11 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted, ref, PropType, nextTick } from 'vue';
   import L from "leaflet";
-  import { Trip } from "@/api";
+  import { Trip, TripPoint } from '@/api';
   import LineOnMap from "./LineOnMap.vue";
   import MarkerOnMap from "./MarkerOnMap.vue";
+
+  const emits = defineEmits(['line-clicked', 'marker-clicked']);
 
   const props = defineProps({
     map: {
@@ -14,55 +16,125 @@
       type: Object as PropType<Trip>,
       required: true,
     },
+    selected: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    }
   });
 
   const group = ref<L.LayerGroup | null>(null);
   const line = ref<L.Polyline | null>(null);
   const markers = ref<L.Marker[]>([]);
 
-  const ignoreMarkerClick = ref(false);
-  const ignoreMarkerPopup = ref(false);
+  function lineCreated(l: L.Polyline) {
+    console.log("lineCreated:", l);
+    line.value = l;
+
+    if (group.value) {
+      group.value.addLayer(l);
+    }
+  }
+
+  function lineRemoved(l: L.Polyline) {
+    // console.log("lineRemoved:", l);
+
+    if (group.value) {
+      group.value.removeLayer(l);
+    }
+
+    line.value = null;
+  }
+
+  function markerCreated(m: L.Marker) {
+    // console.log("markerCreated:", m);
+    markers.value.push(m);
+
+    if (group.value) {
+      group.value.addLayer(m);
+    }
+  }
+
+  function markerRemoved(m: L.Marker) {
+    // console.log("markerRemoved:", m);
+
+    const index = markers.value.indexOf(m);
+    if (index !== -1) {
+      markers.value.splice(index, 1);
+
+      if (group.value) {
+        group.value.removeLayer(m);
+      }
+    }
+  }
+
+  function lineClicked(
+    { line, isPopupOpen }:
+    { line: L.Polyline, isPopupOpen: boolean }
+  ) {
+    console.log('Line clicked');
+    emits('line-clicked', props.trip);
+  }
+
+  function markerClicked(
+    { marker, isPopupOpen }:
+    { marker: L.Marker, isPopupOpen: boolean }
+  ) {
+    console.log('Marker clicked');
+    emits('marker-clicked', props.trip);
+  }
+
+  function labelForPoint(point: TripPoint) {
+    const parts = [];
+
+    if (point.city) {
+      parts.push(
+        `<span class="text-xl font-bold">${point.city}</span>`,
+      );
+    }
+
+    if (point.time) {
+      const instance = new Date(point.time)
+        .toLocaleString('en-US', {
+          day: '2-digit',    // Day of the month (e.g., "18")
+          month: 'short',    // Short month name (e.g., "Feb")
+          weekday: 'short',  // Optional: "Mon"
+          hour: '2-digit',   // 24-hour format hour
+          minute: '2-digit', // Minute
+          hour12: false      // 24-hour format
+        });
+
+      parts.push(
+        `<span class="text-xl">${instance}</span>`,
+      );
+    }
+
+    return parts.join('<br>');
+  }
 
   onMounted(() => {
-    props.map.on("click", () => {
-      console.log("Map clicked");
-
-      ignoreMarkerClick.value = true;
-      ignoreMarkerPopup.value = true;
-
-      for (const m of markers.value) {
-        m.setOpacity(0.6);
-        m.closePopup();
-      }
-
-      ignoreMarkerClick.value = false;
-      ignoreMarkerPopup.value = false;
-    });
-
     props.map.on("zoomend", () => {
       markers.value?.forEach((marker) => {
-        if (marker.isPopupOpen()) {
-          marker.setLatLng(marker.getLatLng()); // Force popup to reposition
+        if (marker.getPopup()?.isOpen()) {
+          marker.getPopup().update(); // Ensures the popup stays correctly positioned
         }
       });
     });
 
     props.map.on("moveend", () => {
       markers.value?.forEach((marker) => {
-        if (marker.isPopupOpen()) {
-          nextTick();
-          marker.update(); // Update the popup position
+        if (marker.getPopup()?.isOpen()) {
+          marker.getPopup().update();
         }
       });
     });
 
-    console.log("TripOnMap.onMounted:", props.trip);
+    // console.log("TripOnMap.onMounted:", props.trip);
 
     if (!props.map || !props.trip) return;
 
     group.value = L.layerGroup().addTo(props.map);
 
-    console.log("TripOnMap: Group added to map");
+    // console.log("TripOnMap: Group added to map");
 
     // Add line if already created
     if (line.value) {
@@ -77,7 +149,7 @@
 
   onUnmounted(() => {
     if (group.value && props.map) {
-      console.log("TripOnMap.onUnmounted: Removing group from map");
+      // console.log("TripOnMap.onUnmounted: Removing group from map");
       props.map.removeLayer(group.value);
     }
 
@@ -89,115 +161,6 @@
       markers.value = [];
     }
   });
-
-  function lineCreated(l: L.Polyline) {
-    console.log("lineCreated:", l);
-    line.value = l;
-
-    if (group.value) {
-      group.value.addLayer(l);
-    }
-  }
-
-  function lineRemoved(l: L.Polyline) {
-    console.log("lineRemoved:", l);
-
-    if (group.value) {
-      group.value.removeLayer(l);
-    }
-
-    line.value = null;
-  }
-
-  function markerCreated(m: L.Marker) {
-    console.log("markerCreated:", m);
-    markers.value.push(m);
-
-    if (group.value) {
-      group.value.addLayer(m);
-    }
-  }
-
-  function markerRemoved(m: L.Marker) {
-    console.log("markerRemoved:", m);
-
-    const index = markers.value.indexOf(m);
-    if (index !== -1) {
-      markers.value.splice(index, 1);
-
-      if (group.value) {
-        group.value.removeLayer(m);
-      }
-    }
-  }
-
-  function markerClicked(
-    { marker, isPopupOpen }:
-    { marker: L.Marker, isPopupOpen: boolean }
-  ) {
-    if (ignoreMarkerClick.value) {
-      return;
-    }
-
-    ignoreMarkerClick.value = true;
-    ignoreMarkerPopup.value = true;
-
-    console.log('Marker clicked');
-    const opacity = isPopupOpen ? 1 : 0.6;
-
-    marker.setOpacity(opacity);
-
-    for (const m of markers.value) {
-      m.setOpacity(opacity);
-
-      if (m === marker) {
-        continue;
-      }
-
-      if (isPopupOpen) {
-        m.openPopup();
-      } else {
-        m.closePopup();
-      }
-    }
-
-    ignoreMarkerClick.value = false;
-    ignoreMarkerPopup.value = false;
-  }
-
-  function markerPopupClosed(
-    { marker, isPopupOpen }:
-    { marker: L.Marker, isPopupOpen: boolean }
-  ) {
-    if (ignoreMarkerPopup.value) {
-      return;
-    }
-
-    ignoreMarkerClick.value = true;
-    ignoreMarkerPopup.value = true;
-
-    console.log('Marker popup closed')
-    const opacity = isPopupOpen ? 1 : 0.6;
-
-    marker.setOpacity(opacity);
-
-    for (const m of markers.value) {
-      m.setOpacity(opacity);
-
-      if (m === marker) {
-        continue;
-      }
-
-      if (isPopupOpen) {
-        m.openPopup();
-      } else {
-        m.closePopup();
-      }
-    }
-
-    ignoreMarkerClick.value = false;
-    ignoreMarkerPopup.value = false;
-  }
 </script>
 
 <template>
@@ -205,21 +168,22 @@
     <template v-if="group">
       <LineOnMap
         :points="trip.points"
-        color="black"
+        :selected="selected"
+        color="blue"
         @created="lineCreated"
         @removed="lineRemoved"
-        @clicked="console.log('Line clicked', $event)"
+        @clicked="lineClicked"
       />
 
       <template v-for="point in trip.points" :key="point.id">
         <MarkerOnMap
           :latitude="point.latitude"
           :longitude="point.longitude"
-          :label="point?.city ?? ('Point: ' + point.id)"
+          :label="labelForPoint(point)"
+          :selected="selected"
           @created="markerCreated"
           @removed="markerRemoved"
           @clicked="markerClicked"
-          @popup-closed="markerPopupClosed"
         />
       </template>
     </template>

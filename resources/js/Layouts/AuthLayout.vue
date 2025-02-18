@@ -1,7 +1,7 @@
 <script setup>
   import {useThemeStore} from "@/stores/theme";
 
-  const theme = useThemeStore();
+  const themeStore = useThemeStore();
 </script>
 
 <template>
@@ -11,8 +11,8 @@
         <div class="w-full flex flex-row justify-center items-center p-10 gap-2">
 
           <input type="checkbox" value="light" class="toggle theme-controller mt-1"
-                 :checked="!theme.isDark"
-                 @change="theme.toggle"/>
+                 :checked="!themeStore.isDark"
+                 @change="themeStore.toggle"/>
 
           <!--      <div class="w-[40px] h-[50px] flex flex-col justify-center items-start mb-1">-->
           <!--        <input type="checkbox" value="light" class="toggle-rotated toggle theme-controller translate-x-[-5px] translate-y-[19px]"-->
@@ -28,8 +28,8 @@
           <h3 class="text-4xl font-bold">Logitry</h3>
 
           <input type="checkbox" value="light" class="toggle theme-controller opacity-0"
-                 :checked="!theme.isDark"
-                 @change="theme.toggle"/>
+                 :checked="!themeStore.isDark"
+                 @change="themeStore.toggle"/>
         </div>
         <slot/>
       </div>

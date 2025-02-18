@@ -29,9 +29,7 @@
     errors: Object as PropType<Record<string, string[]>>,
   });
 
-  const theme = useThemeStore()
-
-  console.log(theme);
+  const themeStore = useThemeStore()
 
   const error = ref(null as string | null);
   const success = ref(null as string | null);

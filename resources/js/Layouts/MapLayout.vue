@@ -1,17 +1,19 @@
 <script setup lang="ts">
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
-  import {useThemeStore} from "@/stores/theme";
   import { computed, onMounted, PropType, provide, ref } from 'vue';
   import { MapBounds, Trip } from '../api';
   import FitBoundsButton from '../Components/Map/FitBoundsButton.vue';
+  import { useThemeStore } from "@/stores/theme";
+  import { useMapStore } from '@/stores/map';
 
   const props = defineProps({
     bounds: Object as PropType<MapBounds> | null,
     trips: Array as PropType<Trip[]> | null,
   });
 
-  const theme = useThemeStore();
+  const themeStore = useThemeStore();
+  const mapStore = useMapStore();
 
   const map = ref(null as L.Map | null);
   // Provide map to all the pages
@@ -22,6 +24,10 @@
     const center = p ? [p.latitude, p.longitude] : [51.505, -0.09];
 
     map.value = L.map('map', { zoomControl: false })
+      .on('click', () => {
+        console.log('map click');
+        mapStore.clicks++;
+      })
       .setView(center, 6);
 
     fitBounds();
@@ -54,8 +60,8 @@
   <main>
     <article>
       <input type="checkbox" value="light" class="toggle theme-controller mt-1"
-             :checked="!theme.isDark"
-             @change="theme.toggle" hidden/>
+             :checked="!themeStore.isDark"
+             @change="themeStore.toggle" hidden/>
 
       <div class="w-full h-full absolute">
         <div id="map">

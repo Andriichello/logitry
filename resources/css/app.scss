@@ -10,3 +10,7 @@
     themes: light --default, dark --prefersdark;
     root: ":root";
 }
+
+.leaflet-popup-content {
+    user-select: none; /* Prevent text selection */
+}

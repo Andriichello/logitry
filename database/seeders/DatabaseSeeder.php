@@ -43,6 +43,22 @@ class DatabaseSeeder extends Seeder
             ->withRole(Role::Owner)
             ->create();
 
+        $mike = User::factory()
+            ->create([
+                'name' => 'Mike',
+                'email' => 'mike@email.com',
+                'phone' => '+380991236819',
+                'password' => 'pa$$w0rd',
+                'email_verified_at' => now(),
+                'phone_verified_at' => now(),
+            ]);
+
+        CompanyUser::factory()
+            ->withCompany($dasAuto)
+            ->withUser($mike)
+            ->withRole(Role::Driver)
+            ->create();
+
         $dasAutoTerry = Company::factory()
             ->create([
                 'parent_id' => $dasAuto->id,
@@ -71,7 +87,7 @@ class DatabaseSeeder extends Seeder
         $haulAuto = Company::factory()
             ->create([
                 'abbreviation' => 'haul-auto',
-                'name' => 'Haul Auto (Sub)',
+                'name' => 'Haul Auto',
                 'realm' => Realm::Logistics,
                 'plan' => 'Free',
             ]);
@@ -90,6 +106,44 @@ class DatabaseSeeder extends Seeder
             ->withCompany($haulAuto)
             ->withUser($paul)
             ->withRole(Role::Owner)
+            ->create();
+
+        $james = User::factory()
+            ->create([
+                'name' => 'James',
+                'email' => 'james@email.com',
+                'phone' => '+380991232056',
+                'password' => 'pa$$w0rd',
+                'email_verified_at' => now(),
+                'phone_verified_at' => now(),
+            ]);
+
+        CompanyUser::factory()
+            ->withCompany($haulAuto)
+            ->withUser($james)
+            ->withRole(Role::Driver)
+            ->create();
+
+        $peter = User::factory()
+            ->create([
+                'name' => 'Peter',
+                'email' => 'peter@email.com',
+                'phone' => '+380991231602',
+                'password' => 'pa$$w0rd',
+                'email_verified_at' => now(),
+                'phone_verified_at' => now(),
+            ]);
+
+        CompanyUser::factory()
+            ->withCompany($haulAuto)
+            ->withUser($peter)
+            ->withRole(Role::Driver)
+            ->create();
+
+        CompanyUser::factory()
+            ->withCompany($haulAuto)
+            ->withUser($peter)
+            ->withRole(Role::Driver)
             ->create();
     }
 }

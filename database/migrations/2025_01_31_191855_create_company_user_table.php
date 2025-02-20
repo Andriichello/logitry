@@ -18,6 +18,16 @@ return new class extends Migration
             $table->string('role', 50);
             $table->timestamp('deactivated_at')->nullable();
             $table->timestamps();
+
+            $table->foreign('company_id')
+                ->references('id')
+                ->on('companies')
+                ->onDelete('cascade');
+
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

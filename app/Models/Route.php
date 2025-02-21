@@ -5,6 +5,7 @@ namespace App\Models;
 use Database\Factories\RouteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -25,6 +26,7 @@ use Illuminate\Support\Collection;
  * @property Vehicle|null $vehicle
  * @property User|null $driver
  * @property Point[]|Collection $points
+ * @property Trip[]|Collection $trips
  *
  * @method static RouteFactory factory(...$parameters)
  */
@@ -89,10 +91,21 @@ class Route extends BaseModel
     /**
      * Points associated with the model.
      *
-     * @return BelongsTo
+     * @return HasMany
      */
-    public function points(): BelongsTo
+    public function points(): HasMany
     {
-        return $this->belongsTo(Point::class);
+        return $this->hasMany(Point::class)
+            ->orderBy('number');
+    }
+
+    /**
+     * Trips associated with the model.
+     *
+     * @return HasMany
+     */
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class);
     }
 }

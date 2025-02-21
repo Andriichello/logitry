@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * Class CompanyFactory.
@@ -20,6 +21,7 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
+            'abbreviation' => Str::random(8),
             'name' => fake()->title(),
         ];
     }

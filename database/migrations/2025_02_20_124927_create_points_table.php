@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedInteger('number')->default(0);
             $table->string('name', 100);
             $table->string('description')->nullable();
-            $table->string('country', 5);
+            $table->string('country', 100);
             $table->string('city', 255)->nullable();
             $table->string('street', 255)->nullable();
             $table->decimal('latitude', 9, 7);

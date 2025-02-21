@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enum\TripStatus;
+use App\Queries\TripQuery;
 use Database\Factories\TripFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Carbon;
 
 /**
@@ -28,6 +30,7 @@ use Illuminate\Support\Carbon;
  * @property User|null $driver
  * @property Contact|null $contact
  *
+ * @method static TripQuery query()
  * @method static TripFactory factory(...$parameters)
  */
 class Trip extends BaseModel
@@ -101,5 +104,15 @@ class Trip extends BaseModel
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return TripQuery
+     */
+    public function newEloquentBuilder($query): TripQuery
+    {
+        return new TripQuery($query);
     }
 }

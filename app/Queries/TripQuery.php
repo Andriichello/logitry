@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Queries;
+
+use App\Models\Trip;
+use App\Queries\Interfaces\IndexableInterface;
+use Carbon\Carbon;
+
+/**
+ * Class TripQuery.
+ *
+ * @property Trip $model
+ *
+ * @method TripQuery select($columns = ['*'])
+ * @method TripQuery whereKey($id)
+ * @method Trip|null find($id, $columns = ['*'])
+ * @method Trip findOrFail($id, $columns = ['*'])
+ * @method Trip|null first($columns = ['*'])
+ * @method Trip firstOrFail($columns = ['*'])
+ * @method Trip make(array $attributes = [])
+ * @method Trip create(array $attributes = [])
+ * @method Trip updateOrCreate(array $attributes, array $values = [])
+ */
+class TripQuery extends BaseQuery implements IndexableInterface
+{
+    /**
+     * Filter to trips that depart after the given date.
+     *
+     * @param Carbon $date
+     *
+     * @return static
+     */
+    public function departsAfter(Carbon $date): static
+    {
+        $this->where('departs_at', '>=', $date);
+
+        return $this;
+    }
+
+    /**
+     * Filter to trips that depart before the given date.
+     *
+     * @param Carbon $date
+     *
+     * @return static
+     */
+    public function departsBefore(Carbon $date): static
+    {
+        $this->where('departs_at', '<=', $date);
+
+        return $this;
+    }
+
+    /**
+     * Filter to trips that depart within the given time interval.
+     *
+     * @param Carbon|null $beg
+     * @param Carbon|null $end
+     *
+     * @return static
+     */
+    public function departsWithin(?Carbon $beg, ?Carbon $end): static
+    {
+        $this->where(function (TripQuery $query) use ($beg, $end) {
+            if ($beg) {
+                $query->departsAfter($beg);
+            }
+
+            if ($end) {
+                $query->departsBefore($beg);
+            }
+        });
+
+        return $this;
+    }
+
+    /**
+     * Filter to trips that arrive after the given date.
+     *
+     * @param Carbon $date
+     *
+     * @return static
+     */
+    public function arrivesAfter(Carbon $date): static
+    {
+        $this->where('arrives_at', '>=', $date);
+
+        return $this;
+    }
+
+    /**
+     * Filter to trips that arrive before the given date.
+     *
+     * @param Carbon $date
+     *
+     * @return static
+     */
+    public function arrivesBefore(Carbon $date): static
+    {
+        $this->where('arrives_at', '<=', $date);
+
+        return $this;
+    }
+
+    /**
+     * Filter to trips that arrive within the given time interval.
+     *
+     * @param Carbon|null $beg
+     * @param Carbon|null $end
+     *
+     * @return static
+     */
+    public function arrivesWithin(?Carbon $beg, ?Carbon $end): static
+    {
+        $this->where(function (TripQuery $query) use ($beg, $end) {
+            if ($beg) {
+                $query->arrivesAfter($beg);
+            }
+
+            if ($end) {
+                $query->arrivesBefore($beg);
+            }
+        });
+
+        return $this;
+    }
+}

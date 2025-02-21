@@ -24,7 +24,8 @@ class CompanyFactory extends Factory
         ];
     }
 
-    /** Indicate company.
+    /**
+     * Indicate company.
      *
      * @param Company|null $company
      *

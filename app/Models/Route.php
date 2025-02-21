@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\RouteFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -23,9 +25,13 @@ use Illuminate\Support\Collection;
  * @property Vehicle|null $vehicle
  * @property User|null $driver
  * @property Point[]|Collection $points
+ *
+ * @method static RouteFactory factory(...$parameters)
  */
 class Route extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *

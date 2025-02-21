@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\PointFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
@@ -23,9 +25,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  *
  * @property Company $route
+ *
+ * @method static PointFactory factory(...$parameters)
  */
 class Point extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *

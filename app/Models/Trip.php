@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enum\TripStatus;
+use Database\Factories\TripFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 
@@ -25,9 +27,13 @@ use Illuminate\Support\Carbon;
  * @property Vehicle|null $vehicle
  * @property User|null $driver
  * @property Contact|null $contact
+ *
+ * @method static TripFactory factory(...$parameters)
  */
 class Trip extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Auth\MeRequest;
-use App\Http\Resources\User\MeResource;
+use App\Http\Resources\Specific\MeResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\User;
 

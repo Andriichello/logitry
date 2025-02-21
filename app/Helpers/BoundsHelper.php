@@ -99,6 +99,6 @@ class BoundsHelper implements BoundsHelperInterface
             $points = array_merge($points, $route->points->all());
         }
 
-        return $this->forPoints($routes);
+        return $this->forPoints($points);
     }
 }

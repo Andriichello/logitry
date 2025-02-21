@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Company;
+namespace App\Http\Resources\Specific;
 
 use App\Http\Resources\BaseResource;
 use App\Models\Company;

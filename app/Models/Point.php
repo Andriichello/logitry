@@ -12,7 +12,7 @@ use Illuminate\Support\Carbon;
  *
  * @property int $route_id
  * @property int $number
- * @property string $name
+ * @property string|null $name
  * @property string|null $description
  * @property string|null $country
  * @property string|null $city

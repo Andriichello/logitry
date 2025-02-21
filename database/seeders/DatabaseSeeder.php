@@ -6,11 +6,7 @@ use App\Enum\Realm;
 use App\Enum\Role;
 use App\Models\Company;
 use App\Models\CompanyUser;
-use App\Models\Point;
-use App\Models\Route;
 use App\Models\User;
-use App\Models\Vehicle;
-use Database\Factories\PointFactory;
 use Illuminate\Database\Seeder;
 
 /**
@@ -61,37 +57,6 @@ class DatabaseSeeder extends Seeder
             ->withCompany($dasAuto)
             ->withUser($mike)
             ->withRole(Role::Driver)
-            ->create();
-
-        $routeOne = Route::factory()
-            ->withCompany($dasAuto)
-            ->withVehicle(Vehicle::factory()->create())
-            ->withDriver($mike)
-            ->create(['name' => 'Route One']);
-
-        $pointsOne = Point::factory()
-            ->withRoute($routeOne)
-            ->count(4)
-            ->create();
-
-        $routeTwo = Route::factory()
-            ->withCompany($dasAuto)
-            ->withVehicle(Vehicle::factory()->create())
-            ->create(['name' => 'Route Two']);
-
-        $pointsTwo = Point::factory()
-            ->withRoute($routeTwo)
-            ->count(4)
-            ->create();
-
-        $routeThree = Route::factory()
-            ->withCompany($dasAuto)
-            ->withVehicle(Vehicle::factory()->create())
-            ->create(['name' => 'Route Three']);
-
-        $pointsThree = Point::factory()
-            ->withRoute($routeThree)
-            ->count(4)
             ->create();
 
         $dasAutoTerry = Company::factory()

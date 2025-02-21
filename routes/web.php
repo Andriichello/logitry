@@ -29,6 +29,9 @@ Route::group(['as' => 'web.'], function () {
     Route::get('/map', [Web\MapController::class, 'view'])
         ->name('map.view');
 
+    Route::get('/map/data', [Web\MapController::class, 'get'])
+        ->name('map.data');
+
     Route::get('/me', [MeController::class, 'me'])
         ->name('me.view');
 });

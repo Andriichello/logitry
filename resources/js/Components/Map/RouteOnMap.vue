@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, onUnmounted, ref, PropType, nextTick } from 'vue';
   import L from "leaflet";
-  import { Trip, TripPoint } from '@/api';
+  import { Route, Point } from '@/api';
   import LineOnMap from "./LineOnMap.vue";
   import MarkerOnMap from "./MarkerOnMap.vue";
 
@@ -12,8 +12,8 @@
       type: Object as PropType<L.Map>,
       required: true,
     },
-    trip: {
-      type: Object as PropType<Trip>,
+    route: {
+      type: Object as PropType<Route>,
       required: true,
     },
     selected: {
@@ -27,7 +27,7 @@
   const markers = ref<L.Marker[]>([]);
 
   function lineCreated(l: L.Polyline) {
-    console.log("lineCreated:", l);
+    // console.log("lineCreated:", l);
     line.value = l;
 
     if (group.value) {
@@ -72,7 +72,7 @@
     { line: L.Polyline, isPopupOpen: boolean }
   ) {
     console.log('Line clicked');
-    emits('line-clicked', props.trip);
+    emits('line-clicked', props.route);
   }
 
   function markerClicked(
@@ -80,10 +80,10 @@
     { marker: L.Marker, isPopupOpen: boolean }
   ) {
     console.log('Marker clicked');
-    emits('marker-clicked', props.trip);
+    emits('marker-clicked', props.route);
   }
 
-  function labelForPoint(point: TripPoint) {
+  function labelForPoint(point: Point) {
     const parts = [];
 
     if (point.city) {
@@ -130,7 +130,7 @@
 
     // console.log("TripOnMap.onMounted:", props.trip);
 
-    if (!props.map || !props.trip) return;
+    if (!props.map || !props.route) return;
 
     group.value = L.layerGroup().addTo(props.map);
 
@@ -167,7 +167,7 @@
   <div>
     <template v-if="group">
       <LineOnMap
-        :points="trip.points"
+        :points="route.points"
         :selected="selected"
         color="blue"
         @created="lineCreated"
@@ -175,7 +175,7 @@
         @clicked="lineClicked"
       />
 
-      <template v-for="point in trip.points" :key="point.id">
+      <template v-for="point in route.points" :key="point.id">
         <MarkerOnMap
           :latitude="point.latitude"
           :longitude="point.longitude"

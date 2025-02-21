@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
-import { Trip, TripPoint } from '@/api';
+import { Point, Route, Trip, TripPoint } from '@/api';
 
 interface MapState {
-  /** Currently selected trip */
-  trip: Trip | null;
-  /** Currently selected point of the trip */
-  point: TripPoint | null;
+  /** Currently selected route */
+  route: Route | null;
+  /** Currently selected point of the route */
+  point: Point | null;
   /** Variable for handling map clicks for clearing selections */
   clicks: number;
 }
@@ -13,7 +13,7 @@ interface MapState {
 export const useMapStore = defineStore('map', {
   state: (): MapState => {
     return {
-      trip: null,
+      route: null,
       point: null,
       clicks: 0,
     }

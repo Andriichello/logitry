@@ -2,14 +2,14 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { computed, onMounted, PropType, provide, ref } from 'vue';
-  import { MapBounds, Trip } from '../api';
+  import { Bounds, Route } from '../api';
   import FitBoundsButton from '../Components/Map/FitBoundsButton.vue';
   import { useThemeStore } from "@/stores/theme";
   import { useMapStore } from '@/stores/map';
 
   const props = defineProps({
-    bounds: Object as PropType<MapBounds> | null,
-    trips: Array as PropType<Trip[]> | null,
+    bounds: Object as PropType<Bounds> | null,
+    routes: Array as PropType<Route[]> | null,
   });
 
   const themeStore = useThemeStore();
@@ -20,7 +20,7 @@
   provide('map', map);
 
   onMounted(() => {
-    const p = props?.trips?.[0]?.points?.[0];
+    const p = props?.routes?.[0]?.points?.[0];
     const center = p ? [p.latitude, p.longitude] : [51.505, -0.09];
 
     map.value = L.map('map', { zoomControl: false })
@@ -39,6 +39,12 @@
 
   const bounds = computed(() => {
     if (props?.bounds) {
+      console.log('has bounds...', [
+        [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
+        [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
+      ]);
+
+
       return L.latLngBounds(
         [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
         [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
@@ -50,7 +56,7 @@
 
   function fitBounds() {
     if (map.value && bounds.value) {
-      map.value.fitBounds(bounds.value);
+        map.value.fitBounds(bounds.value);
     }
   }
 

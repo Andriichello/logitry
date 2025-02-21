@@ -5,6 +5,7 @@ namespace App\Http\Requests\Web;
 use App\Http\Requests\BaseRequest;
 use App\Models\Company;
 use App\Models\User;
+use Carbon\Carbon;
 
 /**
  * Class MapRequest.
@@ -34,7 +35,53 @@ class MapRequest extends BaseRequest
                 'nullable',
                 'string',
             ],
+            'beg' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'date',
+            ],
+            'end' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'date',
+            ],
         ];
+    }
+
+    /**
+     * Get the beginning of the time interval
+     * to return trips for.
+     *
+     * @return Carbon|null
+     */
+    public function beg(): ?Carbon
+    {
+        $beg = $this->get('beg');
+
+        if (empty($beg)) {
+            return null;
+        }
+
+        return Carbon::parse($beg);
+    }
+
+    /**
+     * Get the end of the time interval
+     * to return trips for.
+     *
+     * @return Carbon|null
+     */
+    public function end(): ?Carbon
+    {
+        $end = $this->get('end');
+
+        if (empty($end)) {
+            return null;
+        }
+
+        return Carbon::parse($end);
     }
 
     /**

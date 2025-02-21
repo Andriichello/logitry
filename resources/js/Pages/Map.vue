@@ -11,46 +11,46 @@
   import { inject, onMounted, PropType, watch } from 'vue';
   import { useMapStore } from '@/stores/map';
   import { Company } from "@/api";
-  import { Trip } from '@/api';
-  import TripOnMap from '../Components/Map/TripOnMap.vue';
+  import { Route } from '@/api';
+  import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
-    trips: Array as PropType<Trip[]> | null,
+    routes: Array as PropType<Route[]> | null,
   });
 
   const mapStore = useMapStore();
 
   const map = inject<L.Map>('map');
 
-  function markerClicked(trip: Trip) {
-    if (mapStore.trip?.id === trip.id) {
-      mapStore.trip = null;
+  function markerClicked(route: Route) {
+    if (mapStore.route?.id === route.id) {
+      mapStore.route = null;
     } else {
-      mapStore.trip = trip;
+      mapStore.route = route;
     }
   }
 
-  function lineClicked(trip: Trip) {
-    if (mapStore.trip?.id === trip.id) {
-      mapStore.trip = null;
+  function lineClicked(route: Route) {
+    if (mapStore.route?.id === route.id) {
+      mapStore.route = null;
     } else {
-      mapStore.trip = trip;
+      mapStore.route = route;
     }
   }
 
   watch(() => mapStore.clicks, (newValue, oldValue) => {
     if (newValue !== oldValue) {
-      mapStore.trip = null;
+      mapStore.route = null;
     }
   })
 </script>
 
 <template>
   <div>
-    <template v-for="trip in trips" :key="trip.id" v-if="map">
-      <TripOnMap :map="map" :trip="trip"
-        :selected="mapStore.trip?.id === trip.id"
+    <template v-for="route in routes" :key="route.id" v-if="map">
+      <RouteOnMap :map="map" :route="route"
+        :selected="mapStore.route?.id === route.id"
         @marker-clicked="markerClicked"
         @line-clicked="lineClicked"/>
     </template>

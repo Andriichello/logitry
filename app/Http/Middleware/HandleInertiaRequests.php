@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\Resources\User\MeResource;
+use App\Http\Resources\Specific\MeResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;

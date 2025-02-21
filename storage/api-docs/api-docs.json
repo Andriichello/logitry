@@ -326,253 +326,6 @@
                 },
                 "type": "object"
             },
-            "Trip": {
-                "description": "Trip details",
-                "required": [
-                    "id",
-                    "type",
-                    "status",
-                    "name",
-                    "description",
-                    "date",
-                    "points",
-                    "vehicle",
-                    "driver",
-                    "seats",
-                    "seats_booked",
-                    "price",
-                    "currency",
-                    "contact"
-                ],
-                "properties": {
-                    "id": {
-                        "description": "Unique identifier for the trip.",
-                        "type": "integer"
-                    },
-                    "type": {
-                        "description": "Type of the trip, e.g., Transfer.",
-                        "type": "string"
-                    },
-                    "status": {
-                        "description": "Current status of the trip.",
-                        "type": "string",
-                        "enum": [
-                            "Available",
-                            "Sold-Out",
-                            "Cancelled",
-                            "Unavailable"
-                        ]
-                    },
-                    "name": {
-                        "description": "Name of the trip.",
-                        "type": "string"
-                    },
-                    "description": {
-                        "description": "Description of the trip.",
-                        "type": "string"
-                    },
-                    "date": {
-                        "description": "Date of the trip.",
-                        "type": "string",
-                        "format": "date"
-                    },
-                    "points": {
-                        "description": "List of points in the trip route.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/TripPoint"
-                        }
-                    },
-                    "vehicle": {
-                        "$ref": "#/components/schemas/TripVehicle"
-                    },
-                    "driver": {
-                        "$ref": "#/components/schemas/TripDriver"
-                    },
-                    "seats": {
-                        "description": "Total number of seats in the vehicle.",
-                        "type": "integer"
-                    },
-                    "seats_booked": {
-                        "description": "Number of already booked seats.",
-                        "type": "integer"
-                    },
-                    "price": {
-                        "description": "Price per seat.",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "currency": {
-                        "description": "Currency for the price.",
-                        "type": "string"
-                    },
-                    "contact": {
-                        "$ref": "#/components/schemas/TripContact"
-                    }
-                },
-                "type": "object"
-            },
-            "TripPoint": {
-                "description": "Point of the trip route",
-                "required": [
-                    "city",
-                    "country",
-                    "street",
-                    "time",
-                    "longitude",
-                    "latitude"
-                ],
-                "properties": {
-                    "city": {
-                        "description": "City of the point.",
-                        "type": "string"
-                    },
-                    "country": {
-                        "description": "Country of the point.",
-                        "type": "string"
-                    },
-                    "street": {
-                        "description": "Street address of the point.",
-                        "type": "string",
-                        "nullable": true
-                    },
-                    "time": {
-                        "description": "Scheduled time at this point.",
-                        "type": "string",
-                        "format": "time"
-                    },
-                    "longitude": {
-                        "description": "Longitude coordinate.",
-                        "type": "number",
-                        "format": "float"
-                    },
-                    "latitude": {
-                        "description": "Latitude coordinate.",
-                        "type": "number",
-                        "format": "float"
-                    }
-                },
-                "type": "object"
-            },
-            "TripVehicle": {
-                "description": "Details of the trip's vehicle",
-                "required": [
-                    "id",
-                    "manufacturer",
-                    "model",
-                    "year",
-                    "color"
-                ],
-                "properties": {
-                    "id": {
-                        "description": "Vehicle identifier.",
-                        "type": "integer"
-                    },
-                    "manufacturer": {
-                        "description": "Manufacturer of the vehicle.",
-                        "type": "string"
-                    },
-                    "model": {
-                        "description": "Model of the vehicle.",
-                        "type": "string"
-                    },
-                    "year": {
-                        "description": "Year of manufacture.",
-                        "type": "string"
-                    },
-                    "color": {
-                        "description": "Color of the vehicle.",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "TripDriver": {
-                "description": "Information about the driver",
-                "required": [
-                    "id",
-                    "name",
-                    "phone"
-                ],
-                "properties": {
-                    "id": {
-                        "description": "Driver identifier.",
-                        "type": "integer"
-                    },
-                    "name": {
-                        "description": "Name of the driver.",
-                        "type": "string"
-                    },
-                    "phone": {
-                        "description": "Driver contact number.",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "TripContact": {
-                "description": "Contact details for the trip",
-                "required": [
-                    "phone"
-                ],
-                "properties": {
-                    "phone": {
-                        "description": "Contact phone number.",
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
-            "MapBounds": {
-                "description": "Latitude and longitude bounds for trips",
-                "required": [
-                    "northEast",
-                    "southWest"
-                ],
-                "properties": {
-                    "northEast": {
-                        "description": "Northeast corner of the bounds",
-                        "required": [
-                            "latitude",
-                            "longitude"
-                        ],
-                        "properties": {
-                            "latitude": {
-                                "description": "Maximum latitude value.",
-                                "type": "number",
-                                "format": "float"
-                            },
-                            "longitude": {
-                                "description": "Maximum longitude value.",
-                                "type": "number",
-                                "format": "float"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "southWest": {
-                        "description": "Southwest corner of the bounds",
-                        "required": [
-                            "latitude",
-                            "longitude"
-                        ],
-                        "properties": {
-                            "latitude": {
-                                "description": "Minimum latitude value.",
-                                "type": "number",
-                                "format": "float"
-                            },
-                            "longitude": {
-                                "description": "Minimum longitude value.",
-                                "type": "number",
-                                "format": "float"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
-                "type": "object"
-            },
             "PageSize": {
                 "description": "Max number of results on page.",
                 "type": "integer",
@@ -710,6 +463,49 @@
                         "description": "User's password. Is required.",
                         "type": "string",
                         "format": "password"
+                    }
+                },
+                "type": "object"
+            },
+            "Bounds": {
+                "title": "Coordinates Bounds Resource",
+                "description": "Represents a set of geographical coordinates defining bounds",
+                "properties": {
+                    "northEast": {
+                        "description": "The northeastern bound coordinates",
+                        "properties": {
+                            "latitude": {
+                                "description": "Latitude of the northeastern point",
+                                "type": "number",
+                                "format": "float",
+                                "example": 40.7128
+                            },
+                            "longitude": {
+                                "description": "Longitude of the northeastern point",
+                                "type": "number",
+                                "format": "float",
+                                "example": -74.006
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "southWest": {
+                        "description": "The southwestern bound coordinates",
+                        "properties": {
+                            "latitude": {
+                                "description": "Latitude of the southwestern point",
+                                "type": "number",
+                                "format": "float",
+                                "example": 34.0522
+                            },
+                            "longitude": {
+                                "description": "Longitude of the southwestern point",
+                                "type": "number",
+                                "format": "float",
+                                "example": -118.2437
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -862,6 +658,197 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/Company"
+                            }
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Point": {
+                "title": "Point Resource",
+                "description": "Point resource representation",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the point",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "route_id": {
+                        "description": "Identifier of the route associated with the point",
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "number": {
+                        "description": "Point number in its sequence",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "Name of the point",
+                        "type": "string",
+                        "example": "Start Point",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the point",
+                        "type": "string",
+                        "example": "This is the starting point of the route.",
+                        "nullable": true
+                    },
+                    "country": {
+                        "description": "Country where the point is located",
+                        "type": "string",
+                        "example": "USA",
+                        "nullable": true
+                    },
+                    "city": {
+                        "description": "City where the point is located",
+                        "type": "string",
+                        "example": "New York",
+                        "nullable": true
+                    },
+                    "street": {
+                        "description": "Street where the point is located",
+                        "type": "string",
+                        "example": "5th Avenue",
+                        "nullable": true
+                    },
+                    "latitude": {
+                        "description": "Latitude coordinate of the point",
+                        "type": "number",
+                        "format": "float",
+                        "example": 40.7128
+                    },
+                    "longitude": {
+                        "description": "Longitude coordinate of the point",
+                        "type": "number",
+                        "format": "float",
+                        "example": -74.006
+                    },
+                    "travel_time": {
+                        "description": "Travel time to the point in minutes",
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 120,
+                        "nullable": true
+                    },
+                    "travel_time_cap": {
+                        "description": "Maximum allowed travel time to the point in minutes",
+                        "type": "integer",
+                        "format": "int32",
+                        "example": 150,
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "The date and time when the point was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T10:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "The date and time when the point was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-01-01T12:00:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Route": {
+                "title": "Route Resource",
+                "description": "Representation of a Route",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the route",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "company_id": {
+                        "description": "Identifier for the company associated with the route",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "contact_id": {
+                        "description": "Identifier for the contact person related to the route",
+                        "type": "integer",
+                        "example": 45,
+                        "nullable": true
+                    },
+                    "vehicle_id": {
+                        "description": "Identifier for the vehicle used in the route",
+                        "type": "integer",
+                        "example": 23,
+                        "nullable": true
+                    },
+                    "driver_id": {
+                        "description": "Identifier for the driver assigned to the route",
+                        "type": "integer",
+                        "example": 52,
+                        "nullable": true
+                    },
+                    "name": {
+                        "description": "Name of the route",
+                        "type": "string",
+                        "example": "Downtown Delivery",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Details about the route",
+                        "type": "string",
+                        "example": "Morning delivery route covering downtown area.",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the route was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the route was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-02T14:00:00Z",
+                        "nullable": true
+                    },
+                    "company": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Company"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "contact": {
+                        "description": "Contact information associated with the route",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "vehicle": {
+                        "description": "Vehicle associated with the route",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "driver": {
+                        "description": "Driver of the route",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "points": {
+                        "description": "Points included in the route",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Point"
+                        }
+                    },
+                    "bounds": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Bounds"
                             }
                         ],
                         "nullable": true

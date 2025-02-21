@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Helpers\Interfaces\SignInsHelperInterface;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Auth\SignInsRequest;
-use App\Http\Resources\Company\CompanyResource;
+use App\Http\Resources\Specific\CompanyResource;
 use App\Http\Responses\ApiResponse;
 
 /**

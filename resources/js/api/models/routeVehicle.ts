@@ -6,9 +6,7 @@
  */
 
 /**
- * Contact details for the trip
+ * Vehicle associated with the route
+ * @nullable
  */
-export interface TripContact {
-  /** Contact phone number. */
-  phone: string;
-}
+export type RouteVehicle = { [key: string]: unknown } | null;

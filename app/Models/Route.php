@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Queries\RouteQuery;
 use Database\Factories\RouteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -28,6 +30,7 @@ use Illuminate\Support\Collection;
  * @property Point[]|Collection $points
  * @property Trip[]|Collection $trips
  *
+ * @method static RouteQuery query()
  * @method static RouteFactory factory(...$parameters)
  */
 class Route extends BaseModel
@@ -95,6 +98,7 @@ class Route extends BaseModel
      */
     public function points(): HasMany
     {
+        /** @phpstan-ignore-next-line */
         return $this->hasMany(Point::class)
             ->orderBy('number');
     }
@@ -107,5 +111,15 @@ class Route extends BaseModel
     public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return RouteQuery
+     */
+    public function newEloquentBuilder($query): RouteQuery
+    {
+        return new RouteQuery($query);
     }
 }

@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('route_id');
             $table->unsignedInteger('number')->default(0);
-            $table->string('name', 100);
+            $table->string('name', 100)->nullable();
             $table->string('description')->nullable();
-            $table->string('country', 100);
+            $table->string('country', 100)->nullable();
             $table->string('city', 255)->nullable();
             $table->string('street', 255)->nullable();
             $table->decimal('latitude', 9, 7);

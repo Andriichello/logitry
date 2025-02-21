@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Specific;
 
 use App\Http\Resources\BaseResource;
-use App\Http\Resources\Company\CompanyResource;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;

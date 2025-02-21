@@ -33,7 +33,7 @@ return new class extends Migration
 
             $table->unique(['company_id', 'nickname']);
 
-            $table->index(['company', 'manufacturer', 'model', 'year', 'nickname']);
+            $table->index(['company_id', 'manufacturer', 'model', 'year', 'nickname']);
 
             $table->foreign('company_id')
                 ->references('id')

@@ -2,14 +2,16 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { computed, onMounted, PropType, provide, ref } from 'vue';
-  import { Bounds, Route } from '@/api';
+  import { Bounds, Company, Route } from '@/api';
   import CompassButton from '@/Components/Map/CompassButton.vue';
   import { useThemeStore } from "@/stores/theme";
   import { useMapStore } from '@/stores/map';
   import SideDrawer from '@/Components/Menu/SideDrawer.vue';
   import MenuButton from '@/Components/Menu/MenuButton.vue';
+  import { Building2, Moon, Sun } from 'lucide-vue-next';
 
   const props = defineProps({
+    company: Object as PropType<Company> | null,
     bounds: Object as PropType<Bounds> | null,
     routes: Array as PropType<Route[]> | null,
   });
@@ -41,12 +43,6 @@
 
   const bounds = computed(() => {
     if (props?.bounds) {
-      console.log('has bounds...', [
-        [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
-        [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
-      ]);
-
-
       return L.latLngBounds(
         [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
         [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
@@ -74,10 +70,10 @@
            :checked="!themeStore.isDark"
            @change="themeStore.toggle" hidden/>
 
-    <div class="drawer drawer-bottom">
+    <div class="drawer drawer-end">
       <input id="map-drawer" type="checkbox" class="drawer-toggle"/>
 
-      <SideDrawer class="z-[1000]"/>
+      <SideDrawer class="z-[1000] min-w-[25vm]"/>
     </div>
 
     <div class="w-full h-full absolute">
@@ -85,7 +81,22 @@
         <slot/>
       </div>
 
-      <MenuButton class="absolute top-2 left-2 z-[400] text-xs"
+      <div id="side">
+        <div class="w-full flex flex-row justify-start items-center gap-2 p-2" v-if="props.company">
+          <div class="p-3 rounded bg-gray-200">
+            <Building2 class="w-6 h-6"/>
+          </div>
+
+          <div class="w-full flex flex-col justify-start items-start">
+            <h3 class="text-xl font-bold">{{ props.company.name }}</h3>
+            <span class="text-sm">{{ props.company.abbreviation }}</span>
+          </div>
+        </div>
+
+        <div class="divider px-5 m-0"/>
+      </div>
+
+      <MenuButton class="absolute top-2 right-2 z-[400] text-xs"
                   @click="clickDrawer"/>
 
       <CompassButton class="absolute bottom-6 right-2 z-[400]"
@@ -95,11 +106,40 @@
 </template>
 
 <style scoped>
+  #side {
+    top: 0;
+    left: 0;
+
+    width: 25vw;
+    max-height: 100vh;
+  }
+
   #map {
-    width: 100vw;
+    position: absolute;
+    top: 0;
+    left: 25vw;
+
+    width: 75vw;
     height: 100vh;
     min-height: 100vh;
     max-height: 100vh;
+  }
+
+  @media (max-width: 800px) {
+    #side {
+      display: none;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: 100vw;
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+    }
   }
 </style>
 

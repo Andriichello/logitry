@@ -16,6 +16,7 @@ class BoundsHelper implements BoundsHelperInterface
      * Calculate bounds for the given points.
      *
      * @param Collection|Point[] $points
+     * @param float|null $padding [0 ; 1]
      *
      * @return null|array{
      *     northEast: array{
@@ -28,7 +29,7 @@ class BoundsHelper implements BoundsHelperInterface
      *     },
      * }
      */
-    public function forPoints(Collection|array $points): ?array
+    public function forPoints(Collection|array $points, ?float $padding = null): ?array
     {
         $latitudes = [];
         $longitudes = [];
@@ -42,14 +43,19 @@ class BoundsHelper implements BoundsHelperInterface
             return null;
         }
 
+        $latPadding = $padding
+            ? (max($latitudes) - min($latitudes)) * $padding : null;
+        $longPadding = $padding
+            ? (max($longitudes) - min($longitudes)) * $padding : null;
+
         return [
             'northEast' => [
-                'latitude' => max($latitudes),
-                'longitude' => max($longitudes),
+                'latitude' => max($latitudes) + $latPadding,
+                'longitude' => max($longitudes) + $longPadding,
             ],
             'southWest' => [
-                'latitude' => min($latitudes),
-                'longitude' => min($longitudes),
+                'latitude' => min($latitudes) - $latPadding,
+                'longitude' => min($longitudes) - $longPadding,
             ],
         ];
     }
@@ -58,6 +64,7 @@ class BoundsHelper implements BoundsHelperInterface
      * Calculate bounds for the given points.
      *
      * @param Route $route
+     * @param float|null $padding [0 ; 1]
      *
      * @return null|array{
      *     northEast: array{
@@ -70,15 +77,16 @@ class BoundsHelper implements BoundsHelperInterface
      *     },
      * }
      */
-    public function forRoute(Route $route): ?array
+    public function forRoute(Route $route, ?float $padding = null): ?array
     {
-        return $this->forPoints($route->points->all());
+        return $this->forPoints($route->points->all(), $padding);
     }
 
     /**
      * Calculate bounds for the given routes.
      *
      * @param Collection|Route[] $routes
+     * @param float|null $padding [0 ; 1]
      *
      * @return null|array{
      *     northEast: array{
@@ -91,7 +99,7 @@ class BoundsHelper implements BoundsHelperInterface
      *     },
      * }
      */
-    public function forRoutes(Collection|array $routes): ?array
+    public function forRoutes(Collection|array $routes, ?float $padding = null): ?array
     {
         $points = [];
 
@@ -99,6 +107,6 @@ class BoundsHelper implements BoundsHelperInterface
             $points = array_merge($points, $route->points->all());
         }
 
-        return $this->forPoints($points);
+        return $this->forPoints($points, $padding);
     }
 }

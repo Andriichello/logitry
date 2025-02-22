@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <button class="w-10 h-10 p-2 btn btn-neutral">
+  <button class="w-10 h-10 p-2 btn bg-base-100">
     <Compass/>
   </button>
 </template>

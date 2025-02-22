@@ -55,7 +55,7 @@
         setTimeout(
           () => {
             toast.error('No routes found.', {
-              position: POSITION.BOTTOM_CENTER,
+              position: POSITION.BOTTOM_LEFT,
               timeout: 3000,
             });
           },

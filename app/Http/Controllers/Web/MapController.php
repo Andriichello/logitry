@@ -61,7 +61,7 @@ class MapController extends BaseController
                 ? new CompanyResource($company) : null,
             'routes' => RouteResource::collection($routes),
             'bounds' => (new BoundsHelper())
-                ->forRoutes($routes->all()),
+                ->forRoutes($routes->all(), 0.05),
             'trips' => Inertia::defer(
                 fn() => TripResource::collection($request->trips()->get())
             ),

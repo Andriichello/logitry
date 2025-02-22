@@ -13,6 +13,7 @@ createInertiaApp({
       .use(Toast, {
         hideProgressBar: true,
         position: POSITION.BOTTOM_CENTER,
+
       })
       .use(createPinia())
       .use(plugin)

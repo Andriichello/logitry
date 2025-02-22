@@ -20,10 +20,14 @@ use Illuminate\Support\Carbon;
  * @property int|null $contact_id
  * @property TripStatus $status
  * @property object|null $metadata
- * @property Carbon|null $departs_at
+ * @property Carbon $departs_at
  * @property Carbon|null $arrives_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @property-read bool $has_happened
+ * @property-read bool $is_happening
+ * @property-read bool $will_happen
  *
  * @property Route $route
  * @property Vehicle|null $vehicle
@@ -104,6 +108,39 @@ class Trip extends BaseModel
     public function contact(): BelongsTo
     {
         return $this->belongsTo(Contact::class);
+    }
+
+    /**
+     * Accessor for the `has_happened` attribute.
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD)
+     */
+    public function getHasHappenedAttribute(): bool
+    {
+        return $this->departs_at->isPast() && $this->arrives_at?->isPast();
+    }
+
+    /**
+     * Accessor for the `is_happening` attribute.
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD)
+     */
+    public function getIsHappeningAttribute(): bool
+    {
+        return !$this->departs_at->isFuture() && !$this->arrives_at?->isPast();
+    }
+
+    /**
+     * Accessor for the `will_happen` attribute.
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD)
+     */
+    public function getWillHappenAttribute(): bool
+    {
+        return $this->departs_at->isFuture();
     }
 
     /**

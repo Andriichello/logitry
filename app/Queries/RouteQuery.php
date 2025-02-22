@@ -41,6 +41,23 @@ class RouteQuery extends BaseQuery implements IndexableInterface
     }
 
     /**
+     * Filter to routes with trips that depart within the given time interval.
+     *
+     * @param Carbon|null $beg
+     * @param Carbon|null $end
+     *
+     * @return static
+     */
+    public function orTripsDepartWithin(?Carbon $beg, ?Carbon $end): static
+    {
+        $this->orWhereHas('trips', function (TripQuery $query) use ($beg, $end) {
+            $query->departsWithin($beg, $end);
+        });
+
+        return $this;
+    }
+
+    /**
      * Filter to routes with trips that arrive within the given time interval.
      *
      * @param Carbon|null $beg
@@ -51,6 +68,23 @@ class RouteQuery extends BaseQuery implements IndexableInterface
     public function tripsArriveWithin(?Carbon $beg, ?Carbon $end): static
     {
         $this->whereHas('trips', function (TripQuery $query) use ($beg, $end) {
+            $query->arrivesWithin($beg, $end);
+        });
+
+        return $this;
+    }
+
+    /**
+     * Filter to routes with trips that arrive within the given time interval.
+     *
+     * @param Carbon|null $beg
+     * @param Carbon|null $end
+     *
+     * @return static
+     */
+    public function orTripsArriveWithin(?Carbon $beg, ?Carbon $end): static
+    {
+        $this->orWhereHas('trips', function (TripQuery $query) use ($beg, $end) {
             $query->arrivesWithin($beg, $end);
         });
 

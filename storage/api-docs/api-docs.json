@@ -856,6 +856,90 @@
                 },
                 "type": "object"
             },
+            "Trip": {
+                "title": "Trip Resource",
+                "description": "Representation of a Trip",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the trip",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "route_id": {
+                        "description": "Identifier for the associated route",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "reversed": {
+                        "description": "Indicates if the route direction is reversed",
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "vehicle_id": {
+                        "description": "Identifier for the vehicle assigned to the trip",
+                        "type": "integer",
+                        "example": 15,
+                        "nullable": true
+                    },
+                    "driver_id": {
+                        "description": "Identifier for the driver assigned to the trip",
+                        "type": "integer",
+                        "example": 8,
+                        "nullable": true
+                    },
+                    "contact_id": {
+                        "description": "Identifier for the contact person related to the trip",
+                        "type": "integer",
+                        "example": 45,
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Current status of the trip",
+                        "type": "string",
+                        "enum": [
+                            "Draft",
+                            "Available",
+                            "Unavailable",
+                            "In Progress",
+                            "Finished",
+                            "Cancelled"
+                        ]
+                    },
+                    "metadata": {
+                        "description": "Additional metadata for the trip",
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "departs_at": {
+                        "description": "Planned departure time of the trip",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-15T08:00:00Z"
+                    },
+                    "arrives_at": {
+                        "description": "Expected arrival time of the trip",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-15T10:00:00Z",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the trip was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the trip was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-02T14:00:00Z",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "UserAppends": {
                 "description": "Comma-separated list of fields to append to the resource.\n              Available appends:",
                 "type": "string",

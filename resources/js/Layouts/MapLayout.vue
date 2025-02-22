@@ -21,14 +21,14 @@
 
   onMounted(() => {
     const p = props?.routes?.[0]?.points?.[0];
-    const center = p ? [p.latitude, p.longitude] : [51.505, -0.09];
+    const center = p ? [p.latitude, p.longitude] : [50.0755, 14.4378];
 
     map.value = L.map('map', { zoomControl: false })
       .on('click', () => {
         console.log('map click');
         mapStore.clicks++;
       })
-      .setView(center, 6);
+      .setView(center, 5);
 
     fitBounds();
 

@@ -7,8 +7,9 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Web\MapRequest;
 use App\Http\Resources\Specific\CompanyResource;
 use App\Http\Resources\Specific\RouteResource;
+use App\Http\Resources\Specific\TripResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Route;
+use Inertia\Inertia;
 use Inertia\Response;
 use Inertia\ResponseFactory;
 
@@ -27,29 +28,16 @@ class MapController extends BaseController
      */
     public function get(MapRequest $request): ApiResponse
     {
-        $query = Route::query();
-
-        $company = $request->company();
-
-        if ($company) {
-            $query->where('company_id', $company->id);
-        }
-
-        $beg = $request->beg();
-        $end = $request->end();
-
-        if ($beg || $end) {
-            $query->tripsDepartWithin($beg, $end);
-        }
-
-        $routes = $query->get()->all();
+        $routes = $request->routes()->get();
+        $trips = $request->trips()->get();
 
         $props = [
             'company' => ($company = $request->company())
                 ? new CompanyResource($company) : null,
             'bounds' => (new BoundsHelper())
-                ->forRoutes($routes),
+                ->forRoutes($routes->all()),
             'routes' => RouteResource::collection($routes),
+            'trips' => TripResource::collection($trips),
         ];
 
         return ApiResponse::ok($props);
@@ -66,22 +54,7 @@ class MapController extends BaseController
      */
     public function view(MapRequest $request): Response|ResponseFactory
     {
-        $query = Route::query();
-
-        $company = $request->company();
-
-        if ($company) {
-            $query->where('company_id', $company->id);
-        }
-
-        $beg = $request->beg();
-        $end = $request->end();
-
-        if ($beg || $end) {
-            $query->tripsDepartWithin($beg, $end);
-        }
-
-        $routes = $query->get();
+        $routes = $request->routes()->get();
 
         $props = [
             'company' => ($company = $request->company())
@@ -89,6 +62,9 @@ class MapController extends BaseController
             'routes' => RouteResource::collection($routes),
             'bounds' => (new BoundsHelper())
                 ->forRoutes($routes->all()),
+            'trips' => Inertia::defer(
+                fn() => TripResource::collection($request->trips()->get())
+            ),
         ];
 
         return inertia('Map', $props);

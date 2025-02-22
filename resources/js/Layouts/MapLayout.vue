@@ -2,10 +2,12 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { computed, onMounted, PropType, provide, ref } from 'vue';
-  import { Bounds, Route } from '../api';
-  import FitBoundsButton from '../Components/Map/FitBoundsButton.vue';
+  import { Bounds, Route } from '@/api';
+  import CompassButton from '@/Components/Map/CompassButton.vue';
   import { useThemeStore } from "@/stores/theme";
   import { useMapStore } from '@/stores/map';
+  import SideDrawer from '@/Components/Menu/SideDrawer.vue';
+  import MenuButton from '@/Components/Menu/MenuButton.vue';
 
   const props = defineProps({
     bounds: Object as PropType<Bounds> | null,
@@ -60,31 +62,44 @@
     }
   }
 
+  function clickDrawer() {
+    document.getElementById('map-drawer')?.click();
+  }
+
 </script>
 
 <template>
-  <main>
-    <article>
-      <input type="checkbox" value="light" class="toggle theme-controller mt-1"
-             :checked="!themeStore.isDark"
-             @change="themeStore.toggle" hidden/>
+  <main class="w-full h-full overflow-hidden">
+    <input type="checkbox" value="light" class="toggle theme-controller mt-1"
+           :checked="!themeStore.isDark"
+           @change="themeStore.toggle" hidden/>
 
-      <div class="w-full h-full absolute">
-        <div id="map">
-          <slot/>
-        </div>
-        <FitBoundsButton class="absolute bottom-6 right-2 z-[400] opacity-75"
-          @click="fitBounds"/>
+    <div class="drawer drawer-bottom">
+      <input id="map-drawer" type="checkbox" class="drawer-toggle"/>
+
+      <SideDrawer class="z-[1000]"/>
+    </div>
+
+    <div class="w-full h-full absolute">
+      <div id="map">
+        <slot/>
       </div>
-    </article>
+
+      <MenuButton class="absolute top-2 left-2 z-[400] text-xs"
+                  @click="clickDrawer"/>
+
+      <CompassButton class="absolute bottom-6 right-2 z-[400]"
+        @click="fitBounds"/>
+    </div>
   </main>
 </template>
 
 <style scoped>
   #map {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     min-height: 100vh;
+    max-height: 100vh;
   }
 </style>
 

@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('trips', function (Blueprint $table) {
             $table->id();
             $table->foreignId('route_id');
-            $table->boolean('reversed');
-            $table->foreignId('vehicle_id');
+            $table->boolean('reversed')->default(false);
+            $table->foreignId('vehicle_id')->nullable();
             $table->foreignId('driver_id')->nullable();
             $table->foreignId('contact_id')->nullable();
             $table->string('status', 25);

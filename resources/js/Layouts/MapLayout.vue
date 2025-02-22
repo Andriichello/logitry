@@ -8,7 +8,7 @@
   import { useMapStore } from '@/stores/map';
   import SideDrawer from '@/Components/Menu/SideDrawer.vue';
   import MenuButton from '@/Components/Menu/MenuButton.vue';
-  import { Building2, Moon, Sun } from 'lucide-vue-next';
+  import { Building2, Route as RouteIcon, Search } from 'lucide-vue-next';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -81,7 +81,7 @@
         <slot/>
       </div>
 
-      <div id="side">
+      <div id="side" class="p-2">
         <div class="w-full flex flex-row justify-start items-center gap-2 p-2" v-if="props.company">
           <div class="p-3 rounded bg-gray-200">
             <Building2 class="w-6 h-6"/>
@@ -94,6 +94,26 @@
         </div>
 
         <div class="divider px-5 m-0"/>
+
+        <div class="flex flex-col justify-start items-center gap-2 py-2" v-if="props.routes?.length">
+          <h3 class="w-full text-md font-semibold">
+            Routes list
+          </h3>
+
+          <div class="w-full max-h-[60vh] flex flex-col justify-start items-start gap-1">
+            <template v-for="route in props.routes" :key="route.id">
+              <div class="w-full flex flex-row justify-start items-center items-top gap-2 border rounded p-2 cursor-pointer"
+                   :class="{'bg-neutral': mapStore.route === route, 'text-neutral-content': mapStore.route === route}"
+                   @click="mapStore.route = route">
+                <div class="w-6 h-6 p-1 rounded">
+                  <RouteIcon class="w-4 h-4"/>
+                </div>
+
+                <span class="text-lg font">{{ route.name }}</span>
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
 
       <MenuButton class="absolute top-2 right-2 z-[400] text-xs"

@@ -32,6 +32,8 @@ class RouteResource extends BaseResource
             'driver_id' => $this->driver_id,
             'name' => $this->name,
             'description' => $this->description,
+            'travel_time' => $this->travel_time,
+            'travel_time_cap' => $this->travel_time_cap,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'bounds' => (new BoundsHelper())
@@ -93,6 +95,20 @@ class RouteResource extends BaseResource
      *         nullable=true,
      *         description="Details about the route",
      *         example="Morning delivery route covering downtown area."
+     *     ),
+     *     @OA\Property(
+     *         property="travel_time",
+     *         type="integer",
+     *         nullable=true,
+     *         description="Total travel time in minutes",
+     *         example=635
+     *     ),
+     *     @OA\Property(
+     *         property="travel_time_cap",
+     *         type="integer",
+     *         nullable=true,
+     *         description="Cap (max) for total travel time",
+     *         example=835
      *     ),
      *     @OA\Property(
      *         property="created_at",

@@ -45,6 +45,16 @@ export interface Route {
    */
   description?: string | null;
   /**
+   * Total travel time in minutes
+   * @nullable
+   */
+  travel_time?: number | null;
+  /**
+   * Cap (max) for total travel time
+   * @nullable
+   */
+  travel_time_cap?: number | null;
+  /**
    * Timestamp when the route was created
    * @nullable
    */

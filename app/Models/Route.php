@@ -23,6 +23,9 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
+ * @property int|null $travel_time
+ * @property int|null $travel_time_cap
+ *
  * @property Company $company
  * @property Contact|null $contact
  * @property Vehicle|null $vehicle
@@ -111,6 +114,62 @@ class Route extends BaseModel
     public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
+    }
+
+    /**
+     * Accessor for the `travel_time` attribute.
+     *
+     * @return int|null
+     */
+    public function getTravelTimeAttribute(): ?int
+    {
+        if (empty($this->points)) {
+            return null;
+        }
+
+        $travelTime = 0;
+
+        foreach ($this->points as $index => $point) {
+            if ($index === 0) {
+                continue;
+            }
+
+            if ($point->travel_time === null) {
+                return null;
+            }
+
+            $travelTime += $point->travel_time;
+        }
+
+        return $travelTime;
+    }
+
+    /**
+     * Accessor for the `travel_time_cap` attribute.
+     *
+     * @return int|null
+     */
+    public function getTravelTimeCapAttribute(): ?int
+    {
+        if (empty($this->points)) {
+            return null;
+        }
+
+        $travelTimeCap = 0;
+
+        foreach ($this->points as $index => $point) {
+            if ($index === 0) {
+                continue;
+            }
+
+            if ($point->travel_time_cap === null) {
+                return null;
+            }
+
+            $travelTimeCap += $point->travel_time_cap;
+        }
+
+        return $travelTimeCap;
     }
 
     /**

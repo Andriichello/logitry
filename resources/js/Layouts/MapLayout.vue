@@ -1,19 +1,20 @@
 <script setup lang="ts">
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
-  import { computed, onMounted, PropType, provide, ref } from 'vue';
+  import { onMounted, PropType, provide, ref, watch } from 'vue';
   import { Bounds, Company, Route } from '@/api';
   import CompassButton from '@/Components/Map/CompassButton.vue';
-  import { useThemeStore } from "@/stores/theme";
+  import { useThemeStore } from '@/stores/theme';
   import { useMapStore } from '@/stores/map';
   import SideDrawer from '@/Components/Menu/SideDrawer.vue';
   import MenuButton from '@/Components/Menu/MenuButton.vue';
-  import { Building2, Route as RouteIcon, Search } from 'lucide-vue-next';
+  import SideView from '@/Components/Map/SideView.vue';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
     bounds: Object as PropType<Bounds> | null,
     routes: Array as PropType<Route[]> | null,
+    trips: Array as PropType<Trip[]> | null,
   });
 
   const themeStore = useThemeStore();
@@ -34,7 +35,7 @@
       })
       .setView(center, 5);
 
-    fitBounds();
+    fitBounds(mapStore.route?.bounds ?? props.bounds);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -53,17 +54,42 @@
   }
 
   function fitBounds(given = null) {
-    const b = toBounds(given ?? props.bounds);
-
-    if (map.value && b) {
-        map.value.fitBounds(b);
+    if (!map.value) {
+      return;
     }
+
+    let b = null;
+
+    if (given) {
+      b = toBounds(given);
+    }
+
+    if (!b) {
+      return;
+    }
+
+    map.value.fitBounds(b);
   }
 
   function clickDrawer() {
     document.getElementById('map-drawer')?.click();
   }
 
+  function routeClicked(route: Route) {
+    mapStore.route = route;
+  }
+
+  watch(
+    () => mapStore.route,
+    (newValue) => {
+      if (newValue) {
+        fitBounds(newValue.bounds);
+      } else {
+        fitBounds(props.bounds)
+      }
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>
@@ -83,55 +109,14 @@
         <slot/>
       </div>
 
-      <div id="side" class="p-2">
-        <div class="w-full flex flex-row justify-start items-center gap-2 p-2" v-if="props.company">
-          <div class="p-3 rounded bg-gray-200">
-            <Building2 class="w-6 h-6" color="black"/>
-          </div>
-
-          <div class="w-full flex flex-col justify-start items-start">
-            <h3 class="text-xl font-bold">{{ props.company.name }}</h3>
-            <span class="text-sm">{{ props.company.abbreviation }}</span>
-          </div>
-        </div>
-
-        <div class="divider px-5 m-0"/>
-
-        <div class="flex flex-col justify-start items-center">
-          <div class="w-full max-h-[60vh] flex flex-col justify-start items-start gap-1"
-               v-if="props.routes?.length">
-
-            <h3 class="text-md font-semibold">
-              Routes list
-            </h3>
-
-            <template v-for="route in props.routes" :key="route.id">
-              <div class="w-full flex flex-row justify-start items-center items-top gap-2 border rounded p-2 cursor-pointer"
-                   :class="{'bg-primary': mapStore.route === route, 'text-neutral-content': mapStore.route === route}"
-                   @click="mapStore.route = route; fitBounds(route.bounds)">
-                <div class="w-6 h-6 p-1 rounded">
-                  <RouteIcon class="w-4 h-4"/>
-                </div>
-
-                <span class="text-lg">{{ route.name }}</span>
-              </div>
-            </template>
-          </div>
-
-          <div class="flex flex-col justify-center items-center gap-2 p-4"
-            v-else>
-            <RouteIcon class="w-8 h-8"/>
-
-            <span class="text-lg font-bold">No routes found</span>
-          </div>
-        </div>
-      </div>
+      <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"
+        @route-clicked="routeClicked"/>
 
       <MenuButton class="absolute top-2 right-2 z-[400] text-xs"
                   @click="clickDrawer"/>
 
       <CompassButton class="absolute bottom-6 right-2 z-[400]"
-        @click="fitBounds"/>
+        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
     </div>
   </main>
 </template>

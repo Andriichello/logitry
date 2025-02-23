@@ -801,6 +801,18 @@
                         "example": "Morning delivery route covering downtown area.",
                         "nullable": true
                     },
+                    "travel_time": {
+                        "description": "Total travel time in minutes",
+                        "type": "integer",
+                        "example": 635,
+                        "nullable": true
+                    },
+                    "travel_time_cap": {
+                        "description": "Cap (max) for total travel time",
+                        "type": "integer",
+                        "example": 835,
+                        "nullable": true
+                    },
                     "created_at": {
                         "description": "Timestamp when the route was created",
                         "type": "string",

@@ -41,20 +41,22 @@
     }).addTo(map.value);
   });
 
-  const bounds = computed(() => {
-    if (props?.bounds) {
-      return L.latLngBounds(
-        [props.bounds.southWest.latitude, props.bounds.southWest.longitude],
-        [props.bounds.northEast.latitude, props.bounds.northEast.longitude],
-      );
+  function toBounds(given) {
+    if (!given || !given.southWest || !given.northEast) {
+      return null;
     }
 
-    return null;
-  });
+    return L.latLngBounds(
+      [given.southWest.latitude, given.southWest.longitude],
+      [given.northEast.latitude, given.northEast.longitude],
+    );
+  }
 
-  function fitBounds() {
-    if (map.value && bounds.value) {
-        map.value.fitBounds(bounds.value);
+  function fitBounds(given = null) {
+    const b = toBounds(given ?? props.bounds);
+
+    if (map.value && b) {
+        map.value.fitBounds(b);
     }
   }
 
@@ -84,7 +86,7 @@
       <div id="side" class="p-2">
         <div class="w-full flex flex-row justify-start items-center gap-2 p-2" v-if="props.company">
           <div class="p-3 rounded bg-gray-200">
-            <Building2 class="w-6 h-6"/>
+            <Building2 class="w-6 h-6" color="black"/>
           </div>
 
           <div class="w-full flex flex-col justify-start items-start">
@@ -95,23 +97,32 @@
 
         <div class="divider px-5 m-0"/>
 
-        <div class="flex flex-col justify-start items-center gap-2 py-2" v-if="props.routes?.length">
-          <h3 class="w-full text-md font-semibold">
-            Routes list
-          </h3>
+        <div class="flex flex-col justify-start items-center">
+          <div class="w-full max-h-[60vh] flex flex-col justify-start items-start gap-1"
+               v-if="props.routes?.length">
 
-          <div class="w-full max-h-[60vh] flex flex-col justify-start items-start gap-1">
+            <h3 class="text-md font-semibold">
+              Routes list
+            </h3>
+
             <template v-for="route in props.routes" :key="route.id">
               <div class="w-full flex flex-row justify-start items-center items-top gap-2 border rounded p-2 cursor-pointer"
-                   :class="{'bg-neutral': mapStore.route === route, 'text-neutral-content': mapStore.route === route}"
-                   @click="mapStore.route = route">
+                   :class="{'bg-primary': mapStore.route === route, 'text-neutral-content': mapStore.route === route}"
+                   @click="mapStore.route = route; fitBounds(route.bounds)">
                 <div class="w-6 h-6 p-1 rounded">
                   <RouteIcon class="w-4 h-4"/>
                 </div>
 
-                <span class="text-lg font">{{ route.name }}</span>
+                <span class="text-lg">{{ route.name }}</span>
               </div>
             </template>
+          </div>
+
+          <div class="flex flex-col justify-center items-center gap-2 p-4"
+            v-else>
+            <RouteIcon class="w-8 h-8"/>
+
+            <span class="text-lg font-bold">No routes found</span>
           </div>
         </div>
       </div>

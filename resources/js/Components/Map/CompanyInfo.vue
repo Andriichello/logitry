@@ -12,7 +12,7 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-row justify-start items-center gap-2 p-2">
+  <div class="w-full flex flex-row justify-start items-center gap-2 p-2 pb-0">
     <div class="p-3 rounded bg-gray-200">
       <Building2 class="w-6 h-6" color="black"/>
     </div>

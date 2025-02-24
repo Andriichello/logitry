@@ -100,10 +100,10 @@
         </div>
       </div>
 
-      <div class="w-full grow flex flex-col justify-start items-start overflow-y-scroll"
+      <div class="w-full grow flex flex-col justify-start items-start overflow-y-auto pb-10"
            v-if="props.routes?.length">
 
-        <template v-for="(route, index) in [...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ...props.routes, ]" :key="route.id">
+        <template v-for="(route, index) in props.routes" :key="route.id">
           <div class="w-full flex flex-col justify-start items-center">
             <div class="w-full border-t-2 opacity-15" v-if="index > 0"/>
 

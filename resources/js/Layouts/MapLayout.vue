@@ -101,61 +101,23 @@
     <div class="drawer drawer-end">
       <input id="map-drawer" type="checkbox" class="drawer-toggle"/>
 
-      <SideDrawer class="z-[1000] min-w-[25vm]"/>
+      <SideDrawer class="z-[1000] min-w-[25vw]"/>
     </div>
 
-    <div class="w-full h-full absolute">
-      <div id="map">
+    <div id="map-page" class="w-full h-full flex relative">
+      <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"
+                class="max-w-sm h-[100vh] max-h-[100vh]"
+                @route-clicked="routeClicked"/>
+
+      <div id="map" class="h-[100vh] flex-1 relative">
         <slot/>
       </div>
-
-      <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"
-        @route-clicked="routeClicked"/>
 
       <MenuButton class="absolute top-2 right-2 z-[400] text-xs"
                   @click="clickDrawer"/>
 
       <CompassButton class="absolute bottom-6 right-2 z-[400]"
-        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
+                     @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
     </div>
   </main>
 </template>
-
-<style scoped>
-  #side {
-    top: 0;
-    left: 0;
-
-    width: 25vw;
-    max-height: 100vh;
-  }
-
-  #map {
-    position: absolute;
-    top: 0;
-    left: 25vw;
-
-    width: 75vw;
-    height: 100vh;
-    min-height: 100vh;
-    max-height: 100vh;
-  }
-
-  @media (max-width: 800px) {
-    #side {
-      display: none;
-    }
-
-    #map {
-      position: absolute;
-      top: 0;
-      left: 0;
-
-      width: 100vw;
-      height: 100vh;
-      min-height: 100vh;
-      max-height: 100vh;
-    }
-  }
-</style>
-

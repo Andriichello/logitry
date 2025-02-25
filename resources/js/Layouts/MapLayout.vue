@@ -2,7 +2,7 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { onMounted, onUnmounted, PropType, provide, ref, watch, computed } from 'vue';
-  import { Bounds, Company, Route } from '@/api';
+  import { Bounds, Company, Route, Trip } from '@/api';
   import CompassButton from '@/Components/Map/CompassButton.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useMapStore } from '@/stores/map';
@@ -94,6 +94,14 @@
     mapStore.route = route;
   }
 
+  function routeClosed(route: Route) {
+    mapStore.route = null;
+  }
+
+  function tripClicked(trip: Trip) {
+    mapStore.trip = trip;
+  }
+
   function toggleMap() {
     isShowingMap.value = !isShowingMap.value;
 
@@ -150,7 +158,9 @@
       <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"
                 class="h-[100vh] max-h-[100vh]"
                 v-if="!isShowingMap || !isNarrowScreen"
-                @route-clicked="routeClicked"/>
+                @route-clicked="routeClicked"
+                @route-closed="routeClosed"
+                @trip-clicked="tripClicked"/>
 
       <div id="map" class="h-[100vh] relative">
         <slot/>

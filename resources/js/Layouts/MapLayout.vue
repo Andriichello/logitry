@@ -163,18 +163,19 @@
                      @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
       <template v-if="isNarrowScreen">
-        <div id="map-switcher" class="min-w-1/3 p-2 btn absolute bottom-6 right-4 z-[400] bg-gray-200"
+        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-base-100
+"
              v-if="isShowingMap"
              @click="toggleMap">
-          <span class="text-md text-neutral">Open List</span>
-          <RouteIcon color="black"/>
+          <span class="text-md">Open List</span>
+          <RouteIcon class="w-5 h-5"/>
         </div>
 
-        <div id="map-switcher" class="min-w-1/3 p-2 btn absolute bottom-6 right-4 z-[400] bg-gray-200"
+        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-gray-200"
              v-else
              @click="toggleMap">
           <span class="text-md text-neutral">Open Map</span>
-          <MapPinned color="black"/>
+          <MapPinned class="w-5 h-5" color="black"/>
         </div>
       </template>
     </div>

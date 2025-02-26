@@ -5,6 +5,7 @@
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
+  import { useToast } from 'vue-toastification';
 
   const emits = defineEmits(['route-closed', 'trip-clicked']);
 
@@ -18,6 +19,8 @@
       required: true,
     }
   });
+
+  const toast = useToast();
 
   const arePointsHidden = ref(false);
 
@@ -118,14 +121,15 @@
 
         <div class="w-full flex flex-col justify-start items-center pt-4"
              v-if="trips?.length">
-          <div class="w-full max-h-[60vh] flex flex-col justify-start items-start">
+          <div class="w-full flex flex-col justify-start items-start">
 
             <div class="w-full flex flex-row justify-between items-baseline gap-2">
               <h3 class="text-md font-semibold">
                 Trips <span class="text-sm font-light"></span>
               </h3>
 
-              <div class="rounded flex justify-center items-center cursor-pointer p-2 pr-0 gap-2 text-info">
+              <div class="rounded flex justify-center items-center cursor-pointer p-2 pr-0 gap-2 text-info"
+                @click="toast.info('Not implemented yet!', { timeout: 3000, position: 'bottom-left'})">
                 <span class="font-semibold">View on</span>
                 <Calendar1 class="w-6 h-6"/>
               </div>

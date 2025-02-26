@@ -25,6 +25,9 @@
   // Provide map to all the pages
   provide('map', map);
 
+  const darkMap = ref(null);
+  const lightMap = ref(null);
+
   const isShowingMap = ref(false);
   const isNarrowScreen = ref(false);
 
@@ -44,9 +47,21 @@
 
     fitBounds(mapStore.route?.bounds ?? props.bounds);
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map.value);
+    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    //   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    // }).addTo(map.value);
+
+    // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+    // }).addTo(map.value);
+
+    // L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png')
+    //   .addTo(map.value);
+
+    lightMap.value = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
+    darkMap.value = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png');
+
+    map.value.addLayer(themeStore.isDark ? darkMap.value : lightMap.value);
   });
 
   onUnmounted(() => {
@@ -128,6 +143,19 @@
       }
     },
   );
+
+  watch(
+    () => themeStore.isDark,
+    (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (map.value) {
+          setTimeout(() => {
+            map.value.removeLayer(oldValue ? darkMap.value : lightMap.value);
+            map.value.addLayer(newValue ? darkMap.value : lightMap.value);
+          });
+        }
+      }
+    });
 
   watch(
     () => mapStore.route,

@@ -56,7 +56,7 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto">
+  <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto overflow-overlay">
     <!-- Close Button -->
     <div class="w-full flex justify-between items-center ">
       <h3 class="text-xl font-semibold">When?</h3>
@@ -67,18 +67,22 @@
       </div>
     </div>
 
-    <!-- Day Labels -->
-    <div class="w-full grid grid-cols-7 gap-1 text-center text-sm text-gray-400 px-2 pt-4">
-      <span v-for="day in ['mon', 'tue', 'wen', 'thu', 'fri', 'sat', 'sun']" :key="day">
-        {{ day }}
-      </span>
-    </div>
-
-    <div class="border-b-1 w-full opacity-25"/>
-
 
     <!-- Calendar -->
-    <div class="w-full flex flex-col gap-8 overflow-y-auto pb-[50%] pt-8">
+    <div class="w-full flex flex-col gap-8 overflow-y-auto pb-[50%]">
+      <!-- Day Labels -->
+      <div class="w-full sticky top-0">
+        <div class="bg-base-100 w-full grid grid-cols-7 gap-1 px-2 pt-4 text-center text-sm text-gray-400">
+        <span v-for="day in ['mon', 'tue', 'wen', 'thu', 'fri', 'sat', 'sun']" :key="day">
+          {{ day }}
+        </span>
+        </div>
+
+        <div class="border-b-1 w-full opacity-25"/>
+      </div>
+
+
+
       <div v-for="month in calendar" :key="month.month">
         <!-- Month Header -->
         <h3 class="w-full text-start text-lg font-bold px-4">

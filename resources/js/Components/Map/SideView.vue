@@ -1,15 +1,12 @@
 <script setup lang="ts">
   import { PropType } from 'vue';
-  import { Company, Route } from '@/api';
+  import { Company, Route, Trip } from '@/api';
   import CompanyInfo from '@/Components/Map/CompanyInfo.vue';
   import { useMapStore } from '@/stores/map';
   import SideViewRoutes from '@/Components/Map/SideViewRoutes.vue';
   import SideViewRoute from '@/Components/Map/SideViewRoute.vue';
-  import ClassicCalendar from '@/Components/Date/ClassicCalendar.vue';
-  import dayjs from 'dayjs';
-  import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
 
-  const emits = defineEmits(['route-clicked', 'route-closed', 'trip-clicked']);
+  const emits = defineEmits(['open-calendar', 'route-clicked', 'route-closed', 'trip-clicked']);
 
   const props = defineProps({
     company: {
@@ -26,6 +23,10 @@
   });
 
   const mapStore = useMapStore();
+
+  function openCalendar() {
+    emits('open-calendar');
+  }
 
   function routeClosed(route: Route) {
     emits('route-closed', route);
@@ -52,6 +53,7 @@
 
     <SideViewRoutes v-else
                     :routes="props.routes"
+                    @open-calendar="openCalendar"
                     @route-clicked="routeClicked"/>
   </div>
 </template>

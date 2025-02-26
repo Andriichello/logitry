@@ -31,6 +31,7 @@
   const lightMap = ref(null);
 
   const isShowingMap = ref(false);
+  const isShowingCalendar = ref(false);
   const isNarrowScreen = ref(false);
 
   onMounted(() => {
@@ -94,6 +95,14 @@
 
   function clickDrawer() {
     document.getElementById('map-drawer')?.click();
+  }
+
+  function openCalendar() {
+    isShowingCalendar.value = true;
+  }
+
+  function closeCalendar() {
+    isShowingCalendar.value = false;
   }
 
   function routeClicked(route: Route) {
@@ -175,48 +184,60 @@
 
     <div id="map-page" class="w-full h-full flex relative">
 
-      <div class="h-[100vh] relative w-full flex flex-col justify-start items-start gap-2 p-2">
-        <BookingCalendar :dotted-dates="(trips ?? []).map(trip => dayjs(trip.departs_at).format('YYYY-MM-DD'))"
-                         class="w-full p-2"/>
-      </div>
+      <template v-if="isShowingCalendar">
+        <div class="side w-full px-4 py-4">
+          <BookingCalendar :dotted-dates="(trips ?? []).map(trip => dayjs(trip.departs_at).format('YYYY-MM-DD'))"
+            @close-calendar="closeCalendar"/>
+        </div>
+      </template>
 
-<!--      <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"-->
-<!--                class="h-[100vh] max-h-[100vh]"-->
-<!--                v-if="!isShowingMap || !isNarrowScreen"-->
-<!--                @route-clicked="routeClicked"-->
-<!--                @route-closed="routeClosed"-->
-<!--                @trip-clicked="tripClicked"/>-->
+      <template v-else>
+        <SideView class="side"
+                  v-if="!isShowingMap || !isNarrowScreen"
+                  :company="props.company" :routes="props.routes" :trips="props.trips"
+                  @open-calendar="openCalendar"
+                  @route-clicked="routeClicked"
+                  @route-closed="routeClosed"
+                  @trip-clicked="tripClicked"/>
+
+        <MenuButton id="menu-button" class="absolute top-4 right-4 z-[400] text-xs"
+                    @click="clickDrawer"/>
+
+        <CompassButton id="compass" class="absolute bottom-6 right-4 z-[400] hidden"
+                       @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
+
+        <template v-if="isNarrowScreen">
+          <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-base-100"
+               v-if="isShowingMap"
+               @click="toggleMap">
+            <span class="text-md">Open List</span>
+            <RouteIcon class="w-5 h-5"/>
+          </div>
+
+          <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-gray-200"
+               v-else
+               @click="toggleMap">
+            <span class="text-md text-neutral">Open Map</span>
+            <MapPinned class="w-5 h-5" color="black"/>
+          </div>
+        </template>
+      </template>
 
       <div id="map" class="h-[100vh] relative">
         <slot/>
       </div>
-
-<!--      <MenuButton id="menu-button" class="absolute top-4 right-4 z-[400] text-xs"-->
-<!--                  @click="clickDrawer"/>-->
-
-<!--      <CompassButton id="compass" class="absolute bottom-6 right-4 z-[400] hidden"-->
-<!--                     @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>-->
-
-<!--      <template v-if="isNarrowScreen">-->
-<!--        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-base-100"-->
-<!--             v-if="isShowingMap"-->
-<!--             @click="toggleMap">-->
-<!--          <span class="text-md">Open List</span>-->
-<!--          <RouteIcon class="w-5 h-5"/>-->
-<!--        </div>-->
-
-<!--        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-gray-200"-->
-<!--             v-else-->
-<!--             @click="toggleMap">-->
-<!--          <span class="text-md text-neutral">Open Map</span>-->
-<!--          <MapPinned class="w-5 h-5" color="black"/>-->
-<!--        </div>-->
-<!--      </template>-->
     </div>
   </main>
 </template>
 
 <style scoped>
+  .side {
+    @apply h-[100vh] max-h-[100vh];
+
+    min-width: 35vw;
+    max-width: 500px;
+  }
+
   #side {
     min-width: 35vw;
     max-width: 500px;
@@ -227,6 +248,13 @@
   }
 
   @media (max-width: 800px) {
+    .side {
+      @apply h-[100vh] max-h-[100vh];
+
+      min-width: 35vw;
+      max-width: 100%;
+    }
+
     #side {
       min-width: 35vw;
       max-width: 100%;

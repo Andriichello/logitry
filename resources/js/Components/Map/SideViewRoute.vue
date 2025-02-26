@@ -1,13 +1,12 @@
 <script setup lang="ts">
   import { onMounted, PropType, ref } from 'vue';
-  import { Route } from '@/api';
+  import {Route, Trip} from '@/api';
   import { Calendar1, Car, ChevronDown, ChevronUp, MapPin, MapPinHouse, X } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useToast } from 'vue-toastification';
   import { useMapStore } from '@/stores/map';
-  import Calendar from '@/Components/Date/Calendar.vue';
 
   const emits = defineEmits(['route-closed', 'trip-clicked']);
 

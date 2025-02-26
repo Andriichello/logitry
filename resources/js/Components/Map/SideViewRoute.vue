@@ -1,11 +1,13 @@
 <script setup lang="ts">
-  import { PropType, ref } from 'vue';
+  import { onMounted, PropType, ref } from 'vue';
   import { Route } from '@/api';
   import { Calendar1, Car, ChevronDown, ChevronUp, MapPin, MapPinHouse, X } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useToast } from 'vue-toastification';
+  import { useMapStore } from '@/stores/map';
+  import Calendar from '@/Components/Date/Calendar.vue';
 
   const emits = defineEmits(['route-closed', 'trip-clicked']);
 
@@ -21,11 +23,9 @@
   });
 
   const toast = useToast();
-
-  const arePointsHidden = ref(false);
-
+  const mapStore = useMapStore();
   function hidePoints() {
-    arePointsHidden.value = !arePointsHidden.value;
+    mapStore.arePointsHidden = !mapStore.arePointsHidden;
   }
 </script>
 
@@ -52,17 +52,17 @@
       <div class="w-full flex flex-col justify-start items-start gap-1"
            v-if="route.points?.length">
 
-        <div class="w-full flex flex-row justify-between items-end gap-2 p-2 px-4">
-          <div class="flex flex-row justify-start items-center gap-2 translate-x-[-10px] cursor-pointer"
-               @click="hidePoints">
+        <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer"
+             @click="hidePoints">
 
-            <label class="swap swap-rotate">
-              <input type="checkbox" v-model="arePointsHidden"/>
-              <ChevronDown class="swap-on w-6 h-6" @click="hidePoints"/>
-              <ChevronUp class="swap-off w-6 h-6" @click="hidePoints"/>
-            </label>
+          <div class="flex flex-row justify-start items-center gap-2">
+            <ChevronDown class="w-5 h-5 mt-0.5"
+                         v-if="mapStore.arePointsHidden"/>
 
-            <h3 class="text-lg users">
+            <ChevronUp class="w-5 h-5 mt-0.5"
+                       v-else/>
+
+            <h3 class="text-md">
               Stops ({{route.points?.length }})
             </h3>
           </div>
@@ -74,9 +74,10 @@
         </div>
 
         <template v-for="(point, index) in route.points" :key="point.id">
-          <div class="w-full flex flex-col justify-end items-center px-2" v-if="!arePointsHidden">
+          <div class="w-full flex flex-col justify-end items-center px-2" v-if="!mapStore.arePointsHidden"
+            :class="{'pb-5': index === route.points.length - 1}">
             <div class="w-full flex flex-row justify-start items-center pl-2.5">
-              <div class="w-full flex flex-col justify-center items-start border-l-2 border-opacity-20 border-gray-500 pl-5 py-2"
+              <div class="w-full flex flex-col justify-center items-start border-l-2 border-opacity-20 pl-5 py-2"
                    v-if="index > 0">
                 <div class="flex flex-row justify-start items-center"
                      v-if="point.travel_time">
@@ -119,7 +120,7 @@
           </div>
         </template>
 
-        <div class="w-full flex flex-col justify-start items-center pt-4"
+        <div class="w-full flex flex-col justify-start items-center pt-4 pr-2"
              v-if="trips?.length">
           <div class="w-full flex flex-col justify-start items-start">
 

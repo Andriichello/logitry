@@ -24,8 +24,8 @@
     "dependencies": {
         "@inertiajs/vue3": "^2.0.3",
         "@lucide/lab": "^0.1.2",
-        "@vuepic/vue-datepicker": "^11.0.1",
         "country-flag-icons": "^1.5.18",
+        "dayjs": "^1.11.13",
         "leaflet": "^1.9.4",
         "lucide-vue-next": "^0.475.0",
         "pinia": "^2.3.1",

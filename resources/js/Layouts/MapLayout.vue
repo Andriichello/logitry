@@ -10,6 +10,8 @@
   import MenuButton from '@/Components/Menu/MenuButton.vue';
   import SideView from '@/Components/Map/SideView.vue';
   import { MapPinned, Route as RouteIcon } from 'lucide-vue-next';
+  import dayjs from 'dayjs';
+  import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -45,23 +47,12 @@
       })
       .setView(center, 5);
 
-    fitBounds(mapStore.route?.bounds ?? props.bounds);
-
-    // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    // }).addTo(map.value);
-
-    // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    //   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-    // }).addTo(map.value);
-
-    // L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png')
-    //   .addTo(map.value);
-
     lightMap.value = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
     darkMap.value = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png');
 
     map.value.addLayer(themeStore.isDark ? darkMap.value : lightMap.value);
+
+    fitBounds(mapStore.route?.bounds ?? props.bounds);
   });
 
   onUnmounted(() => {
@@ -183,39 +174,44 @@
     </div>
 
     <div id="map-page" class="w-full h-full flex relative">
-      <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"
-                class="h-[100vh] max-h-[100vh]"
-                v-if="!isShowingMap || !isNarrowScreen"
-                @route-clicked="routeClicked"
-                @route-closed="routeClosed"
-                @trip-clicked="tripClicked"/>
+
+      <div class="h-[100vh] relative w-full flex flex-col justify-start items-start gap-2 p-2">
+        <BookingCalendar :dotted-dates="(trips ?? []).map(trip => dayjs(trip.departs_at).format('YYYY-MM-DD'))"
+                         class="w-full p-2"/>
+      </div>
+
+<!--      <SideView id="side" :company="props.company" :routes="props.routes" :trips="props.trips"-->
+<!--                class="h-[100vh] max-h-[100vh]"-->
+<!--                v-if="!isShowingMap || !isNarrowScreen"-->
+<!--                @route-clicked="routeClicked"-->
+<!--                @route-closed="routeClosed"-->
+<!--                @trip-clicked="tripClicked"/>-->
 
       <div id="map" class="h-[100vh] relative">
         <slot/>
       </div>
 
-      <MenuButton id="menu-button" class="absolute top-4 right-4 z-[400] text-xs"
-                  @click="clickDrawer"/>
+<!--      <MenuButton id="menu-button" class="absolute top-4 right-4 z-[400] text-xs"-->
+<!--                  @click="clickDrawer"/>-->
 
-      <CompassButton id="compass" class="absolute bottom-6 right-4 z-[400] hidden"
-                     @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
+<!--      <CompassButton id="compass" class="absolute bottom-6 right-4 z-[400] hidden"-->
+<!--                     @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>-->
 
-      <template v-if="isNarrowScreen">
-        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-base-100
-"
-             v-if="isShowingMap"
-             @click="toggleMap">
-          <span class="text-md">Open List</span>
-          <RouteIcon class="w-5 h-5"/>
-        </div>
+<!--      <template v-if="isNarrowScreen">-->
+<!--        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-base-100"-->
+<!--             v-if="isShowingMap"-->
+<!--             @click="toggleMap">-->
+<!--          <span class="text-md">Open List</span>-->
+<!--          <RouteIcon class="w-5 h-5"/>-->
+<!--        </div>-->
 
-        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-gray-200"
-             v-else
-             @click="toggleMap">
-          <span class="text-md text-neutral">Open Map</span>
-          <MapPinned class="w-5 h-5" color="black"/>
-        </div>
-      </template>
+<!--        <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-gray-200"-->
+<!--             v-else-->
+<!--             @click="toggleMap">-->
+<!--          <span class="text-md text-neutral">Open Map</span>-->
+<!--          <MapPinned class="w-5 h-5" color="black"/>-->
+<!--        </div>-->
+<!--      </template>-->
     </div>
   </main>
 </template>

@@ -10,6 +10,8 @@ interface MapState {
   point: Point | null;
   /** Variable for handling map clicks for clearing selections */
   clicks: number;
+  /** Determines if route points list is collapsed or not */
+  arePointsHidden: boolean;
 }
 
 export const useMapStore = defineStore('map', {
@@ -19,6 +21,7 @@ export const useMapStore = defineStore('map', {
       trip: null,
       point: null,
       clicks: 0,
+      arePointsHidden: false,
     }
   },
   actions: {

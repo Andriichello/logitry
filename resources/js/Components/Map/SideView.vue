@@ -5,6 +5,9 @@
   import { useMapStore } from '@/stores/map';
   import SideViewRoutes from '@/Components/Map/SideViewRoutes.vue';
   import SideViewRoute from '@/Components/Map/SideViewRoute.vue';
+  import ClassicCalendar from '@/Components/Date/ClassicCalendar.vue';
+  import dayjs from 'dayjs';
+  import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
 
   const emits = defineEmits(['route-clicked', 'route-closed', 'trip-clicked']);
 

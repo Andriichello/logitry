@@ -6,6 +6,8 @@ use App\Models\Company;
 use App\Models\Trip;
 use App\Queries\Interfaces\IndexableInterface;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class TripQuery.
@@ -247,5 +249,25 @@ class TripQuery extends BaseQuery implements IndexableInterface
         });
 
         return $this;
+    }
+
+    /**
+     * Composes a raw select to get highlights of trips
+     * (grouped by departure date).
+     *
+     * @return Builder
+     */
+    public function highlights(): Builder
+    {
+        $selects = [
+            'DATE(trips.departs_at) as date',
+            'COUNT(trips.id) as count',
+            'GROUP_CONCAT(trips.id) as ids',
+        ];
+
+        return DB::table($this->getQuery(), 'trips')
+            ->selectRaw(join(', ', $selects))
+            ->groupBy('date')
+            ->orderBy('date');
     }
 }

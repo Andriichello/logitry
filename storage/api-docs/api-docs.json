@@ -868,6 +868,31 @@
                 },
                 "type": "object"
             },
+            "TripHighlight": {
+                "title": "Trips Highlight Resource",
+                "description": "Representation of a Trips Highlight",
+                "properties": {
+                    "ids": {
+                        "description": "Ids of the trips that are included in the count",
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "date": {
+                        "description": "Departure date of the trips",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2023-10-15"
+                    },
+                    "count": {
+                        "description": "Number of trips on the given date",
+                        "type": "integer",
+                        "example": 3
+                    }
+                },
+                "type": "object"
+            },
             "Trip": {
                 "title": "Trip Resource",
                 "description": "Representation of a Trip",

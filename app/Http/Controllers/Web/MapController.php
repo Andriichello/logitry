@@ -8,6 +8,7 @@ use App\Http\Requests\Web\MapRequest;
 use App\Http\Resources\Specific\CompanyResource;
 use App\Http\Resources\Specific\RouteResource;
 use App\Http\Resources\Specific\TripResource;
+use App\Http\Resources\Specific\TripHighlightResource;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
@@ -54,20 +55,23 @@ class MapController extends BaseController
                 );
         }
 
-        if ($company) {
-            $routes = $request->routes()->get();
-            $trips = $request->trips()->get();
+        $routes = $request->routes()->get();
+        $trips = $request->trips()->get();
 
-            $props = [
-                'company' => ($company = $request->company())
-                    ? new CompanyResource($company) : null,
-                'routes' => RouteResource::collection($routes),
-                'bounds' => (new BoundsHelper())
-                    ->forRoutes($routes->all(), 0.05),
-                'trips' => TripResource::collection($trips),
-                'filters' => $request->filters(),
-            ];
-        }
+        $tripHighlights = $request->tripsForHighlights()
+            ->highlights()
+            ->get();
+
+        $props = [
+            'company' => ($company = $request->company())
+                ? new CompanyResource($company) : null,
+            'routes' => RouteResource::collection($routes),
+            'bounds' => (new BoundsHelper())
+                ->forRoutes($routes->all(), 0.05),
+            'trips' => TripResource::collection($trips),
+            'trip_highlights' => TripHighlightResource::collection($tripHighlights),
+            'filters' => $request->filters(),
+        ];
 
         return ApiResponse::ok($props);
     }
@@ -108,21 +112,26 @@ class MapController extends BaseController
                 );
         }
 
-        if ($company) {
-            $routes = $request->routes()->get();
+        $routes = $request->routes()->get();
 
-            $props = [
-                'company' => ($company = $request->company())
-                    ? new CompanyResource($company) : null,
-                'routes' => RouteResource::collection($routes),
-                'bounds' => (new BoundsHelper())
-                    ->forRoutes($routes->all(), 0.05),
-                'trips' => Inertia::defer(
-                    fn() => TripResource::collection($request->trips()->get())
-                ),
-                'filters' => $request->filters(),
-            ];
-        }
+        $props = [
+            'company' => ($company = $request->company())
+                ? new CompanyResource($company) : null,
+            'routes' => RouteResource::collection($routes),
+            'bounds' => (new BoundsHelper())
+                ->forRoutes($routes->all(), 0.05),
+            'trips' => Inertia::defer(
+                fn() => TripResource::collection($request->trips()->get())
+            ),
+            'trip_highlights' => Inertia::defer(
+                fn() => TripHighlightResource::collection(
+                    $request->tripsForHighlights()
+                        ->highlights()
+                        ->get()
+                )
+            ),
+            'filters' => $request->filters(),
+        ];
 
         return inertia('Map', $props);
     }

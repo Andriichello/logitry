@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { PropType, ref } from 'vue';
-  import { Route } from '@/api';
+  import { Route, Trip } from '@/api';
   import { Route as RouteIcon, X, Search, ArrowRightLeft } from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { useMapStore, MapFilters } from "@/stores/map";
+  import { Deferred } from '@inertiajs/vue3';
 
   const emits = defineEmits(['open-calendar', 'route-clicked']);
 
@@ -11,6 +12,11 @@
     routes: {
       type: Array as PropType<Route[]> | null,
       required: true,
+    },
+    trips: {
+      type: Array as PropType<Trip[]> | null,
+      required: false,
+      default: null,
     },
     filters: {
       type: Object as PropType<MapFilters> | null,

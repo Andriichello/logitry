@@ -166,6 +166,28 @@ class MapRequest extends BaseRequest
     }
 
     /**
+     * Returns a query for all trips that are available starting from yesterday.
+     *
+     * @return TripQuery
+     */
+    public function tripsForHighlights(): TripQuery
+    {
+        $today = now()->subDay()
+            ->setTime(0, 0, 0, 1);
+
+        $query = Trip::query()
+            ->arrivesWithin($today, null);
+
+        $company = $this->company();
+
+        if ($company) {
+            $query->withinCompanies($company);
+        }
+
+        return $query;
+    }
+
+    /**
      * Returns a query for trips to show on map.
      *
      * @return TripQuery

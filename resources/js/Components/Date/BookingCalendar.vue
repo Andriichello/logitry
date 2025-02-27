@@ -43,7 +43,7 @@
       return dottedDate.date === date.format('YYYY-MM-DD');
     });
 
-    return dottedDate ? dottedDate.trips + (dottedDate.trips > 1 ? ' trips' : ' trip')  : '';
+    return dottedDate ? dottedDate.count + (dottedDate.count > 1 ? ' trips' : ' trip')  : '';
   }
 
   const startDate = ref(dayjs().startOf('month'));
@@ -167,7 +167,7 @@
                @mouseleave="!day.isBefore(dayjs().startOf('day')) && day.format('MMMM YYYY') === month.month ? hoverDate = null : null">
 
             <template v-if="isDotted(day)">
-              <div class="tooltip tooltip-bottom tooltip-success flex flex-row justify-center items-center gap-0.5">
+              <div class="w-full h-full tooltip tooltip-bottom tooltip-success flex flex-row justify-center items-center gap-0.5">
                 <div class="tooltip-content">
                   <div class="text-md font-semibold font-black">{{ dottedTooltip(day) }}</div>
                 </div>

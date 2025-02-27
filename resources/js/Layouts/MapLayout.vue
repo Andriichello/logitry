@@ -2,7 +2,7 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { onMounted, onUnmounted, PropType, provide, ref, watch, computed } from 'vue';
-  import { Bounds, Company, Route, Trip } from '@/api';
+  import { Bounds, Company, Route, Trip, TripHighlight } from '@/api';
   import CompassButton from '@/Components/Map/CompassButton.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useMapStore } from '@/stores/map';
@@ -19,6 +19,7 @@
     bounds: Object as PropType<Bounds> | null,
     routes: Array as PropType<Route[]> | null,
     trips: Array as PropType<Trip[]> | null,
+    trip_highlights: Array as PropType<TripHighlight[]> | null,
   });
 
   const themeStore = useThemeStore();
@@ -63,24 +64,6 @@
   onUnmounted(() => {
     window.removeEventListener('resize', onResize);
   });
-
-  const dottedDates = computed(
-    () => {
-      const dates = {};
-
-      props.trips
-        ?.forEach(trip => {
-          const date = dayjs(trip.departs_at).format('YYYY-MM-DD');
-
-          const current = dates[date] ?? { date, trips: 0 };
-          current.trips += 1;
-
-          dates[date] = current;
-        });
-
-      return Object.values(dates) ?? [];
-    },
-  )
 
   function onResize() {
     isNarrowScreen.value = window.innerWidth < 800;
@@ -251,7 +234,7 @@
           <BookingCalendar :months="5"
                            :beg="mapStore.filters.beg"
                            :end="mapStore.filters.end"
-                           :dotted-dates="dottedDates"
+                           :dotted-dates="trip_highlights"
                            @apply-calendar="applyCalendar"
                            @close-calendar="closeCalendar"/>
         </div>

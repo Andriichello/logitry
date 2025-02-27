@@ -154,7 +154,7 @@
                   toDate && day.isSame(toDate, 'day') ? 'bg-primary hover:bg-primary text-white rounded-r-box' : '',
                   day.format('MMMM YYYY') !== month.month ? 'opacity-0 cursor-default' : '',
                ]"
-               @click="!day.isBefore(dayjs().startOf('day')) && day.format('MMMM YYYY') === month.month ? dateClick(day) : null"
+               @click="(!day.isBefore(dayjs().startOf('day')) || day.isSame(dayjs().subtract(1,'day').startOf('day'))) && day.format('MMMM YYYY') === month.month ? dateClick(day) : null"
                @mouseenter="!day.isBefore(dayjs().startOf('day')) && day.format('MMMM YYYY') === month.month ? hoverDate = day : null"
                @mouseleave="!day.isBefore(dayjs().startOf('day')) && day.format('MMMM YYYY') === month.month ? hoverDate = null : null">
 

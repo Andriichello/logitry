@@ -64,6 +64,24 @@
     window.removeEventListener('resize', onResize);
   });
 
+  const dottedDates = computed(
+    () => {
+      const dates = {};
+
+      props.trips
+        ?.forEach(trip => {
+          const date = dayjs(trip.departs_at).format('YYYY-MM-DD');
+
+          const current = dates[date] ?? { date, trips: 0 };
+          current.trips += 1;
+
+          dates[date] = current;
+        });
+
+      return Object.values(dates) ?? [];
+    },
+  )
+
   function onResize() {
     isNarrowScreen.value = window.innerWidth < 800;
   }
@@ -233,7 +251,7 @@
           <BookingCalendar :months="5"
                            :beg="mapStore.filters.beg"
                            :end="mapStore.filters.end"
-                           :dotted-dates="(trips ?? []).map(trip => dayjs(trip.departs_at).format('YYYY-MM-DD'))"
+                           :dotted-dates="dottedDates"
                            @apply-calendar="applyCalendar"
                            @close-calendar="closeCalendar"/>
         </div>

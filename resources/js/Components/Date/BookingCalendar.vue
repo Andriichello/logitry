@@ -25,7 +25,7 @@
       default: 2,
     },
     dottedDates: {
-      type: Array as PropType<string[]>,
+      type: Array,
       required: false,
       default: [],
     },
@@ -36,7 +36,15 @@
   const hoverDate = ref(null as dayjs.Dayjs | null);
 
   const isDotted = (date: dayjs.Dayjs) =>
-    props.dottedDates?.includes(date.format('YYYY-MM-DD'));
+    !!props.dottedDates?.find(dottedDate => dottedDate.date === date.format('YYYY-MM-DD'));
+
+  const dottedTooltip = (date: dayjs.Dayjs) => {
+    const dottedDate = props.dottedDates?.find(dottedDate => {
+      return dottedDate.date === date.format('YYYY-MM-DD');
+    });
+
+    return dottedDate ? dottedDate.trips + (dottedDate.trips > 1 ? ' trips' : ' trip')  : '';
+  }
 
   const startDate = ref(dayjs().startOf('month'));
   const endDate = ref(dayjs().add(props.months, 'month').endOf('month'));
@@ -158,14 +166,28 @@
                @mouseenter="!day.isBefore(dayjs().startOf('day')) && day.format('MMMM YYYY') === month.month ? hoverDate = day : null"
                @mouseleave="!day.isBefore(dayjs().startOf('day')) && day.format('MMMM YYYY') === month.month ? hoverDate = null : null">
 
-            <div class="flex flex-row justify-center items-center gap-0.5">
-              <span class="indicator-item status status-success opacity-0"/>
-              <span class="text-md">{{ day.date() }}</span>
-              <span class="indicator-item status status-success"
-                    :class="[
+            <template v-if="isDotted(day)">
+              <div class="tooltip tooltip-bottom tooltip-success flex flex-row justify-center items-center gap-0.5">
+                <div class="tooltip-content">
+                  <div class="text-md font-semibold font-black">{{ dottedTooltip(day) }}</div>
+                </div>
+
+                <span class="indicator-item status status-success opacity-0"/>
+                <span class="text-md">{{ day.date() }}</span>
+                <span class="indicator-item status status-success"
+                      :class="[
                       isDotted(day) ? '' : 'opacity-0',
                     ]"/>
-            </div>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="flex flex-row justify-center items-center gap-0.5">
+                <span class="indicator-item status status-success opacity-0"/>
+                <span class="text-md">{{ day.date() }}</span>
+                <span class="indicator-item status status-success opacity-0"/>
+              </div>
+            </template>
           </div>
         </div>
       </div>

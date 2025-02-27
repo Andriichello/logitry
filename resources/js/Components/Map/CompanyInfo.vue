@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { Building2 } from 'lucide-vue-next';
+  import { Building2, SearchX } from 'lucide-vue-next';
   import { PropType } from 'vue';
   import { Company } from '@/api';
 
@@ -18,8 +18,8 @@
     </div>
 
     <div class="w-full flex flex-col justify-start items-start">
-      <h3 class="text-xl font-bold">{{ props.company?.name ?? 'Company' }}</h3>
-      <span class="text-sm">{{ props.company?.abbreviation ?? 'Abbreviation' }}</span>
+      <h3 class="text-xl font-bold">{{ props.company ? (props.company.name ?? 'Company') : 'Not found' }}</h3>
+      <span class="text-sm">{{ props.company ? (props.company.abbreviation ?? 'Abbreviation') : 'no such company' }}</span>
     </div>
   </div>
 </template>

@@ -51,6 +51,16 @@ class MapRequest extends BaseRequest
                 'string',
                 'date',
             ],
+            'from' => [
+                'sometimes',
+                'nullable',
+                'string',
+            ],
+            'to' => [
+                'sometimes',
+                'nullable',
+                'string',
+            ],
         ];
     }
 
@@ -68,7 +78,13 @@ class MapRequest extends BaseRequest
             return null;
         }
 
-        return Carbon::parse($beg);
+        $date = Carbon::parse($beg);
+
+        if (!str_contains($beg, ':')) {
+            $date->setTime(0, 0);
+        }
+
+        return $date;
     }
 
     /**
@@ -85,7 +101,13 @@ class MapRequest extends BaseRequest
             return null;
         }
 
-        return Carbon::parse($end);
+        $date = Carbon::parse($end);
+
+        if (!str_contains($end, ':')) {
+            $date->setTime(23, 59, 59);
+        }
+
+        return $date;
     }
 
     /**
@@ -170,5 +192,27 @@ class MapRequest extends BaseRequest
         }
 
         return $query;
+    }
+
+    /**
+     * Returns an array of filters that are applied on the map.
+     *
+     * @return array{
+     *     abbreviation: string|null,
+     *     beg: Carbon|null,
+     *     end: Carbon|null,
+     *     from: string|null,
+     *     to: string|null,
+     * }
+     */
+    public function filters(): array
+    {
+        return [
+            'abbreviation' => $this->get('abbreviation'),
+            'beg' => $this->beg(),
+            'end' => $this->get('end'),
+            'from' => $this->get('from'),
+            'to' => $this->get('to'),
+        ];
     }
 }

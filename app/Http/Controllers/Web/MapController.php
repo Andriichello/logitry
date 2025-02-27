@@ -9,6 +9,7 @@ use App\Http\Resources\Specific\CompanyResource;
 use App\Http\Resources\Specific\RouteResource;
 use App\Http\Resources\Specific\TripResource;
 use App\Http\Responses\ApiResponse;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -23,22 +24,50 @@ class MapController extends BaseController
      *
      * @param MapRequest $request
      *
-     * @return ApiResponse
+     * @return ApiResponse|RedirectResponse
      * @SuppressWarnings(PHPMD)
      */
-    public function get(MapRequest $request): ApiResponse
+    public function get(MapRequest $request): ApiResponse|RedirectResponse
     {
-        $routes = $request->routes()->get();
-        $trips = $request->trips()->get();
+        $company = $request->company();
 
-        $props = [
-            'company' => ($company = $request->company())
-                ? new CompanyResource($company) : null,
-            'bounds' => (new BoundsHelper())
-                ->forRoutes($routes->all()),
-            'routes' => RouteResource::collection($routes),
-            'trips' => TripResource::collection($trips),
-        ];
+        if ($company === null) {
+            $props = [
+                'company' => null,
+                'routes' => [],
+                'bounds' => null,
+                'trips' => null,
+                'filters' => $request->filters(),
+            ];
+
+            return ApiResponse::ok($props);
+        }
+
+        if ($request->missing('beg') || $request->beg()?->diffInDays(now()) > 2) {
+            return redirect()
+                ->route(
+                    'web.map.data',
+                    [
+                        ...$request->query(),
+                        'beg' => now()->format('Y-m-d'),
+                    ]
+                );
+        }
+
+        if ($company) {
+            $routes = $request->routes()->get();
+            $trips = $request->trips()->get();
+
+            $props = [
+                'company' => ($company = $request->company())
+                    ? new CompanyResource($company) : null,
+                'routes' => RouteResource::collection($routes),
+                'bounds' => (new BoundsHelper())
+                    ->forRoutes($routes->all(), 0.05),
+                'trips' => TripResource::collection($trips),
+                'filters' => $request->filters(),
+            ];
+        }
 
         return ApiResponse::ok($props);
     }
@@ -49,23 +78,51 @@ class MapController extends BaseController
      *
      * @param MapRequest $request
      *
-     * @return Response|ResponseFactory
+     * @return RedirectResponse|Response|ResponseFactory
      * @SuppressWarnings(PHPMD)
      */
-    public function view(MapRequest $request): Response|ResponseFactory
+    public function view(MapRequest $request): RedirectResponse|Response|ResponseFactory
     {
-        $routes = $request->routes()->get();
+        $company = $request->company();
 
-        $props = [
-            'company' => ($company = $request->company())
-                ? new CompanyResource($company) : null,
-            'routes' => RouteResource::collection($routes),
-            'bounds' => (new BoundsHelper())
-                ->forRoutes($routes->all(), 0.05),
-            'trips' => Inertia::defer(
-                fn() => TripResource::collection($request->trips()->get())
-            ),
-        ];
+        if ($company === null) {
+            $props = [
+                'company' => null,
+                'routes' => [],
+                'bounds' => null,
+                'trips' => null,
+                'filters' => $request->filters(),
+            ];
+
+            return inertia('Map', $props);
+        }
+
+        if ($request->missing('beg') || $request->beg()?->diffInDays(now()) > 2) {
+            return redirect()
+                ->route(
+                    'web.map.view',
+                    [
+                        ...$request->query(),
+                        'beg' => now()->format('Y-m-d'),
+                    ]
+                );
+        }
+
+        if ($company) {
+            $routes = $request->routes()->get();
+
+            $props = [
+                'company' => ($company = $request->company())
+                    ? new CompanyResource($company) : null,
+                'routes' => RouteResource::collection($routes),
+                'bounds' => (new BoundsHelper())
+                    ->forRoutes($routes->all(), 0.05),
+                'trips' => Inertia::defer(
+                    fn() => TripResource::collection($request->trips()->get())
+                ),
+                'filters' => $request->filters(),
+            ];
+        }
 
         return inertia('Map', $props);
     }

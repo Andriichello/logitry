@@ -12,6 +12,7 @@
   import { MapPinned, Route as RouteIcon } from 'lucide-vue-next';
   import dayjs from 'dayjs';
   import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
+  import {useForm} from "@inertiajs/vue3";
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -33,6 +34,9 @@
   const isShowingMap = ref(false);
   const isShowingCalendar = ref(false);
   const isNarrowScreen = ref(false);
+
+  const begDate = ref(null as dayjs.Dayjs | null);
+  const endDate = ref(null as dayjs.Dayjs | null);
 
   onMounted(() => {
     onResize();
@@ -95,6 +99,43 @@
 
   function clickDrawer() {
     document.getElementById('map-drawer')?.click();
+  }
+
+  function applyCalendar({beg, end}: {beg: dayjs.Dayjs | null, end: dayjs.Dayjs | null}) {
+    mapStore.filters.beg = beg;
+    mapStore.filters.end = end;
+
+    const params = [];
+
+    if (mapStore.filters.abbreviation) {
+      params.push(`abbreviation=${mapStore.filters.abbreviation}`);
+    }
+
+    if (mapStore.filters.beg) {
+      params.push(`beg=${mapStore.filters.beg.format('YYYY-MM-DD')}`);
+    }
+
+    if (mapStore.filters.end) {
+      params.push(`end=${mapStore.filters.end.format('YYYY-MM-DD')}`);
+    }
+
+    if (mapStore.filters.from) {
+      params.push(`from=${mapStore.filters.from}`);
+    }
+
+    if (mapStore.filters.to) {
+      params.push(`to=${mapStore.filters.to}`);
+    }
+
+    let url = '/map';
+
+    if (params.length) {
+      url += `?${params.join('&')}`;
+    }
+
+    useForm().get(url);
+
+    closeCalendar();
   }
 
   function openCalendar() {
@@ -182,19 +223,28 @@
       <SideDrawer class="z-[1000] min-w-[25vw]"/>
     </div>
 
-    <div id="map-page" class="w-full h-full flex relative">
+    <div id="map-page" class="w-full h-full flex flex-row-reverse relative">
+      <div id="map" class="h-[100vh] relative">
+        <slot/>
+      </div>
 
       <template v-if="isShowingCalendar">
         <div class="side w-full px-4 py-4">
-          <BookingCalendar :dotted-dates="(trips ?? []).map(trip => dayjs(trip.departs_at).format('YYYY-MM-DD'))"
-            @close-calendar="closeCalendar"/>
+          <BookingCalendar :months="5"
+                           :beg="mapStore.filters.beg"
+                           :end="mapStore.filters.end"
+                           :dotted-dates="(trips ?? []).map(trip => dayjs(trip.departs_at).format('YYYY-MM-DD'))"
+                           @apply-calendar="applyCalendar"
+                           @close-calendar="closeCalendar"/>
         </div>
       </template>
 
       <template v-else>
-        <SideView class="side"
+        <SideView class="side" id="side"
                   v-if="!isShowingMap || !isNarrowScreen"
-                  :company="props.company" :routes="props.routes" :trips="props.trips"
+                  :company="props.company"
+                  :routes="props.routes"
+                  :trips="props.trips"
                   @open-calendar="openCalendar"
                   @route-clicked="routeClicked"
                   @route-closed="routeClosed"
@@ -222,10 +272,6 @@
           </div>
         </template>
       </template>
-
-      <div id="map" class="h-[100vh] relative">
-        <slot/>
-      </div>
     </div>
   </main>
 </template>

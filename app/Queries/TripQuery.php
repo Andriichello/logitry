@@ -117,7 +117,7 @@ class TripQuery extends BaseQuery implements IndexableInterface
             }
 
             if ($end) {
-                $query->departsBefore($beg);
+                $query->departsBefore($end);
             }
         });
 
@@ -140,7 +140,7 @@ class TripQuery extends BaseQuery implements IndexableInterface
             }
 
             if ($end) {
-                $query->departsBefore($beg);
+                $query->departsBefore($end);
             }
         });
 
@@ -219,7 +219,7 @@ class TripQuery extends BaseQuery implements IndexableInterface
             }
 
             if ($end) {
-                $query->arrivesBefore($beg);
+                $query->arrivesBefore($end);
             }
         });
 
@@ -242,7 +242,7 @@ class TripQuery extends BaseQuery implements IndexableInterface
             }
 
             if ($end) {
-                $query->arrivesBefore($beg);
+                $query->arrivesBefore($end);
             }
         });
 

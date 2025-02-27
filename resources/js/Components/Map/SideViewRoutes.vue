@@ -3,7 +3,7 @@
   import { Route } from '@/api';
   import { Route as RouteIcon, X, Search, ArrowRightLeft } from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
-  import dayjs from 'dayjs';
+  import { useMapStore, MapFilters } from "@/stores/map";
 
   const emits = defineEmits(['open-calendar', 'route-clicked']);
 
@@ -12,22 +12,18 @@
       type: Array as PropType<Route[]> | null,
       required: true,
     },
+    filters: {
+      type: Object as PropType<MapFilters> | null,
+      required: true,
+    },
   });
-
-  const filters = ref({
-    from: null as string | null,
-    to: null as string | null,
-    beg: null as dayjs.Dayjs | null,
-    end: null as dayjs.Dayjs | null,
-  })
-
-  const isShowingFilters = ref(false);
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col justify-start items-center p-3 overflow-y-auto pb-10">
 
-    <div class="w-full flex flex-col justify-between items-baseline pb-4">
+    <div class="w-full flex flex-col justify-between items-baseline pb-4"
+         v-if="filters !== null">
       <div class="w-full flex flex-row justify-between items-baseline gap-2 pb-2">
         <h3 class="text-md font-semibold">
           Filters
@@ -42,21 +38,42 @@
            @click="emits('open-calendar')">
         <div class="w-full flex flex-col justify-start items-start">
           <div class="w-full min-h-full flex justify-start items-center gap-2 font-bold text-md">
-            <div>{{ filters.from ?? 'From' }}</div>
+            <div>{{ filters?.from ?? 'From' }}</div>
 
             <div class="flex justify-center items-center">
               <ArrowRightLeft class="w-3 h-3"/>
             </div>
 
-            <div>{{ filters.to ?? 'To' }}</div>
+            <div>{{ filters?.to ?? 'To' }}</div>
           </div>
 
           <div class="w-full min-h-full flex justify-start items-center gap-2 text-xs">
-            <div class="w-full flex justify-start items-center gap-2">
-              <div>{{ filters.beg ?? 'Start date' }}</div>
-              <div>-</div>
-              <div>{{ filters.end ?? 'End Date' }}</div>
-            </div>
+            <template v-if="filters.beg && filters.end">
+              <div class="w-full flex justify-start items-center gap-2">
+                <div>{{ filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
+
+                <template v-if="!filters.beg?.isSame(filters.end, 'day')">
+                  <div>-</div>
+                  <div>{{ filters.end?.format('ddd, DD MMM') ?? 'End Date' }}</div>
+                </template>
+              </div>
+            </template>
+
+            <template v-else-if="filters.beg">
+              <div class="w-full flex justify-start items-center gap-2">
+                <div>{{ filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
+                <div>-</div>
+                <div>Future</div>
+              </div>
+            </template>
+
+            <template v-else>
+              <div class="w-full flex justify-start items-center gap-2">
+                <div>Start date</div>
+                <div>-</div>
+                <div>End date</div>
+              </div>
+            </template>
           </div>
         </div>
 
@@ -76,7 +93,7 @@
       </div>
     </div>
 
-    <div class="w-full grow flex flex-col justify-start items-start overflow-y-auto pb-10"
+    <div class="w-full grow flex flex-col justify-start items-start"
          v-if="props.routes?.length">
 
       <template v-for="(route, index) in props.routes" :key="route.id">

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import L from 'leaflet';
   import MapLayout from '@/Layouts/MapLayout.vue';
 
   export default {
@@ -9,7 +10,7 @@
 <script setup lang="ts">
   import 'leaflet/dist/leaflet.css';
   import { inject, onMounted, PropType, watch } from 'vue';
-  import { useMapStore } from '@/stores/map';
+  import {MapFilters, useMapStore} from '@/stores/map';
   import { Company, Trip } from '@/api';
   import { Route } from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
@@ -19,11 +20,13 @@
     company: Object as PropType<Company> | null,
     routes: Array as PropType<Route[]> | null,
     trips: Array as PropType<Trip[]> | null,
+    filters: Object as PropType<MapFilters> | null,
   });
 
   const toast = useToast();
 
   const mapStore = useMapStore();
+  mapStore.init(props.filters);
 
   const map = inject<L.Map>('map');
 
@@ -50,8 +53,25 @@
   });
 
   watch(
+    () => props.company, (newValue, oldValue) => {
+      if (!newValue) {
+        setTimeout(
+          () => {
+            toast.error('No such company.', {
+              position: POSITION.BOTTOM_LEFT,
+              timeout: 3000,
+            });
+          },
+          200,
+        );
+      }
+    },
+    { immediate: true },
+  );
+
+  watch(
     () => props.routes, (newValue, oldValue) => {
-      if (newValue?.length === 0) {
+      if (props.company && newValue?.length === 0) {
         setTimeout(
           () => {
             toast.error('No routes found.', {

@@ -53,6 +53,7 @@
 
     <SideViewRoutes v-else
                     :routes="props.routes"
+                    :filters="props.company ? mapStore.filters : null"
                     @open-calendar="openCalendar"
                     @route-clicked="routeClicked"/>
   </div>

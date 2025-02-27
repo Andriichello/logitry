@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import { PropType, ref } from 'vue';
   import { Route, Trip } from '@/api';
-  import { Route as RouteIcon, X, Search, ArrowRightLeft } from 'lucide-vue-next';
+  import { Route as RouteIcon, X, Search, ArrowRightLeft, MapPin, Calendar, Circle } from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { useMapStore, MapFilters } from "@/stores/map";
   import { Deferred } from '@inertiajs/vue3';
+  import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 
   const emits = defineEmits(['open-calendar', 'route-clicked']);
 
@@ -23,6 +24,8 @@
       required: true,
     },
   });
+
+  const mapStore = useMapStore();
 </script>
 
 <template>
@@ -40,51 +43,86 @@
         </div>
       </div>
 
-      <div class="w-full flex flex-row justify-center items-center gap-2 px-2 pl-4 py-3 rounded bg-gray-200 text-black cursor-pointer"
-           @click="emits('open-calendar')">
-        <div class="w-full flex flex-col justify-start items-start">
-          <div class="w-full min-h-full flex justify-start items-center gap-2 font-bold text-md">
-            <div>{{ filters?.from ?? 'From' }}</div>
+      <div class="w-full flex flex-col justify-center items-center rounded">
+        <div class="w-full flex justify-start items-center gap-2">
+          <div class="w-full flex flex justify-center items-center">
+            <div class="w-full flex flex-col justify-start items-start gap-1">
 
-            <div class="flex justify-center items-center">
-              <ArrowRightLeft class="w-3 h-3"/>
+
+              <div class="w-full min-h-full flex justify-start items-center gap-2 font-bold text-md">
+                <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-gray-100">
+                  <div class="text-xs font-bold text-gray-500">
+                    From?
+                  </div>
+
+                  <div class="w-full min-h-full flex justify-start items-center gap-2 text-md translate-y-[-4px]">
+                    <div>{{ filters?.from ?? 'Origin' }}</div>
+                    <div class="flex justify-center items-center" v-if="filters?.from">{{ getUnicodeFlagIcon(filters?.from === 'Ukraine' ? 'UA' : filters?.from === 'Slovakia' ? 'SK' : filters?.from) }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="w-full border-t-1 opacity-15" />
+              <div class="w-full min-h-full flex justify-start items-center gap-2 font-bold text-md">
+                <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-gray-100">
+                  <div class="text-xs font-bold text-gray-500">
+                    Where?
+                  </div>
+
+                  <div class="w-full min-h-full flex justify-start items-center gap-2 text-md translate-y-[-4px]">
+                    <div>{{ filters?.to ?? 'Destination' }}</div>
+                    <div class="flex justify-center items-center" v-if="filters?.to">{{ getUnicodeFlagIcon(filters?.to === 'Ukraine' ? 'UA' : filters?.to === 'Slovakia' ? 'SK' : filters?.to) }}</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div>{{ filters?.to ?? 'To' }}</div>
-          </div>
-
-          <div class="w-full min-h-full flex justify-start items-center gap-2 text-xs">
-            <template v-if="filters.beg && filters.end">
-              <div class="w-full flex justify-start items-center gap-2">
-                <div>{{ filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
-
-                <template v-if="!filters.beg?.isSame(filters.end, 'day')">
-                  <div>-</div>
-                  <div>{{ filters.end?.format('ddd, DD MMM') ?? 'End Date' }}</div>
-                </template>
-              </div>
-            </template>
-
-            <template v-else-if="filters.beg">
-              <div class="w-full flex justify-start items-center gap-2">
-                <div>{{ filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
-                <div>-</div>
-                <div>Future</div>
-              </div>
-            </template>
-
-            <template v-else>
-              <div class="w-full flex justify-start items-center gap-2">
-                <div>Start date</div>
-                <div>-</div>
-                <div>End date</div>
-              </div>
-            </template>
+            <div class="flex p-3 hover:bg-gray-100 rounded cursor-pointer ml-2">
+              <ArrowRightLeft class="w-4 h-4 rotate-90"/>
+            </div>
           </div>
         </div>
 
-        <div class="flex justify-center items-center p-2">
-          <Search class="w-6 h-6"/>
+        <div class="w-full flex justify-start items-center gap-2 pt-1">
+            <div class="w-full flex flex-col justify-start items-start gap-1">
+              <div class="w-full border-t-1 opacity-15"/>
+              <div class="w-full min-h-full flex justify-start items-center gap-3 font-bold text-md">
+                <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-gray-100"
+                  @click="emits('open-calendar')">
+                  <div class="text-xs font-bold text-gray-500">
+                    Departure
+                  </div>
+
+                  <div class="w-full min-h-full flex justify-start items-center gap-2 text-md">
+                    <template v-if="filters.beg && filters.end">
+                      <div class="w-full flex justify-start items-center gap-2">
+                        <div>{{ filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
+
+                        <template v-if="!filters.beg?.isSame(filters.end, 'day')">
+                          <div>-</div>
+                          <div>{{ filters.end?.format('ddd, DD MMM') ?? 'End Date' }}</div>
+                        </template>
+                      </div>
+                    </template>
+
+                    <template v-else-if="filters.beg">
+                      <div class="w-full flex justify-start items-center gap-2">
+                        <div>{{ filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
+                        <div>-</div>
+                        <div>Future</div>
+                      </div>
+                    </template>
+
+                    <template v-else>
+                      <div class="w-full flex justify-start items-center gap-2">
+                        <div>Start date</div>
+                        <div>-</div>
+                        <div>End date</div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
         </div>
       </div>
     </div>

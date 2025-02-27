@@ -118,18 +118,18 @@ class MapRequest extends BaseRequest
     public function company(): ?Company
     {
         if (empty($this->company)) {
+            $abbreviation = $this->get('abbreviation');
+
+            if (!empty($abbreviation)) {
+                return $this->company = Company::findBy(abb: $abbreviation);
+            }
+
             $user = $this->user();
 
             if ($user instanceof User) {
                 if ($user->company) {
                     return $this->company = $user->company;
                 }
-            }
-
-            $abbreviation = $this->get('abbreviation');
-
-            if (!empty($abbreviation)) {
-                return $this->company = Company::findBy(abb: $abbreviation);
             }
         }
 

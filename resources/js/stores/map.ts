@@ -28,6 +28,8 @@ export interface MapState {
   arePointsHidden: boolean;
   /** Currently applied filters */
   filters: MapFilters;
+  /** Determines if filters view is shown or not */
+  isShowingFilters: boolean;
 }
 
 export const useMapStore = defineStore('map', {
@@ -38,6 +40,7 @@ export const useMapStore = defineStore('map', {
       point: null,
       clicks: 0,
       arePointsHidden: false,
+      isShowingFilters: false,
       filters: {
         abbreviation: null,
         from: null,

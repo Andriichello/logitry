@@ -177,6 +177,14 @@
   }
 
   function swapFromAndTo() {
+    if (!mapStore.filters.from && !mapStore.filters.to) {
+      return;
+    }
+
+    if (mapStore.filters.from === mapStore.filters.to) {
+      return;
+    }
+
     let temp = mapStore.filters.from;
 
     mapStore.filters.from = mapStore.filters.to;

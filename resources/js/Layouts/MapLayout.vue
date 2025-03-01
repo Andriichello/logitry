@@ -36,7 +36,7 @@
 
   const isShowingMap = ref(false);
   const isShowingFrom = ref(false);
-  const isShowingWhere = ref(false);
+  const isShowingTo = ref(false);
   const isShowingCalendar = ref(false);
   const isNarrowScreen = ref(false);
 
@@ -106,10 +106,7 @@
     document.getElementById('map-drawer')?.click();
   }
 
-  function applyCalendar({beg, end}: {beg: dayjs.Dayjs | null, end: dayjs.Dayjs | null}) {
-    mapStore.filters.beg = beg;
-    mapStore.filters.end = end;
-
+  function reloadWithFilters() {
     const params = [];
 
     if (mapStore.filters.abbreviation) {
@@ -139,8 +136,14 @@
     }
 
     useForm().get(url);
+  }
+
+  function applyCalendar({beg, end}: {beg: dayjs.Dayjs | null, end: dayjs.Dayjs | null}) {
+    mapStore.filters.beg = beg;
+    mapStore.filters.end = end;
 
     closeCalendar();
+    reloadWithFilters();
   }
 
   function openFrom() {
@@ -155,8 +158,33 @@
     mapStore.filters.from = from;
     isShowingFrom.value = false;
 
-    // reload...
+    reloadWithFilters();
   }
+
+  function openTo() {
+    isShowingTo.value = true;
+  }
+
+  function closeTo() {
+    isShowingTo.value = false;
+  }
+
+  function applyTo(to) {
+    mapStore.filters.to = to;
+    isShowingTo.value = false;
+
+    reloadWithFilters();
+  }
+
+  function swapFromAndTo() {
+    let temp = mapStore.filters.from;
+
+    mapStore.filters.from = mapStore.filters.to;
+    mapStore.filters.to = temp;
+
+    reloadWithFilters();
+  }
+
 
   function openCalendar() {
     isShowingCalendar.value = true;
@@ -261,10 +289,21 @@
 
       <template v-else-if="isShowingFrom">
         <div class="side w-full px-4 py-4">
-          <SideViewFrom :from="mapStore.filters.from"
+          <SideViewFrom title="From?"
+                        :from="mapStore.filters.from"
                         :countries="props.countries"
                         @apply-from="applyFrom"
                         @close-from="closeFrom"/>
+        </div>
+      </template>
+
+      <template v-else-if="isShowingTo">
+        <div class="side w-full px-4 py-4">
+          <SideViewFrom title="Where?"
+                        :from="mapStore.filters.to"
+                        :countries="props.countries"
+                        @apply-from="applyTo"
+                        @close-from="closeTo"/>
         </div>
       </template>
 
@@ -276,6 +315,8 @@
                   :trips="props.trips"
                   :countries="props.countries"
                   @open-from="openFrom"
+                  @open-where="openTo"
+                  @swap-from-and-where="swapFromAndTo"
                   @open-calendar="openCalendar"
                   @route-clicked="routeClicked"
                   @route-closed="routeClosed"

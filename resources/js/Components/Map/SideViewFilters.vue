@@ -7,7 +7,7 @@
   import { Deferred, usePage } from '@inertiajs/vue3';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 
-  const emits = defineEmits(['open-from', 'open-where', 'open-calendar']);
+  const emits = defineEmits(['open-from', 'open-where', 'swap-from-and-where', 'open-calendar']);
 
   const props = defineProps({
     filters: {
@@ -83,7 +83,8 @@
           </div>
           <div class="w-full border-t-1 opacity-15" />
           <div class="w-full min-h-full flex justify-start items-center gap-2 font-bold text-md">
-            <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-base-300">
+            <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-base-300"
+                 @click="emits('open-where')">
               <div class="text-xs font-bold text-gray-500 filter-hint">
                 Where?
               </div>
@@ -114,7 +115,8 @@
           </div>
         </div>
 
-        <div class="flex p-3 hover:bg-base-300 rounded cursor-pointer ml-2">
+        <div class="flex p-3 hover:bg-base-300 rounded cursor-pointer ml-2"
+          @click="emits('swap-from-and-where')">
           <ArrowRightLeft class="w-4 h-4 rotate-90"/>
         </div>
       </div>

@@ -136,12 +136,9 @@ class MapController extends BaseController
                 ),
                 'trips'
             ),
-            'countries' => Inertia::defer(
-                fn() => array_map(
-                    fn($country) => $country['name'],
-                    (new CountriesHelper())->list()
-                ),
-                'filters',
+            'countries' => array_map(
+                fn($country) => $country['name'],
+                (new CountriesHelper())->list()
             ),
         ];
 

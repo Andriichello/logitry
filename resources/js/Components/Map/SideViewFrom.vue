@@ -7,6 +7,10 @@
   const emits = defineEmits(['close-from', 'apply-from']);
 
   const props = defineProps({
+    title: {
+      type: String as PropType<string>,
+      required: true,
+    },
     from: {
       type: String as PropType<string> | null,
     },
@@ -78,7 +82,7 @@
   <div class="w-full h-full flex flex-col justify-start items-center gap-3">
     <!-- Close Button -->
     <div class="w-full flex justify-between items-center">
-      <h3 class="text-xl font-semibold pl-2">From?</h3>
+      <h3 class="text-xl font-semibold pl-2">{{ title }}</h3>
 
       <div class="rounded-full p-2 cursor-pointer"
            @click="emits('close-from')">

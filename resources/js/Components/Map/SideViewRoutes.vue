@@ -8,7 +8,7 @@
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import SideViewFilters from "@/Components/Map/SideViewFilters.vue";
 
-  const emits = defineEmits(['open-from', 'open-where', 'open-calendar', 'route-clicked']);
+  const emits = defineEmits(['open-from', 'open-where', 'swap-from-and-where', 'open-calendar', 'route-clicked']);
 
   const props = defineProps({
     routes: {
@@ -47,6 +47,7 @@
 
       <SideViewFilters :filters="filters"
                        :countries="countries"
+                       @swap-from-and-where="emits('swap-from-and-where')"
                        @open-from="emits('open-from')"
                        @open-where="emits('open-where')"
                        @open-calendar="emits('open-calendar')"/>

@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, PropType, ref } from 'vue';
-import { X, MapPinOff, Keyboard } from 'lucide-vue-next';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
+  import { computed, PropType, ref } from 'vue';
+  import { Car, MapPinOff, X } from 'lucide-vue-next';
+  import getUnicodeFlagIcon from 'country-flag-icons/unicode';
+  import { Deferred } from '@inertiajs/vue3';
 
-
-const emits = defineEmits(['close-from', 'apply-from']);
+  const emits = defineEmits(['close-from', 'apply-from']);
 
   const props = defineProps({
     from: {
@@ -16,19 +16,56 @@ const emits = defineEmits(['close-from', 'apply-from']);
   const from = ref(props.from);
   const search = ref('');
 
-  const countries = computed(() => {
-    return Object.entries(props.countries ?? {})
-      .filter(
-        ([key, value]) =>
-          key.toLowerCase().includes(search.value.toLowerCase()) ||
-          value.toLowerCase().includes(search.value.toLowerCase())
-      )
+  const selected = computed(() => {
+    if (!from.value) {
+      return null;
+    }
+
+    if (!props.countries) {
+      return null;
+    }
+
+    const key = from.value?.trim().toLowerCase();
+
+    if (!key?.length) {
+      return null;
+    }
+
+    const country = props.countries?.[key];
+
+    return { a2: key, name: country, flag: getUnicodeFlagIcon(key.toUpperCase()) };
+  });
+
+  const filteredCountries = computed(() => {
+    if (!props.countries) {
+      return {};
+    }
+
+    const byKey = Object.keys(props.countries)
+      .filter(key => key.toLowerCase().includes(search.value.toLowerCase()));
+
+    const byValue = Object.keys(props.countries)
+      .filter(key => props.countries[key].toLowerCase().includes(search.value.toLowerCase()));
+
+    const matches = {};
+
+    byKey.forEach(key => {
+      matches[key] = props.countries[key];
+    });
+
+    byValue.forEach(key => {
+      if (!matches?.[key]) {
+        matches[key] = props.countries[key];
+      }
+    });
+
+    return Object.entries(matches)
       .reduce(
         (acc, [key, value]) => {
           acc[key] = value;
           return acc;
         },
-        {} as Record<string, string>
+        {} as Record<string, string>,
       );
   });
 
@@ -40,7 +77,7 @@ const emits = defineEmits(['close-from', 'apply-from']);
 <template>
   <div class="w-full h-full flex flex-col justify-start items-center gap-3">
     <!-- Close Button -->
-    <div class="w-full flex justify-between items-center ">
+    <div class="w-full flex justify-between items-center">
       <h3 class="text-xl font-semibold pl-2">From?</h3>
 
       <div class="rounded-full p-2 cursor-pointer"
@@ -50,46 +87,77 @@ const emits = defineEmits(['close-from', 'apply-from']);
     </div>
 
     <!-- From -->
-    <div class="w-full h-full flex flex-col gap-2 overflow-y-auto">
+    <div class="w-full h-full flex flex-col gap-1 overflow-y-auto pt-1 px-2">
+
       <input class="w-full min-h-12 input input-lg"
-             type="text" placeholder="Country..." autofocus
+             type="text" placeholder="Country name or code..." autofocus
              @input="search = search.replace(/[0-9]*$/g, '')"
              v-model="search"/>
 
-      <div class="w-full flex flex-col overflow-y-auto"
-           v-if="search.trim().length === 0">
-      </div>
+      <div class="w-full flex flex-col"/>
 
-      <div class="w-full flex flex-col overflow-y-auto"
-           v-else>
-        <template v-if="Object.keys(countries ?? {}).length === 0">
-          <div class="w-full flex justify-center items-center pt-4">
-            <MapPinOff class="w-8 h-8"/>
-          </div>
+      <Deferred data="countries">
+        <template #fallback>
+          <div class="flex flex-col justify-center items-center gap-2 p-4 mt-4">
+            <Car class="w-8 h-8"/>
 
-          <div class="w-full flex flex-col justify-start items-center px-2 py-2 text-center font-semibold text-lg">
-            No such country found.
+            <span class="text-lg font-bold">Loading countries</span>
+            <span class="loading loading-dots loading-md"></span>
           </div>
         </template>
 
-        <template v-else
-                  v-for="(a2, index) in Object.keys(countries ?? {})"
-                  :key="a2">
-          <div class="w-full flex flex-col justify-start items-center">
-            <div class="w-full border-t-2 opacity-15" v-if="index > 0 && Object.keys(countries ?? {})[index - 1] !== a2"/>
+        <div class="w-full flex flex-col justify-start items-center pt-1"
+             v-if="selected">
 
-            <div class="w-full flex flex-col justify-start items-center cursor-pointer p-2 pt-0">
-              <div class="w-full flex flex-row justify-start items-start gap-2 rounded pt-2">
-                <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 bg-base-300 rounded">
-                  <span>{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</span>
-                </div>
-                <span class="text-md font-semibold">{{ countries?.[a2] }}</span>
+          <div class="w-full flex flex-col justify-start items-center cursor-pointer p-1 border-2 border-primary border-dashed rounded">
+            <div class="w-full flex flex-row justify-start items-start gap-2 rounded p-2 rounded cursor-pointer">
+              <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded">
+                <span class="text-xl">{{ getUnicodeFlagIcon(selected.a2) }}</span>
+              </div>
+              <span class="w-full text-lg">{{ selected.name }}</span>
+              <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded"
+                   @click="from = null">
+                <X class="w-6 h-6 text-primary"/>
               </div>
             </div>
-
           </div>
-        </template>
-      </div>
+
+        </div>
+
+        <div class="w-full flex flex-col overflow-y-auto" v-if="search.trim().length > 0">
+
+          <template v-if="Object.keys(filteredCountries ?? {}).length === 0">
+            <div class="w-full flex justify-center items-center pt-4">
+              <MapPinOff class="w-8 h-8"/>
+            </div>
+
+            <div class="w-full flex flex-col justify-start items-center px-2 py-2 text-center font-semibold text-lg">
+              No such country found.
+            </div>
+          </template>
+
+          <template v-else
+                    v-for="(a2, index) in Object.keys(filteredCountries ?? {})"
+                    :key="a2">
+            <div class="w-full flex flex-col justify-start items-center"
+                 @click="from = a2; search = '';"
+                 v-if="a2 !== selected?.a2">
+              <div class="w-full border-t-2 opacity-15 2-" v-if="index > 0 && Object.keys(filteredCountries ?? {})[index - 1] !== a2"/>
+
+              <div class="w-full flex flex-col justify-start items-center cursor-pointer p-1">
+                <div class="w-full flex flex-row justify-start items-start gap-2 rounded p-2 rounded cursor-pointer hover:bg-base-300">
+                  <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded">
+                    <span class="text-xl">{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</span>
+                  </div>
+                  <span class="text-lg">{{ filteredCountries?.[a2] }}</span>
+                </div>
+              </div>
+
+            </div>
+          </template>
+        </div>
+      </Deferred>
+
     </div>
 
     <div class="w-full flex flex-col justify-center items-center">

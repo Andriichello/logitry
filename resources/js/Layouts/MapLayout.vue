@@ -153,6 +153,7 @@
 
   function applyFrom(from) {
     mapStore.filters.from = from;
+    isShowingFrom.value = false;
 
     // reload...
   }
@@ -261,7 +262,7 @@
       <template v-else-if="isShowingFrom">
         <div class="side w-full px-4 py-4">
           <SideViewFrom :from="mapStore.filters.from"
-                        :countries="countries"
+                        :countries="props.countries"
                         @apply-from="applyFrom"
                         @close-from="closeFrom"/>
         </div>
@@ -273,6 +274,7 @@
                   :company="props.company"
                   :routes="props.routes"
                   :trips="props.trips"
+                  :countries="props.countries"
                   @open-from="openFrom"
                   @open-calendar="openCalendar"
                   @route-clicked="routeClicked"

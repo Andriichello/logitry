@@ -19,7 +19,10 @@
     },
     trips: {
       type: Array as PropType<Trip[]> | null,
-    }
+    },
+    countries: {
+      type: Object as PropType<Record<string, string>> | null,
+    },
   });
 
   const mapStore = useMapStore();
@@ -57,6 +60,7 @@
 
     <SideViewRoutes v-else
                     :routes="props.routes"
+                    :countries="props.countries"
                     :filters="props.company ? mapStore.filters : null"
                     @open-from="openFrom"
                     @open-calendar="openCalendar"

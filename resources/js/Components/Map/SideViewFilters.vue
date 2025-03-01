@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import { PropType, ref } from 'vue';
+  import { computed, inject, PropType, ref, watch } from 'vue';
   import { Route, Trip } from '@/api';
   import { Route as RouteIcon, X, Search, ArrowRightLeft, MapPin, Calendar, Circle } from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { useMapStore, MapFilters } from "@/stores/map";
-  import { Deferred } from '@inertiajs/vue3';
+  import { Deferred, usePage } from '@inertiajs/vue3';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 
   const emits = defineEmits(['open-from', 'open-where', 'open-calendar']);
@@ -14,7 +14,36 @@
       type: Object as PropType<MapFilters> | null,
       required: true,
     },
+    countries: Object as PropType<Record<string, string>> | null,
   });
+
+  const fromCountry = computed(() => {
+    return findCountry(props.filters?.from);
+  });
+
+  const toCountry = computed(() => {
+    return findCountry(props.filters?.to);
+  });
+
+  function findCountry(a2: string | null) {
+    if (!a2) {
+      return null;
+    }
+
+    if (!props.countries) {
+      return null;
+    }
+
+    const key = a2?.trim().toLowerCase();
+
+    if (!key?.length) {
+      return null;
+    }
+
+    const country = props.countries?.[key];
+
+    return { a2: key, name: country, flag: getUnicodeFlagIcon(key.toUpperCase()) };
+  };
 </script>
 
 <template>
@@ -30,8 +59,25 @@
               </div>
 
               <div class="w-full min-h-full flex justify-start items-center gap-2 text-md translate-y-[-4px] font-bold">
-                <div>{{ props.filters?.from ?? 'Origin' }}</div>
-                <div class="flex justify-center items-center" v-if="props.filters?.from">{{ getUnicodeFlagIcon(props.filters?.from === 'Ukraine' ? 'UA' : props.filters?.from === 'Slovakia' ? 'SK' : props.filters?.from) }}</div>
+                <Deferred data="countries">
+                  <template #fallback>
+                    <div>
+                      <span class="loading loading-dots loading-xs" v-if="props.filters?.from"/>
+                      {{ props.filters?.from ?? 'Origin' }}
+                    </div>
+                    <div class="flex justify-center items-center" v-if="props.filters?.from">{{ getUnicodeFlagIcon(props.filters?.from?.toUpperCase()) }}</div>
+                  </template>
+
+                  <template v-if="!fromCountry">
+                    <div>{{ props.filters?.from ?? 'Origin' }}</div>
+                    <div class="flex justify-center items-center" v-if="props.filters?.from">{{ getUnicodeFlagIcon(props.filters?.from?.toUpperCase()) }}</div>
+                  </template>
+
+                  <template v-else>
+                    <div>{{ fromCountry.name ?? fromCountry.a2 ?? props.filters?.from }}</div>
+                    <div class="flex justify-center items-center" v-if="fromCountry.flag">{{ fromCountry.flag }}</div>
+                  </template>
+                </Deferred>
               </div>
             </div>
           </div>
@@ -43,8 +89,26 @@
               </div>
 
               <div class="w-full min-h-full flex justify-start items-center gap-2 text-md translate-y-[-4px]">
-                <div>{{ props.filters?.to ?? 'Destination' }}</div>
-                <div class="flex justify-center items-center" v-if="props.filters?.to">{{ getUnicodeFlagIcon(props.filters?.to === 'Ukraine' ? 'UA' : props.filters?.to === 'Slovakia' ? 'SK' : props.filters?.to) }}</div>
+                <Deferred data="countries">
+                  <template #fallback>
+                    <div>
+                      <span class="loading loading-dots loading-xs" v-if="props.filters?.to"/>
+                      {{ props.filters?.to ?? 'Destination' }}
+                    </div>
+                    <div class="flex justify-center items-center" v-if="props.filters?.to">{{ getUnicodeFlagIcon(props.filters?.to?.toUpperCase()) }}</div>
+                  </template>
+
+                  <template v-if="!toCountry">
+                    <div>{{ props.filters?.to ?? 'Destination' }}</div>
+                    <div class="flex justify-center items-center" v-if="props.filters?.to">{{ getUnicodeFlagIcon(props.filters?.to?.toUpperCase()) }}</div>
+                  </template>
+
+                  <template v-else>
+                    <div>{{ toCountry.name ?? toCountry.a2 ?? props.filters?.to }}</div>
+                    <div class="flex justify-center items-center" v-if="toCountry.flag">{{ toCountry.flag }}</div>
+                  </template>
+                </Deferred>
+
               </div>
             </div>
           </div>

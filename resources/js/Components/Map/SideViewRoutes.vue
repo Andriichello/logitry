@@ -24,6 +24,9 @@
       type: Object as PropType<MapFilters> | null,
       required: true,
     },
+    countries: {
+      type: Object as PropType<Record<string, string>> | null,
+    },
   });
 </script>
 
@@ -43,6 +46,7 @@
       </div>
 
       <SideViewFilters :filters="filters"
+                       :countries="countries"
                        @open-from="emits('open-from')"
                        @open-where="emits('open-where')"
                        @open-calendar="emits('open-calendar')"/>

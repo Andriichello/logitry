@@ -13,6 +13,7 @@
   import dayjs from 'dayjs';
   import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
   import {useForm} from "@inertiajs/vue3";
+  import SideViewFrom from "@/Components/Map/SideViewFrom.vue";
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -20,6 +21,7 @@
     routes: Array as PropType<Route[]> | null,
     trips: Array as PropType<Trip[]> | null,
     trip_highlights: Array as PropType<TripHighlight[]> | null,
+    countries: Object as PropType<Record<string, string>> | null,
   });
 
   const themeStore = useThemeStore();
@@ -33,6 +35,8 @@
   const lightMap = ref(null);
 
   const isShowingMap = ref(false);
+  const isShowingFrom = ref(false);
+  const isShowingWhere = ref(false);
   const isShowingCalendar = ref(false);
   const isNarrowScreen = ref(false);
 
@@ -139,6 +143,20 @@
     closeCalendar();
   }
 
+  function openFrom() {
+    isShowingFrom.value = true;
+  }
+
+  function closeFrom() {
+    isShowingFrom.value = false;
+  }
+
+  function applyFrom(from) {
+    mapStore.filters.from = from;
+
+    // reload...
+  }
+
   function openCalendar() {
     isShowingCalendar.value = true;
   }
@@ -240,12 +258,22 @@
         </div>
       </template>
 
+      <template v-else-if="isShowingFrom">
+        <div class="side w-full px-4 py-4">
+          <SideViewFrom :from="mapStore.filters.from"
+                        :countries="countries"
+                        @apply-from="applyFrom"
+                        @close-from="closeFrom"/>
+        </div>
+      </template>
+
       <template v-else>
         <SideView class="side" id="side"
                   v-if="!isShowingMap || !isNarrowScreen"
                   :company="props.company"
                   :routes="props.routes"
                   :trips="props.trips"
+                  @open-from="openFrom"
                   @open-calendar="openCalendar"
                   @route-clicked="routeClicked"
                   @route-closed="routeClosed"

@@ -3,14 +3,16 @@
 namespace App\Http\Controllers\Web;
 
 use App\Helpers\BoundsHelper;
+use App\Helpers\CountriesHelper;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Web\MapRequest;
 use App\Http\Resources\Specific\CompanyResource;
 use App\Http\Resources\Specific\RouteResource;
-use App\Http\Resources\Specific\TripResource;
 use App\Http\Resources\Specific\TripHighlightResource;
+use App\Http\Resources\Specific\TripResource;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -94,8 +96,9 @@ class MapController extends BaseController
                 'company' => null,
                 'routes' => [],
                 'bounds' => null,
-                'trips' => null,
                 'filters' => $request->filters(),
+                'trips' => null,
+                'trip_highlights' => null,
             ];
 
             return inertia('Map', $props);
@@ -120,17 +123,26 @@ class MapController extends BaseController
             'routes' => RouteResource::collection($routes),
             'bounds' => (new BoundsHelper())
                 ->forRoutes($routes->all(), 0.05),
+            'filters' => $request->filters(),
             'trips' => Inertia::defer(
-                fn() => TripResource::collection($request->trips()->get())
+                fn() => TripResource::collection($request->trips()->get()),
+                'trips'
             ),
             'trip_highlights' => Inertia::defer(
                 fn() => TripHighlightResource::collection(
                     $request->tripsForHighlights()
                         ->highlights()
                         ->get()
-                )
+                ),
+                'trips'
             ),
-            'filters' => $request->filters(),
+            'countries' => Inertia::defer(
+                fn() => array_map(
+                    fn($country) => $country['name'],
+                    (new CountriesHelper())->list()
+                ),
+                'filters',
+            ),
         ];
 
         return inertia('Map', $props);

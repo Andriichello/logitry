@@ -6,7 +6,7 @@
   import SideViewRoutes from '@/Components/Map/SideViewRoutes.vue';
   import SideViewRoute from '@/Components/Map/SideViewRoute.vue';
 
-  const emits = defineEmits(['open-calendar', 'route-clicked', 'route-closed', 'trip-clicked']);
+  const emits = defineEmits(['open-from', 'open-where', 'open-calendar', 'route-clicked', 'route-closed', 'trip-clicked']);
 
   const props = defineProps({
     company: {
@@ -23,6 +23,10 @@
   });
 
   const mapStore = useMapStore();
+
+  function openFrom() {
+    emits('open-from');
+  }
 
   function openCalendar() {
     emits('open-calendar');
@@ -54,6 +58,7 @@
     <SideViewRoutes v-else
                     :routes="props.routes"
                     :filters="props.company ? mapStore.filters : null"
+                    @open-from="openFrom"
                     @open-calendar="openCalendar"
                     @route-clicked="routeClicked"/>
   </div>

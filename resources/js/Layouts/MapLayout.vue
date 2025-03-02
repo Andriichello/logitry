@@ -244,6 +244,10 @@
     mapStore.trip = trip;
   }
 
+  function tripClosed(trip: Trip) {
+    mapStore.trip = null;
+  }
+
   function toggleMap() {
     isShowingMap.value = !isShowingMap.value;
 
@@ -359,7 +363,8 @@
                   @clear-filters="clearFilters"
                   @route-clicked="routeClicked"
                   @route-closed="routeClosed"
-                  @trip-clicked="tripClicked"/>
+                  @trip-clicked="tripClicked"
+                  @trip-closed="tripClosed"/>
 
         <MenuButton id="menu-button" class="absolute top-4 right-4 z-[400] text-xs"
                     @click="clickDrawer"/>

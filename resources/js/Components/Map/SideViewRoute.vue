@@ -6,7 +6,7 @@
     ArrowRightFromLine,
     Car,
     ChevronDown,
-    ChevronUp,
+    ChevronUp, FilterX,
     MapPin,
     MapPinHouse,
     X,
@@ -16,7 +16,7 @@
   import { Deferred } from '@inertiajs/vue3';
   import { useMapStore } from '@/stores/map';
 
-  const emits = defineEmits(['route-closed', 'trip-clicked']);
+  const emits = defineEmits(['route-closed', 'trip-clicked', 'trip-closed']);
 
   const props = defineProps({
     route: {
@@ -74,55 +74,46 @@
       </h3>
     </div>
 
-    <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto pb-20">
-      <div class="w-full flex flex-col justify-start items-start gap-1"
-           v-if="route.points?.length">
+    <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
+      <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer"
+           @click="hidePoints">
 
-        <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer"
-             @click="hidePoints">
+        <div class="flex flex-row justify-start items-center gap-2">
+          <ChevronDown class="w-5 h-5 mt-0.5"
+                       v-if="mapStore.arePointsHidden"/>
 
-          <div class="flex flex-row justify-start items-center gap-2">
-            <ChevronDown class="w-5 h-5 mt-0.5"
-                         v-if="mapStore.arePointsHidden"/>
+          <ChevronUp class="w-5 h-5 mt-0.5"
+                     v-else/>
 
-            <ChevronUp class="w-5 h-5 mt-0.5"
-                       v-else/>
-
-            <h3 class="text-md">
-              Stops ({{route.points?.length }})
-            </h3>
-          </div>
-
-          <div class="flex flex-row justify-end items-center"
-               v-if="route.travel_time">
-            <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }}</span>
-          </div>
+          <h3 class="text-md">
+            Stops ({{route.points?.length }})
+          </h3>
         </div>
 
-        <template v-for="(point, index) in route.points" :key="point.id">
-          <div class="w-full flex flex-col justify-end items-center px-2" v-if="!mapStore.arePointsHidden"
-            :class="{'pb-5': index === route.points.length - 1}">
-            <div class="w-full flex flex-row justify-start items-center pl-2.5">
-              <div class="w-full flex flex-col justify-center items-start border-l-2 border-opacity-20 pl-5 py-2"
-                   v-if="index > 0">
-                <div class="flex flex-row justify-start items-center"
-                     v-if="point.travel_time">
-                  <span>{{ minutesToHumanReadable(point.travel_time) }}</span>
+        <div class="flex flex-row justify-end items-center"
+             v-if="route.travel_time">
+          <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }}</span>
+        </div>
+      </div>
+
+      <div class="w-full flex flex-col justify-start items-start px-1">
+        <ul class="w-full timeline timeline-snap-icon timeline-compact timeline-vertical"
+            v-if="!mapStore.arePointsHidden">
+          <template v-for="(point, index) in route.points" :key="point.id">
+            <li>
+              <div class="timeline-middle">
+                <div class="px-1 pb-2">
+                  <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === route.points.length - 1"/>
+                  <MapPin v-else/>
                 </div>
               </div>
-            </div>
-
-            <div class="w-full flex flex-col justify-start items-center">
-              <div class="w-full flex flex-row justify-start items-center gap-2 rounded">
-                <div class="rounded flex justify-center items-center">
-                  <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === route.points.length - 1"/>
-                  <MapPin class="w-6 h-6" v-else/>
-                </div>
-
-                <div class="flex justify-start items-baseline"
+              <div class="timeline-start"
+                   :class="{'mb-4' : index !== (route.points?.length - 1)}">
+                <div class="w-full flex justify-start items-baseline"
                      v-if="point.city">
-                <span>
-                  <span class="text-lg font-semibold">{{ point.city }}</span><br>
+                <span class="w-full">
+                  <span class="text-lg font-semibold grow">{{ point.city }}</span><br>
+
                   <Deferred data="countries">
                     <template #fallback>
                       <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
@@ -130,17 +121,28 @@
 
                     <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ props.countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
                   </Deferred>
-
                 </span>
                 </div>
 
                 <div v-else>
                   <span class="text-lg">{{ point.name }}</span>
                 </div>
+
+                <template v-if="mapStore.trip?.reversed">
+                  <template v-if="index < (route.points.length - 1)">
+                    <time class="font-mono italic" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
+                  </template>
+                </template>
+
+                <template v-else>
+                  <time class="font-mono italic" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
+                </template>
               </div>
-            </div>
-          </div>
-        </template>
+              <hr />
+            </li>
+          </template>
+        </ul>
+
       </div>
 
       <Deferred data="trips">
@@ -177,12 +179,90 @@
               </div>
             </div>
 
+            <!-- Put this part before </body> tag -->
+            <input type="checkbox"
+                   id="trip_details"
+                   class="modal-toggle"
+                   :checked="mapStore.trip"
+                   @change="$event.target.checked ? null : mapStore.trip !== null ? emits('trip-closed', mapStore.trip) : null"/>
+
+            <div class="modal sm:modal-middle" role="dialog">
+              <div class="modal-box max-w-md max-h-[90%]">
+                <div class="w-full flex flex-row justify-between items-baseline gap-2">
+                  <h3 class="text-md font-semibold">
+                    Trip Details
+                  </h3>
+
+                  <label class="rounded flex justify-center items-center cursor-pointer p-2 translate-x-[8px]"
+                         for="trip_details">
+                    <X class="w-5 h-5"/>
+                  </label>
+                </div>
+
+                <div class="w-full flex flex-row justify-between items-baseline gap-2 pt-3">
+                  <h3 class="text-xl font-semibold">
+                    {{ route.name ?? 'Route' }}
+                  </h3>
+                </div>
+
+                <div class="h-[500px]" v-if="route.points?.length">
+
+
+                  <ul class="timeline timeline-snap-icon timeline-compact timeline-vertical">
+                    <template v-for="(point, index) in (mapStore.trip?.reversed ? [...route.points].reverse() : route.points)" :key="point.id">
+                      <li>
+                        <div class="timeline-middle">
+                          <div class="px-1 pb-2">
+                            <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === route.points.length - 1"/>
+                            <MapPin v-else/>
+                          </div>
+                        </div>
+                        <div class="timeline-start"
+                             :class="{'mb-4' : index !== (route.points?.length - 1)}">
+                          <time class="font-mono italic">11:00</time>
+                          <div class="w-full flex justify-start items-baseline"
+                               v-if="point.city">
+                              <span class="w-full">
+                                <span class="text-lg font-semibold grow">{{ point.city }}</span><br>
+
+                                <Deferred data="countries">
+                                  <template #fallback>
+                                    <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
+                                  </template>
+
+                                  <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ props.countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
+                                </Deferred>
+                              </span>
+                          </div>
+
+                          <div v-else>
+                            <span class="text-lg">{{ point.name }}</span>
+                          </div>
+
+                          <template v-if="mapStore.trip?.reversed">
+                            <template v-if="index < (route.points.length - 1)">
+                              <time class="font-mono italic" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
+                            </template>
+                          </template>
+
+                          <template v-else>
+                            <time class="font-mono italic" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
+                          </template>
+                        </div>
+                        <hr />
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </div>
+              <label id="close_trip_details" class="modal-backdrop" for="trip_details">Close</label>
+            </div>
+
             <template v-for="(trip, index) in filteredTrips" :key="trip.id">
               <div class="w-full flex flex-col justify-start items-center pb-1">
                 <div class="w-full border-t-1 opacity-15 pt-1" v-if="index > 0"/>
 
-                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2 rounded hover:bg-base-300 px-2"
-                     @click="emits('trip-clicked', trip)">
+                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2 rounded hover:bg-base-300 px-2">
 
                   <div class="rounded flex justify-center items-center text-error tooltip tooltip-right tooltip-error"
                        v-if="trip.reversed">
@@ -202,7 +282,8 @@
                     <ArrowRightFromLine class="w-6 h-6"/>
                   </div>
 
-                  <div class="w-full flex flex-row justify-start items-baseline gap-2 p-1 pb-2">
+                  <div class="w-full flex flex-row justify-start items-baseline gap-2 p-1 pb-2"
+                       @click="emits('trip-clicked', trip)">
                     <div class="flex flex-col justify-start items-baseline">
                       <span class="text-lg font-semibold">{{ toHumanTime(trip.departs_at) }}</span>
                       <span class="text-md">{{ toHumanDate(trip.departs_at) }}</span>
@@ -217,7 +298,8 @@
                   </div>
 
                   <template v-if="route.base_price">
-                    <div class="flex flex-col justify-start items-baseline">
+                    <div class="flex flex-col justify-start items-baseline"
+                         @click="emits('trip-clicked', trip)">
                       <span class="w-full text-lg font-semibold text-end">{{ route.base_price.from }}</span>
                       <div class="w-full flex flex-row justify-end items-baseline gap-0.5">
                         <span class="w-full text-xs font-semibold text-end">{{ route.base_price.currency }}</span>

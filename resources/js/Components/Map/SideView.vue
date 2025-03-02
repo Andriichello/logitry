@@ -15,6 +15,7 @@
     'route-clicked',
     'route-closed',
     'trip-clicked',
+    'trip-closed',
   ]);
 
   const props = defineProps({
@@ -63,6 +64,10 @@
   function tripClicked(trip: Trip) {
     emits('trip-clicked', trip);
   }
+
+  function tripClosed(trip: Trip) {
+    emits('trip-closed', trip);
+  }
 </script>
 
 <template>
@@ -74,7 +79,8 @@
                    :trips="props.trips?.filter(trip => trip.route_id === mapStore.route?.id)"
                    :countries="props.countries"
                    @route-closed="routeClosed"
-                   @trip-clicked="tripClicked"/>
+                   @trip-clicked="tripClicked"
+                   @trip-closed="tripClosed"/>
 
     <SideViewRoutes v-else
                     :routes="props.routes"

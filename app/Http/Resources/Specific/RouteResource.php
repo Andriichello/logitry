@@ -5,6 +5,7 @@ namespace App\Http\Resources\Specific;
 use App\Helpers\BoundsHelper;
 use App\Http\Resources\BaseResource;
 use App\Models\Route;
+use App\Models\RoutePrice;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,13 @@ class RouteResource extends BaseResource
      */
     public function toArray(Request $request): array
     {
+        /** @var RoutePrice|null $basePrice */
+        $basePrice = $this->prices
+            ->whereNull('beg_point_id')
+            ->whereNull('end_point_id')
+            ->sortBy('id')
+            ->first();
+
         return [
             'id' => $this->id,
             'company_id' => $this->company_id,
@@ -39,6 +47,8 @@ class RouteResource extends BaseResource
             'bounds' => (new BoundsHelper())
                 ->forPoints($this->points),
             'points' => $this->points,
+            'prices' => RoutePriceResource::collection($this->prices),
+            'base_price' => RoutePriceResource::make($basePrice),
             ...$this->getRequested($request),
         ];
     }
@@ -163,7 +173,21 @@ class RouteResource extends BaseResource
      *         nullable=true,
      *         description="Geographical bounds for the route",
      *         ref="#/components/schemas/Bounds"
-     *     )
+     *     ),
+     *     @OA\Property(
+     *         property="prices",
+     *         type="array",
+     *         nullable=true,
+     *         description="Prices of the in the route",
+     *         @OA\Items(ref="#/components/schemas/RoutePrice"),
+     *     ),
+     *     @OA\Property(
+     *         property="base_price",
+     *         type="object",
+     *         nullable=true,
+     *         description="Base price of the route",
+     *         ref="#/components/schemas/RoutePrice",
+     *     ),
      * )
      */
 }

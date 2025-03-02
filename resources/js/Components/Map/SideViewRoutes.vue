@@ -73,12 +73,12 @@
           <div class="modal-box max-w-xs">
             <h3 class="text-lg font-bold">Clear all filters?</h3>
             <div class="w-full flex flex-row justify-start items-baseline gap-2 pt-5">
-              <label class="flex-1 btn btn-md btn-soft"
+              <label class="flex-1 btn btn-md btn-outline"
                      for="clear_filters"
                      @click="emits('clear-filters')">
                 Yes
               </label>
-              <label class="flex-1 btn btn-outline btn-md"
+              <label class="flex-1 btn btn-md btn-soft"
                      for="clear_filters">
                 No
               </label>

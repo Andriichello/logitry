@@ -2,7 +2,7 @@
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
   import { onMounted, onUnmounted, PropType, provide, ref, watch, computed } from 'vue';
-  import { Bounds, Company, Route, Trip, TripHighlight } from '@/api';
+  import { Bounds, Company, Route, RoutePrice, Trip, TripHighlight } from '@/api';
   import CompassButton from '@/Components/Map/CompassButton.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useMapStore } from '@/stores/map';

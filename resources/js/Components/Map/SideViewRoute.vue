@@ -1,11 +1,19 @@
 <script setup lang="ts">
-  import { computed, ref, PropType } from 'vue';
+  import { computed, PropType, ref } from 'vue';
   import { Route, Trip } from '@/api';
-  import { Calendar1, Car, ChevronDown, ChevronUp, MapPin, MapPinHouse, X, ArrowLeftFromLine, ArrowRightFromLine } from 'lucide-vue-next';
+  import {
+    ArrowLeftFromLine,
+    ArrowRightFromLine,
+    Car,
+    ChevronDown,
+    ChevronUp,
+    MapPin,
+    MapPinHouse,
+    X,
+  } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
-  import { useToast } from 'vue-toastification';
   import { useMapStore } from '@/stores/map';
 
   const emits = defineEmits(['route-closed', 'trip-clicked']);
@@ -149,14 +157,14 @@
              v-if="trips?.length">
           <div class="w-full flex flex-col justify-start items-start">
 
-            <div class="w-full flex flex-wrap flex-row justify-between items-end">
+            <div class="w-full flex flex-wrap flex-row justify-between items-end pb-2">
               <h3 class="text-md font-semibold">
                 Trips
               </h3>
 
-              <div class="w-full flex flex-row justify-between items-end gap-2">
+              <div class="w-full flex flex-row justify-start items-end gap-2" v-if="trips?.filter(t => !t.reversed).length && trips?.filter(t => t.reversed).length">
                 <span class="text-sm font-medium grow">Direction: </span>
-                <div class="self-center filter" v-if="trips?.filter(t => !t.reversed).length && trips?.filter(t => t.reversed).length">
+                <div class="self-center filter">
                   <input class="btn btn-sm btn-success" type="radio" value="forward" name="trips_mode" :aria-label="'Forward ' + '(' + trips?.filter(t => !t.reversed)?.length + ')'"
                          :class="{'btn-outline': tripsMode !== 'forward'}"
                          @click="tripsMode = 'forward'"/>
@@ -169,15 +177,14 @@
               </div>
             </div>
 
-
             <template v-for="(trip, index) in filteredTrips" :key="trip.id">
-              <div class="w-full flex flex-col justify-start items-center">
-                <div class="w-full border-t-1 opacity-15" v-if="index > 0"/>
+              <div class="w-full flex flex-col justify-start items-center pb-1">
+                <div class="w-full border-t-1 opacity-15 pt-1" v-if="index > 0"/>
 
-                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2"
+                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2 rounded hover:bg-base-300 px-2"
                      @click="emits('trip-clicked', trip)">
 
-                  <div class="rounded flex justify-center items-center pl-2 text-error tooltip tooltip-right tooltip-error"
+                  <div class="rounded flex justify-center items-center text-error tooltip tooltip-right tooltip-error"
                        v-if="trip.reversed">
                     <div class="tooltip-content">
                       <div class="text-md font-medium">Back</div>
@@ -186,7 +193,7 @@
                     <ArrowLeftFromLine class="w-6 h-6"/>
                   </div>
 
-                  <div class="h-full rounded flex justify-center items-center pl-2 text-success tooltip tooltip-right tooltip-success"
+                  <div class="h-full rounded flex justify-center items-center text-success tooltip tooltip-right tooltip-success"
                        v-else>
                     <div class="tooltip-content">
                       <div class="text-md font-medium">Forward</div>
@@ -209,10 +216,20 @@
                     </div>
                   </div>
 
-                  <div class="flex flex-col justify-start items-baseline">
-                    <span class="w-full text-lg font-semibold text-end">price.</span>
-                    <span class="w-full text-xs font-semibold text-end">USD</span>
-                  </div>
+                  <template v-if="route.base_price">
+                    <div class="flex flex-col justify-start items-baseline">
+                      <span class="w-full text-lg font-semibold text-end">{{ route.base_price.from }}</span>
+                      <div class="w-full flex flex-row justify-end items-baseline gap-0.5">
+                        <span class="w-full text-xs font-semibold text-end">{{ route.base_price.currency }}</span>
+                        <span>/</span>
+                        <span class="w-full text-xs font-bold text-end">
+                          <span v-if="route.base_price.unit === 'Seat'">seat</span>
+                          <span v-else-if="route.base_price.unit === 'Weight'">kg</span>
+                          <span v-else-if="route.base_price.unit === 'Volume'">m³</span>
+                      </span>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
             </template>

@@ -31,6 +31,7 @@ use Illuminate\Support\Collection;
  * @property Vehicle|null $vehicle
  * @property User|null $driver
  * @property Point[]|Collection $points
+ * @property RoutePrice[]|Collection $prices
  * @property Trip[]|Collection $trips
  *
  * @method static RouteQuery query()
@@ -104,6 +105,16 @@ class Route extends BaseModel
         /** @phpstan-ignore-next-line */
         return $this->hasMany(Point::class)
             ->orderBy('number');
+    }
+
+    /**
+     * Prices associated with the model.
+     *
+     * @return HasMany
+     */
+    public function prices(): HasMany
+    {
+        return $this->hasMany(RoutePrice::class);
     }
 
     /**

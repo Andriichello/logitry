@@ -10,6 +10,8 @@ import type { RouteVehicle } from "./routeVehicle";
 import type { RouteDriver } from "./routeDriver";
 import type { Point } from "./point";
 import type { RouteBounds } from "./routeBounds";
+import type { RoutePrice } from "./routePrice";
+import type { RouteBasePrice } from "./routeBasePrice";
 
 /**
  * Representation of a Route
@@ -85,4 +87,11 @@ export interface Route {
   points?: Point[];
   /** @nullable */
   bounds?: RouteBounds;
+  /**
+   * Prices of the in the route
+   * @nullable
+   */
+  prices?: RoutePrice[] | null;
+  /** @nullable */
+  base_price?: RouteBasePrice;
 }

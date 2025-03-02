@@ -757,6 +757,113 @@
                 },
                 "type": "object"
             },
+            "RoutePrice": {
+                "title": "RoutePrice Resource",
+                "description": "Representation of a RoutePrice",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the route price",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "route_id": {
+                        "description": "Unique identifier for the associated route",
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "beg_point_id": {
+                        "description": "Unique identifier for the beginning point of the route",
+                        "type": "integer",
+                        "example": 15,
+                        "nullable": true
+                    },
+                    "end_point_id": {
+                        "description": "Unique identifier for the endpoint of the route",
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "name": {
+                        "description": "Name of the route price",
+                        "type": "string",
+                        "example": "Peak Rate",
+                        "nullable": true
+                    },
+                    "description": {
+                        "description": "Description of the route price",
+                        "type": "string",
+                        "example": "Peak hour rates applied",
+                        "nullable": true
+                    },
+                    "unit": {
+                        "description": "Sales",
+                        "type": "string",
+                        "enum": [
+                            "Seat",
+                            "Weight",
+                            "Volume"
+                        ],
+                        "example": "Seat"
+                    },
+                    "from": {
+                        "description": "Starting range price",
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    },
+                    "to": {
+                        "description": "Ending range price",
+                        "type": "number",
+                        "format": "float",
+                        "example": 100.5,
+                        "nullable": true
+                    },
+                    "currency": {
+                        "description": "Currency for the pricing",
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the route price was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-01T12:00:00Z",
+                        "nullable": true
+                    },
+                    "updated_at": {
+                        "description": "Timestamp when the route price was last updated",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2023-10-02T14:00:00Z",
+                        "nullable": true
+                    },
+                    "route": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Route"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "beg_point": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Point"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "end_point": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Point"
+                            }
+                        ],
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "Route": {
                 "title": "Route Resource",
                 "description": "Representation of a Route",
@@ -861,6 +968,22 @@
                         "oneOf": [
                             {
                                 "$ref": "#/components/schemas/Bounds"
+                            }
+                        ],
+                        "nullable": true
+                    },
+                    "prices": {
+                        "description": "Prices of the in the route",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RoutePrice"
+                        },
+                        "nullable": true
+                    },
+                    "base_price": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/RoutePrice"
                             }
                         ],
                         "nullable": true

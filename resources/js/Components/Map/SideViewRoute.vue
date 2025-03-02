@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { PropType } from 'vue';
+  import { computed, ref, PropType } from 'vue';
   import { Route, Trip } from '@/api';
-  import { Calendar1, Car, ChevronDown, ChevronUp, MapPin, MapPinHouse, X } from 'lucide-vue-next';
+  import { Calendar1, Car, ChevronDown, ChevronUp, MapPin, MapPinHouse, X, ArrowLeftFromLine, ArrowRightFromLine } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
@@ -24,8 +24,24 @@
     },
   });
 
-  const toast = useToast();
   const mapStore = useMapStore();
+
+  const tripsMode = ref('all');
+
+  const filteredTrips = computed(() => {
+    if (!props.trips) {
+      return [];
+    }
+
+    if (tripsMode.value === 'all') {
+      return props.trips;
+    }
+
+    return props.trips.filter(trip => {
+      return trip.reversed ? tripsMode.value === 'backward' : tripsMode.value === 'forward';
+    })
+  });
+
   function hidePoints() {
     mapStore.arePointsHidden = !mapStore.arePointsHidden;
   }
@@ -133,24 +149,51 @@
              v-if="trips?.length">
           <div class="w-full flex flex-col justify-start items-start">
 
-            <div class="w-full flex flex-row justify-between items-baseline gap-2">
+            <div class="w-full flex flex-wrap flex-row justify-between items-end">
               <h3 class="text-md font-semibold">
-                Trips <span class="text-sm font-light"></span>
+                Trips
               </h3>
 
-              <div class="rounded flex justify-center items-center cursor-pointer p-2 pr-0 gap-2 text-info"
-                @click="toast.info('Not implemented yet!', { timeout: 3000, position: 'bottom-left'})">
-                <span class="font-semibold">View on</span>
-                <Calendar1 class="w-6 h-6"/>
+              <div class="w-full flex flex-row justify-between items-end gap-2">
+                <span class="text-sm font-medium grow">Direction: </span>
+                <div class="self-center filter" v-if="trips?.filter(t => !t.reversed).length && trips?.filter(t => t.reversed).length">
+                  <input class="btn btn-sm btn-success" type="radio" value="forward" name="trips_mode" :aria-label="'Forward ' + '(' + trips?.filter(t => !t.reversed)?.length + ')'"
+                         :class="{'btn-outline': tripsMode !== 'forward'}"
+                         @click="tripsMode = 'forward'"/>
+                  <input class="btn btn-sm btn-error" type="radio" value="backward" name="trips_mode" :aria-label="'Back ' + '(' + trips?.filter(t => t.reversed)?.length + ')'"
+                         :class="{'btn-outline': tripsMode !== 'backward'}"
+                         @change="$event.target.checked && (tripsMode = 'backward')"/>
+                  <input class="btn btn-sm filter-reset ml-1" type="radio" value="all" name="trips_mode" aria-label="All"
+                         @change="$event.target.checked && (tripsMode = 'all')"/>
+                </div>
               </div>
             </div>
 
-            <template v-for="(trip, index) in trips" :key="trip.id">
+
+            <template v-for="(trip, index) in filteredTrips" :key="trip.id">
               <div class="w-full flex flex-col justify-start items-center">
                 <div class="w-full border-t-1 opacity-15" v-if="index > 0"/>
 
                 <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2"
                      @click="emits('trip-clicked', trip)">
+
+                  <div class="rounded flex justify-center items-center pl-2 text-error tooltip tooltip-right tooltip-error"
+                       v-if="trip.reversed">
+                    <div class="tooltip-content">
+                      <div class="text-md font-medium">Back</div>
+                    </div>
+
+                    <ArrowLeftFromLine class="w-6 h-6"/>
+                  </div>
+
+                  <div class="h-full rounded flex justify-center items-center pl-2 text-success tooltip tooltip-right tooltip-success"
+                       v-else>
+                    <div class="tooltip-content">
+                      <div class="text-md font-medium">Forward</div>
+                    </div>
+
+                    <ArrowRightFromLine class="w-6 h-6"/>
+                  </div>
 
                   <div class="w-full flex flex-row justify-start items-baseline gap-2 p-1 pb-2">
                     <div class="flex flex-col justify-start items-baseline">

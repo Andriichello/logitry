@@ -126,7 +126,7 @@
     <!-- Calendar -->
     <div class="w-full flex flex-col gap-8 overflow-y-auto pb-20">
       <!-- Day Labels -->
-      <div class="w-full sticky top-0">
+      <div class="w-full sticky top-0 z-10">
         <div class="bg-base-100 w-full grid grid-cols-7 gap-1 px-2 pt-4 text-center text-sm text-gray-400">
         <span v-for="day in ['mon', 'tue', 'wen', 'thu', 'fri', 'sat', 'sun']" :key="day">
           {{ day }}

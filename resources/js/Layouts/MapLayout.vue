@@ -155,7 +155,7 @@
   }
 
   function applyFrom(from) {
-    mapStore.filters.from = from;
+    mapStore.filters.from = from?.join(',');
     isShowingFrom.value = false;
 
     reloadWithFilters();
@@ -297,8 +297,8 @@
 
       <template v-else-if="isShowingFrom">
         <div class="side w-full px-4 py-4">
-          <SideViewFrom title="From?"
-                        :from="mapStore.filters.from"
+          <SideViewFrom title="Countries"
+                        :from="mapStore.filters.from?.length ? mapStore.filters.from.split(',') : []"
                         :countries="props.countries"
                         @apply-from="applyFrom"
                         @close-from="closeFrom"/>

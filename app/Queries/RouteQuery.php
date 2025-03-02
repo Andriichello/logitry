@@ -24,6 +24,22 @@ use Carbon\Carbon;
 class RouteQuery extends BaseQuery implements IndexableInterface
 {
     /**
+     * Filter to routes that go through the given countries.
+     *
+     * @param string ...$countries alpha2 strings
+     *
+     * @return $this
+     */
+    public function withinCountries(string ...$countries): static
+    {
+        $this->whereHas('points', function ($query) use ($countries) {
+            $query->whereIn('country', $countries);
+        });
+
+        return $this;
+    }
+
+    /**
      * Filter to routes with trips that depart within the given time interval.
      *
      * @param Carbon|null $beg

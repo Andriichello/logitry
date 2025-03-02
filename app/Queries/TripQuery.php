@@ -48,6 +48,22 @@ class TripQuery extends BaseQuery implements IndexableInterface
     }
 
     /**
+     * Filter to trips that go through the given countries.
+     *
+     * @param string ...$countries alpha2 strings
+     *
+     * @return $this
+     */
+    public function withinCountries(string ...$countries): static
+    {
+        $this->whereHas('route', function (RouteQuery $query) use ($countries) {
+            $query->withinCountries(...$countries);
+        });
+
+        return $this;
+    }
+
+    /**
      * Filter to trips that depart after the given date.
      *
      * @param Carbon $date

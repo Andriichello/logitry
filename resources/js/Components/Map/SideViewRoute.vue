@@ -7,6 +7,7 @@
   import { Deferred } from '@inertiajs/vue3';
   import { useToast } from 'vue-toastification';
   import { useMapStore } from '@/stores/map';
+  import { countries } from 'country-flag-icons';
 
   const emits = defineEmits(['route-closed', 'trip-clicked']);
 
@@ -18,7 +19,10 @@
     trips: {
       type: Array as PropType<Trip[]> | null,
       required: true,
-    }
+    },
+    countries: {
+      type: Object as PropType<Record<string, string>> | null,
+    },
   });
 
   const toast = useToast();
@@ -96,7 +100,14 @@
                      v-if="point.city">
                 <span>
                   <span class="text-lg font-semibold">{{ point.city }}</span><br>
-                  <span class="text-md">{{ getUnicodeFlagIcon(point.country === 'Ukraine' ? 'UA' : point.country === 'Slovakia' ? 'SK' : point.country) }} {{ point.country }} </span>
+                  <Deferred data="countries">
+                    <template #fallback>
+                      <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
+                    </template>
+
+                    <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{  countries?.[point.country] ?? point.country }} </span>
+                  </Deferred>
+
                 </span>
                 </div>
 

@@ -162,6 +162,36 @@ class MapRequest extends BaseRequest
             $query->where('company_id', $company->id);
         }
 
+        $from = $this->get('from');
+        $from = explode(',', $from);
+        $from = array_values(array_filter($from));
+
+        $to = $this->get('to');
+        $to = explode(',', $to);
+        $to = array_values(array_filter($to));
+
+        $countries = [];
+
+        foreach ($from as $country) {
+            $country = trim($country);
+
+            if (!empty($country)) {
+                $countries[] = $country;
+            }
+        }
+
+        foreach ($to as $country) {
+            $country = trim($country);
+
+            if (!empty($country)) {
+                $countries[] = $country;
+            }
+        }
+
+        if (count($countries) > 0) {
+            $query->withinCountries(...$countries);
+        }
+
         return $query;
     }
 
@@ -182,6 +212,36 @@ class MapRequest extends BaseRequest
 
         if ($company) {
             $query->withinCompanies($company);
+        }
+
+        $from = $this->get('from');
+        $from = explode(',', $from);
+        $from = array_values(array_filter($from));
+
+        $to = $this->get('to');
+        $to = explode(',', $to);
+        $to = array_values(array_filter($to));
+
+        $countries = [];
+
+        foreach ($from as $country) {
+            $country = trim($country);
+
+            if (!empty($country)) {
+                $countries[] = $country;
+            }
+        }
+
+        foreach ($to as $country) {
+            $country = trim($country);
+
+            if (!empty($country)) {
+                $countries[] = $country;
+            }
+        }
+
+        if (count($countries) > 0) {
+            $query->withinCountries(...$countries);
         }
 
         return $query;
@@ -211,6 +271,36 @@ class MapRequest extends BaseRequest
 
         if ($company) {
             $query->withinCompanies($company);
+        }
+
+        $from = $this->get('from');
+        $from = explode(',', $from);
+        $from = array_values(array_filter($from));
+
+        $to = $this->get('to');
+        $to = explode(',', $to);
+        $to = array_values(array_filter($to));
+
+        $countries = [];
+
+        foreach ($from as $country) {
+            $country = trim($country);
+
+            if (!empty($country)) {
+                $countries[] = $country;
+            }
+        }
+
+        foreach ($to as $country) {
+            $country = trim($country);
+
+            if (!empty($country)) {
+                $countries[] = $country;
+            }
+        }
+
+        if (count($countries) > 0) {
+            $query->withinCountries(...$countries);
         }
 
         return $query;

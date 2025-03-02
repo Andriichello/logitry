@@ -46,11 +46,11 @@
     }
   }
 
-  watch(() => mapStore.clicks, (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      mapStore.route = null;
-    }
-  });
+  // watch(() => mapStore.clicks, (newValue, oldValue) => {
+  //   if (newValue !== oldValue) {
+  //     mapStore.route = null;
+  //   }
+  // });
 
   watch(
     () => props.company, (newValue, oldValue) => {

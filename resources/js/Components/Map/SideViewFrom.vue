@@ -12,7 +12,7 @@
       required: true,
     },
     from: {
-      type: String as PropType<string> | null,
+      type: Array as PropType<string[]> | null,
     },
     countries: Object as PropType<Record<string, string>> | null,
   });
@@ -22,22 +22,25 @@
 
   const selected = computed(() => {
     if (!from.value) {
-      return null;
+      return [];
     }
 
     if (!props.countries) {
-      return null;
+      return [];
     }
 
-    const key = from.value?.trim().toLowerCase();
+    return from.value
+      .map(a2 => {
+        const key = a2?.trim().toLowerCase();
 
-    if (!key?.length) {
-      return null;
-    }
+        if (!key?.length) {
+          return null;
+        }
 
-    const country = props.countries?.[key];
+        const country = props.countries?.[key];
 
-    return { a2: key, name: country, flag: getUnicodeFlagIcon(key.toUpperCase()) };
+        return { a2: key, name: country, flag: getUnicodeFlagIcon(key.toUpperCase()) };
+      });
   });
 
   const filteredCountries = computed(() => {
@@ -91,7 +94,25 @@
     </div>
 
     <!-- From -->
-    <div class="w-full h-full flex flex-col gap-1 overflow-y-auto pt-1 px-2">
+    <div class="w-full h-full flex flex-col gap-2 pt-1 px-2">
+      <div class="w-full min-h-12 flex flex-row justify-start items-center gap-2 pb-2 overflow-x-auto"
+           v-if="selected?.length > 0">
+
+        <template v-for="country in selected" :key="country.a2">
+          <div class="flex flex-col justify-start items-center cursor-pointer p-1 border-2 border-primary border-dashed rounded"
+               @click="from = from.filter(a2 => a2 !== country.a2)">
+            <div class="w-full flex flex-row justify-center items-center gap-1 rounded rounded cursor-pointer">
+              <div class="w-8 h-7 aspect-square flex justify-center items-center rounded">
+                <span class="text-xl">{{ getUnicodeFlagIcon(country.a2) }}</span>
+              </div>
+              <span class="w-full text-lg font-medium">{{ country.a2?.toUpperCase() }}</span>
+              <div class="flex justify-center items-center rounded">
+                <X class="w-6 h-6 text-primary"/>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
 
       <input class="w-full min-h-12 input input-lg"
              type="text" placeholder="Country name or code..." autofocus
@@ -110,24 +131,6 @@
           </div>
         </template>
 
-        <div class="w-full flex flex-col justify-start items-center pt-1"
-             v-if="selected">
-
-          <div class="w-full flex flex-col justify-start items-center cursor-pointer p-1 border-2 border-primary border-dashed rounded">
-            <div class="w-full flex flex-row justify-start items-start gap-2 rounded p-2 rounded cursor-pointer">
-              <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded">
-                <span class="text-xl">{{ getUnicodeFlagIcon(selected.a2) }}</span>
-              </div>
-              <span class="w-full text-lg">{{ selected.name }}</span>
-              <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded"
-                   @click="from = null">
-                <X class="w-6 h-6 text-primary"/>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
         <div class="w-full flex flex-col overflow-y-auto" v-if="search.trim().length > 0">
 
           <template v-if="Object.keys(filteredCountries ?? {}).length === 0">
@@ -144,11 +147,11 @@
                     v-for="(a2, index) in Object.keys(filteredCountries ?? {})"
                     :key="a2">
             <div class="w-full flex flex-col justify-start items-center"
-                 @click="from = a2; search = '';"
-                 v-if="a2 !== selected?.a2">
+                 @click="!from?.includes(a2) ? from?.push(a2) : null; search = '';">
               <div class="w-full border-t-2 opacity-15 2-" v-if="index > 0 && Object.keys(filteredCountries ?? {})[index - 1] !== a2"/>
 
-              <div class="w-full flex flex-col justify-start items-center cursor-pointer p-1">
+              <div class="w-full flex flex-col justify-start items-center cursor-pointer p-1"
+                :class="[from?.includes(a2) ? 'border-2 border-primary border-dashed' : 'border-2 border-transparent border-dashed']">
                 <div class="w-full flex flex-row justify-start items-start gap-2 rounded p-2 rounded cursor-pointer hover:bg-base-300">
                   <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded">
                     <span class="text-xl">{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</span>

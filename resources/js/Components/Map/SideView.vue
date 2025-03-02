@@ -59,6 +59,7 @@
     <SideViewRoute v-if="mapStore.route"
                    :route="mapStore.route"
                    :trips="props.trips?.filter(trip => trip.route_id === mapStore.route?.id)"
+                   :countries="props.countries"
                    @route-closed="routeClosed"
                    @trip-clicked="tripClicked"/>
 

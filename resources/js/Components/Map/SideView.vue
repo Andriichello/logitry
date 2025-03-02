@@ -6,7 +6,16 @@
   import SideViewRoutes from '@/Components/Map/SideViewRoutes.vue';
   import SideViewRoute from '@/Components/Map/SideViewRoute.vue';
 
-  const emits = defineEmits(['open-from', 'open-where', 'swap-from-and-where', 'open-calendar', 'route-clicked', 'route-closed', 'trip-clicked']);
+  const emits = defineEmits([
+    'open-from',
+    'open-where',
+    'swap-from-and-where',
+    'open-calendar',
+    'clear-filters',
+    'route-clicked',
+    'route-closed',
+    'trip-clicked',
+  ]);
 
   const props = defineProps({
     company: {
@@ -39,6 +48,10 @@
     emits('open-calendar');
   }
 
+  function clearFilters() {
+    emits('clear-filters');
+  }
+
   function routeClosed(route: Route) {
     emits('route-closed', route);
   }
@@ -65,12 +78,14 @@
 
     <SideViewRoutes v-else
                     :routes="props.routes"
+                    :trips="props.trips"
                     :countries="props.countries"
                     :filters="props.company ? mapStore.filters : null"
                     @open-from="openFrom"
                     @open-where="openWhere"
                     @swap-from-and-where="emits('swap-from-and-where')"
                     @open-calendar="openCalendar"
+                    @clear-filters="clearFilters"
                     @route-clicked="routeClicked"/>
   </div>
 </template>

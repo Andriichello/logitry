@@ -83,7 +83,6 @@
 
 <template>
   <div class="w-full h-full flex flex-col justify-start items-center gap-3">
-    <!-- Close Button -->
     <div class="w-full flex justify-between items-center">
       <h3 class="text-xl font-semibold pl-2">{{ title }}</h3>
 
@@ -93,9 +92,8 @@
       </div>
     </div>
 
-    <!-- From -->
-    <div class="w-full h-full flex flex-col gap-2 pt-1 px-2">
-      <div class="w-full min-h-12 flex flex-row justify-start items-center gap-2 pb-2 overflow-x-auto"
+    <div class="w-full h-full flex flex-col gap-1 px-2 overflow-y-auto">
+      <div class="w-full flex flex-row flex-wrap justify-start items-center gap-2"
            v-if="selected?.length > 0">
 
         <template v-for="country in selected" :key="country.a2">
@@ -114,12 +112,12 @@
         </template>
       </div>
 
-      <input class="w-full min-h-12 input input-lg"
-             type="text" placeholder="Country name or code..." autofocus
-             @input="search = search.replace(/[0-9]*$/g, '')"
-             v-model="search"/>
-
-      <div class="w-full flex flex-col"/>
+      <div class="w-full flex flex-row flex-wrap justify-start items-center py-1">
+        <input class="w-full min-h-12 input input-lg"
+               type="text" placeholder="Country name or code..." autofocus
+               @input="search = search.replace(/[0-9]*$/g, '')"
+               v-model="search"/>
+      </div>
 
       <Deferred data="countries">
         <template #fallback>
@@ -131,7 +129,7 @@
           </div>
         </template>
 
-        <div class="w-full flex flex-col overflow-y-auto" v-if="search.trim().length > 0">
+        <div class="w-full h-full flex flex-col gap-1 overflow-y-auto" v-if="search.trim().length > 0">
 
           <template v-if="Object.keys(filteredCountries ?? {}).length === 0">
             <div class="w-full flex justify-center items-center pt-4">
@@ -146,14 +144,13 @@
           <template v-else
                     v-for="(a2, index) in Object.keys(filteredCountries ?? {})"
                     :key="a2">
-            <div class="w-full flex flex-col justify-start items-center"
+            <div class="w-full border-t-1 opacity-15" v-if="index > 0 && Object.keys(filteredCountries ?? {})[index - 1] !== a2"/>
+            <div class="w-full flex flex-col justify-start items-center gap-0 rounded hover:bg-base-300"
                  @click="!from?.includes(a2) ? from?.push(a2) : null; search = '';">
-              <div class="w-full border-t-2 opacity-15 2-" v-if="index > 0 && Object.keys(filteredCountries ?? {})[index - 1] !== a2"/>
-
-              <div class="w-full flex flex-col justify-start items-center cursor-pointer p-1"
+              <div class="w-full flex flex-col justify-start items-center cursor-pointer py-2"
                 :class="[from?.includes(a2) ? 'border-2 border-primary border-dashed' : 'border-2 border-transparent border-dashed']">
-                <div class="w-full flex flex-row justify-start items-start gap-2 rounded p-2 rounded cursor-pointer hover:bg-base-300">
-                  <div class="w-8 h-7 aspect-square flex justify-center items-center p-1 rounded">
+                <div class="w-full flex flex-row justify-start items-start gap-2 cursor-pointer">
+                  <div class="w-8 h-7 flex justify-center items-center p-1">
                     <span class="text-xl">{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</span>
                   </div>
                   <span class="text-lg">{{ filteredCountries?.[a2] }}</span>
@@ -164,17 +161,16 @@
           </template>
         </div>
       </Deferred>
-
     </div>
 
     <div class="w-full flex flex-col justify-center items-center">
 
-      <div class="w-full flex flex-wrap justify-between items-center gap-2 pt-4">
-        <button class="flex-1 btn" @click="emits('close-from')">
+      <div class="w-full flex flex-wrap justify-between items-center gap-2 pt-1">
+        <button class="flex-1 btn btn-lg" @click="emits('close-from')">
           Cancel
         </button>
 
-        <button class="flex-1 btn btn-primary"
+        <button class="flex-1 btn btn-primary btn-lg"
                 @click="applyFrom">
           Apply
         </button>

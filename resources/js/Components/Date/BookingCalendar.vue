@@ -231,11 +231,11 @@
       </template>
 
       <div class="w-full flex justify-between items-center gap-2">
-        <button class="flex-1 btn" @click="emits('close-calendar')">
+        <button class="flex-1 btn btn-lg" @click="emits('close-calendar')">
           Cancel
         </button>
 
-        <button class="flex-1 btn btn-primary"
+        <button class="flex-1 btn btn-primary btn-lg"
                 :class="{ 'btn-disabled': fromDate === null }"
                 @click="applyCalendar">
           Apply

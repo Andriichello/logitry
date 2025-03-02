@@ -14,6 +14,8 @@
   import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
   import {useForm} from "@inertiajs/vue3";
   import SideViewFrom from "@/Components/Map/SideViewFrom.vue";
+  import { toast } from '@lucide/lab';
+  import { useToast } from 'vue-toastification';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -202,6 +204,34 @@
     isShowingCalendar.value = false;
   }
 
+  function clearFilters() {
+    let shouldReload = false
+
+    if (mapStore.filters.from?.length) {
+      mapStore.filters.from = null;
+      shouldReload = true;
+    }
+
+    if (mapStore.filters.to?.length) {
+      mapStore.filters.to = null;
+      shouldReload = true;
+    }
+
+    if (mapStore.filters.beg && !mapStore.filters.beg.isSame(dayjs(), 'day')) {
+      mapStore.filters.beg = null;
+      shouldReload = true;
+    }
+
+    if (mapStore.filters.end) {
+      mapStore.filters.end = null;
+      shouldReload = true;
+    }
+
+    if (shouldReload) {
+      reloadWithFilters();
+    }
+  }
+
   function routeClicked(route: Route) {
     mapStore.route = route;
   }
@@ -326,6 +356,7 @@
                   @open-where="openTo"
                   @swap-from-and-where="swapFromAndTo"
                   @open-calendar="openCalendar"
+                  @clear-filters="clearFilters"
                   @route-clicked="routeClicked"
                   @route-closed="routeClosed"
                   @trip-clicked="tripClicked"/>
@@ -337,18 +368,18 @@
                        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
         <template v-if="isNarrowScreen">
-          <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-base-100"
+          <div id="map-switcher" class="flex btn btn-md absolute bottom-6 right-4 z-[400] bg-base-100"
                v-if="isShowingMap"
                @click="toggleMap">
-            <span class="text-md">Open List</span>
+            <span class="text-md">{{ mapStore.route ? 'Route Details': 'Routes List' }}</span>
             <RouteIcon class="w-5 h-5"/>
           </div>
 
-          <div id="map-switcher" class="flex btn p-2 absolute bottom-6 right-4 z-[400] bg-gray-200"
+          <div id="map-switcher" class="flex btn btn-md absolute bottom-6 right-4 z-[400] bg-gray-200"
                v-else
                @click="toggleMap">
-            <span class="text-md text-neutral">Open Map</span>
-            <MapPinned class="w-5 h-5" color="black"/>
+            <span class="text-md text-neutral">View on Map</span>
+            <MapPinned class="w-6 h-6" color="black"/>
           </div>
         </template>
       </template>

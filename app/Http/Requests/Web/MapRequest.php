@@ -303,6 +303,8 @@ class MapRequest extends BaseRequest
             $query->withinCountries(...$countries);
         }
 
+        $query->orderBy('departs_at');
+
         return $query;
     }
 

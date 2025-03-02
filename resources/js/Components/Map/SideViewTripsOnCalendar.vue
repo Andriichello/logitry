@@ -70,7 +70,7 @@
 
             <template v-for="(trip, index) in trips" :key="trip.id">
               <div class="w-full flex flex-col justify-start items-center">
-                <div class="w-full border-t-2 opacity-15" v-if="index > 0"/>
+                <div class="w-full border-t-1 opacity-15" v-if="index > 0"/>
 
                 <div class="w-full flex flex-row justify-start items-center cursor-pointer">
 

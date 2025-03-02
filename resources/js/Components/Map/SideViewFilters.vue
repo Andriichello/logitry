@@ -1,10 +1,7 @@
 <script setup lang="ts">
-  import { computed, inject, PropType, ref, watch } from 'vue';
-  import { Route, Trip } from '@/api';
-  import { Route as RouteIcon, X, Search, ArrowRightLeft, MapPin, Calendar, Circle } from 'lucide-vue-next';
-  import { minutesToHumanReadable } from '@/helpers';
-  import { useMapStore, MapFilters } from "@/stores/map";
-  import { Deferred, usePage } from '@inertiajs/vue3';
+  import { computed, PropType } from 'vue';
+  import { MapFilters } from '@/stores/map';
+  import { Deferred } from '@inertiajs/vue3';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
 
   const emits = defineEmits(['open-from', 'open-where', 'swap-from-and-where', 'open-calendar']);
@@ -26,11 +23,13 @@
   });
 
   const fromCountries = computed(() => {
-    return from.value?.map(a2 => findCountry(a2)) ?? [];
+    return (from.value?.map(a2 => findCountry(a2)) ?? [])
+      .filter(country => !!country);
   });
 
   const toCountries = computed(() => {
-    return to.value?.map(a2 => findCountry(a2));
+    return (from.to?.map(a2 => findCountry(a2)) ?? [])
+      .filter(country => !!country);
   });
 
   function findCountry(a2: string | null) {
@@ -55,14 +54,14 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-center items-center">
-    <div class="w-full flex justify-start items-center gap-2">
+  <div class="w-full flex flex-col justify-center gap-1 items-center">
+    <div class="w-full flex justify-start items-center rounded hover:bg-base-300">
       <div class="w-full flex justify-center items-center">
         <div class="w-full flex flex-col justify-start items-start gap-1">
           <div class="w-full min-h-full flex justify-start items-center gap-2 text-md">
-            <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-base-300"
+            <div class="w-full flex flex-col justify-start items-start px-2 pt-1 cursor-pointer "
                  @click="emits('open-from')">
-              <div class="text-xs text-gray-500 font-bold">
+              <div class="text-xs opacity-60 font-bold">
                 Countries
               </div>
 
@@ -73,7 +72,7 @@
                       <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(a2?.toUpperCase()) }}</div>
                       <div>
                         <span class="loading loading-dots loading-xs"/>
-                        {{ a2?.toUpperCase() ?? 'Countries' }}
+                        {{ a2?.toUpperCase() ?? 'All' }}
                       </div>
                     </div>
                   </template>
@@ -89,7 +88,7 @@
                   </div>
 
                   <div class="w-full flex flex-wrap flex-row justify-start items-start" v-else>
-                    Countries
+                    All
                   </div>
                 </Deferred>
 
@@ -166,17 +165,17 @@
       </div>
     </div>
 
-    <div class="w-full flex justify-start items-center gap-2 pt-1">
+    <div class="w-full flex justify-start items-center">
       <div class="w-full flex flex-col justify-start items-start gap-1">
-        <div class="w-full border-t-2 opacity-15"/>
-        <div class="w-full min-h-full flex justify-start items-center gap-3 font-bold text-md">
-          <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer hover:bg-base-300"
+        <div class="w-full border-t-1 opacity-15"/>
+        <div class="w-full min-h-full flex justify-start items-center gap-3 font-bold text-md rounded hover:bg-base-300">
+          <div class="w-full flex flex-col justify-start items-start px-2 pt-1 rounded cursor-pointer"
                @click="emits('open-calendar')">
-            <div class="text-xs font-bold text-gray-500 filter-hint">
+            <div class="text-xs font-bold opacity-60">
               Departure
             </div>
 
-            <div class="w-full min-h-full flex justify-start items-center gap-2 text-md">
+            <div class="w-full min-h-full flex justify-start items-center gap-2 text-md translate-y-[-4px]">
               <template v-if="props.filters.beg && props.filters.end">
                 <div class="w-full flex justify-start items-center gap-2">
                   <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>

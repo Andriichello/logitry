@@ -1,13 +1,12 @@
 <script setup lang="ts">
-  import { onMounted, PropType, ref } from 'vue';
-  import {Route, Trip} from '@/api';
+  import { PropType } from 'vue';
+  import { Route, Trip } from '@/api';
   import { Calendar1, Car, ChevronDown, ChevronUp, MapPin, MapPinHouse, X } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useToast } from 'vue-toastification';
   import { useMapStore } from '@/stores/map';
-  import { countries } from 'country-flag-icons';
 
   const emits = defineEmits(['route-closed', 'trip-clicked']);
 
@@ -51,7 +50,7 @@
       </h3>
     </div>
 
-    <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto pb-10">
+    <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto pb-20">
       <div class="w-full flex flex-col justify-start items-start gap-1"
            v-if="route.points?.length">
 
@@ -105,7 +104,7 @@
                       <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
                     </template>
 
-                    <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{  countries?.[point.country] ?? point.country }} </span>
+                    <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ props.countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
                   </Deferred>
 
                 </span>
@@ -148,9 +147,9 @@
 
             <template v-for="(trip, index) in trips" :key="trip.id">
               <div class="w-full flex flex-col justify-start items-center">
-                <div class="w-full border-t-2 opacity-15" v-if="index > 0"/>
+                <div class="w-full border-t-1 opacity-15" v-if="index > 0"/>
 
-                <div class="w-full flex flex-row justify-start items-center cursor-pointer"
+                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2"
                      @click="emits('trip-clicked', trip)">
 
                   <div class="w-full flex flex-row justify-start items-baseline gap-2 p-1 pb-2">
@@ -168,7 +167,7 @@
                   </div>
 
                   <div class="flex flex-col justify-start items-baseline">
-                    <span class="w-full text-lg font-semibold text-end">12.99</span>
+                    <span class="w-full text-lg font-semibold text-end">price.</span>
                     <span class="w-full text-xs font-semibold text-end">USD</span>
                   </div>
                 </div>

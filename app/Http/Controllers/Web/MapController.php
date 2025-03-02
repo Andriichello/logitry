@@ -124,6 +124,14 @@ class MapController extends BaseController
             'bounds' => (new BoundsHelper())
                 ->forRoutes($routes->all(), 0.05),
             'filters' => $request->filters(),
+//            'trips' => Inertia::defer(
+//                function() use($request) {
+//                    sleep(5);
+//
+//                    return TripResource::collection($request->trips()->get());
+//                },
+//                'trips'
+//            ),
             'trips' => Inertia::defer(
                 fn() => TripResource::collection($request->trips()->get()),
                 'trips'

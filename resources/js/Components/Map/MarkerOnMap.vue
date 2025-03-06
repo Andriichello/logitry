@@ -1,5 +1,6 @@
 <script setup lang="ts">
-  import { onMounted, onUnmounted, ref, watch } from 'vue';
+  import L from 'leaflet';
+  import {onMounted, onUnmounted, PropType, ref, watch} from 'vue';
 
   const emits = defineEmits([
     'created',
@@ -9,24 +10,24 @@
 
   const props = defineProps({
     latitude: {
-      type: Number as number,
+      type: Number as PropType<number>,
       required: true
     },
     longitude: {
-      type: Number as number,
+      type: Number as PropType<number>,
       required: true
     },
     radius: {
-      type: Number as number,
+      type: Number as PropType<number>,
       default: 12
     },
     color: {
-      type: String as string,
+      type: String as PropType<string>,
       default: 'blue'
     },
-    label: String as string | null,
+    label: String as PropType<string> | null,
     selected: {
-      type: Boolean as boolean,
+      type: Boolean as PropType<boolean>,
       default: false,
     },
   });

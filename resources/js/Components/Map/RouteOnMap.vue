@@ -4,6 +4,7 @@
   import { Route, Point } from '@/api';
   import LineOnMap from "./LineOnMap.vue";
   import MarkerOnMap from "./MarkerOnMap.vue";
+  import {MapSizes, useMapStore} from "@/stores/map";
 
   const emits = defineEmits(['line-clicked', 'marker-clicked']);
 
@@ -19,8 +20,10 @@
     selected: {
       type: Boolean as PropType<boolean>,
       default: false,
-    }
+    },
   });
+
+  const mapStore = useMapStore();
 
   const group = ref<L.LayerGroup | null>(null);
   const line = ref<L.Polyline | null>(null);
@@ -92,41 +95,25 @@
       );
     }
 
-    if (point.time) {
-      const instance = new Date(point.time)
-        .toLocaleString('en-US', {
-          day: '2-digit',    // Day of the month (e.g., "18")
-          month: 'short',    // Short month name (e.g., "Feb")
-          weekday: 'short',  // Optional: "Mon"
-          hour: '2-digit',   // 24-hour format hour
-          minute: '2-digit', // Minute
-          hour12: false      // 24-hour format
-        });
-
-      parts.push(
-        `<span class="text-xl">${instance}</span>`,
-      );
-    }
-
     return parts.join('<br>');
   }
 
   onMounted(() => {
-    props.map.on("zoomend", () => {
-      markers.value?.forEach((marker) => {
-        if (marker.getPopup()?.isOpen()) {
-          marker.getPopup().update(); // Ensures the popup stays correctly positioned
-        }
-      });
-    });
+    // props.map.on("zoomend", () => {
+    //   markers.value?.forEach((marker) => {
+    //     if (marker.getPopup()?.isOpen()) {
+    //       marker.getPopup().update(); // Ensures the popup stays correctly positioned
+    //     }
+    //   });
+    // });
 
-    props.map.on("moveend", () => {
-      markers.value?.forEach((marker) => {
-        if (marker.getPopup()?.isOpen()) {
-          marker.getPopup().update();
-        }
-      });
-    });
+    // props.map.on("moveend", () => {
+    //   markers.value?.forEach((marker) => {
+    //     if (marker.getPopup()?.isOpen()) {
+    //       marker.getPopup().update();
+    //     }
+    //   });
+    // });
 
     // console.log("TripOnMap.onMounted:", props.trip);
 
@@ -167,6 +154,7 @@
   <div>
     <template v-if="group">
       <LineOnMap
+        :size="{width: mapStore.scaledSizes.lineWidth}"
         :points="route.points"
         :selected="selected"
         color="blue"
@@ -177,6 +165,11 @@
 
       <template v-for="point in route.points" :key="point.id">
         <MarkerOnMap
+          :size="{
+            width: mapStore.scaledSizes.markerWidth,
+            height: mapStore.scaledSizes.markerHeight,
+            radius: mapStore.scaledSizes.circleRadius,
+          }"
           :latitude="point.latitude"
           :longitude="point.longitude"
           :label="labelForPoint(point)"

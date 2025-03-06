@@ -26,13 +26,13 @@
   const toast = useToast();
 
   const mapStore = useMapStore();
-  mapStore.init(props.filters);
+  mapStore.setFilters(props.filters);
 
   const map = inject<L.Map>('map');
 
   function markerClicked(route: Route) {
     if (mapStore.route?.id === route.id) {
-      mapStore.route = null;
+      // mapStore.route = null;
     } else {
       mapStore.route = route;
     }
@@ -40,7 +40,7 @@
 
   function lineClicked(route: Route) {
     if (mapStore.route?.id === route.id) {
-      mapStore.route = null;
+      // mapStore.route = null;
     } else {
       mapStore.route = route;
     }

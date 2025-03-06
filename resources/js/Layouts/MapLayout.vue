@@ -38,12 +38,8 @@
 
   const isShowingMap = ref(false);
   const isShowingFrom = ref(false);
-  const isShowingTo = ref(false);
   const isShowingCalendar = ref(false);
   const isNarrowScreen = ref(false);
-
-  const begDate = ref(null as dayjs.Dayjs | null);
-  const endDate = ref(null as dayjs.Dayjs | null);
 
   onMounted(() => {
     onResize();
@@ -56,6 +52,11 @@
       .on('click', () => {
         console.log('map click');
         mapStore.clicks++;
+      })
+      .on('zoomend', () => {
+        mapStore.recalculateZoom(map.value ?? null)
+        console.log('zoom', mapStore.zoom);
+        console.log('scale', mapStore.scaledSizes);
       })
       .setView(center, 5);
 
@@ -234,10 +235,14 @@
 
   function routeClicked(route: Route) {
     mapStore.route = route;
+
+    fitBounds(route.bounds ?? props.bounds);
   }
 
   function routeClosed(route: Route) {
     mapStore.route = null;
+
+    fitBounds(props.bounds);
   }
 
   function tripClicked(trip: Trip) {
@@ -288,17 +293,17 @@
       }
     });
 
-  watch(
-    () => mapStore.route,
-    (newValue) => {
-      if (newValue) {
-        fitBounds(newValue.bounds);
-      } else {
-        fitBounds(props.bounds)
-      }
-    },
-    { immediate: true },
-  );
+  // watch(
+  //   () => mapStore.route,
+  //   (newValue) => {
+  //     if (newValue) {
+  //       fitBounds(newValue.bounds);
+  //     } else {
+  //       fitBounds(props.bounds)
+  //     }
+  //   },
+  //   { immediate: true },
+  // );
 </script>
 
 <template>
@@ -336,16 +341,6 @@
                         :countries="props.countries"
                         @apply-from="applyFrom"
                         @close-from="closeFrom"/>
-        </div>
-      </template>
-
-      <template v-else-if="isShowingTo">
-        <div class="side w-full px-4 py-4">
-          <SideViewFrom title="Where?"
-                        :from="mapStore.filters.to"
-                        :countries="props.countries"
-                        @apply-from="applyTo"
-                        @close-from="closeTo"/>
         </div>
       </template>
 

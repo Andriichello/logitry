@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import L from 'leaflet';
   import { onMounted, onUnmounted, PropType, ref, watch } from 'vue';
+  import {Point} from "@/api";
 
   const emits = defineEmits([
     'created',
@@ -13,21 +14,35 @@
       type: Array as PropType<{
         latitude: number,
         longitude: number,
-      }[]>,
+      }[]> | PropType<Point[]>,
       required: true
     },
+    size: {
+      type: Object as PropType<{
+        width: number,
+      }>,
+      required: true,
+    },
     color: {
-      type: String as string,
+      type: String as PropType<string>,
       default: 'blue'
     },
-    label: String as string | null,
+    label: String as PropType<string> | null,
     selected: {
-      type: Boolean as boolean,
+      type: Boolean as PropType<boolean>,
       default: false,
     },
   });
 
   const line = ref(null as L.Polyline | null);
+
+  watch(() => props.size, (newValue, oldValue) => {
+    if (!line.value || JSON.stringify(newValue) === JSON.stringify(oldValue)) {
+      return;
+    }
+
+    line.value.setStyle({ weight: newValue.width });
+  });
 
   watch(() => props.selected, (value, oldValue) => {
     if (value === oldValue || !line.value) {
@@ -48,7 +63,7 @@
 
       line.value = L.polyline(positions, options)
         .setStyle({
-          weight: 6,
+          weight: props.size.width,
           opacity: props.selected ? 1 : 0.4,
         })
         .on('click', (event) => {

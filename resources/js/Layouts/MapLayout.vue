@@ -164,21 +164,6 @@
     reloadWithFilters();
   }
 
-  function openTo() {
-    isShowingTo.value = true;
-  }
-
-  function closeTo() {
-    isShowingTo.value = false;
-  }
-
-  function applyTo(to) {
-    mapStore.filters.to = to;
-    isShowingTo.value = false;
-
-    reloadWithFilters();
-  }
-
   function swapFromAndTo() {
     if (!mapStore.filters.from && !mapStore.filters.to) {
       return;
@@ -293,17 +278,15 @@
       }
     });
 
-  // watch(
-  //   () => mapStore.route,
-  //   (newValue) => {
-  //     if (newValue) {
-  //       fitBounds(newValue.bounds);
-  //     } else {
-  //       fitBounds(props.bounds)
-  //     }
-  //   },
-  //   { immediate: true },
-  // );
+  watch(
+    () => mapStore.route,
+    (newValue, oldValue) => {
+      if (newValue && newValue.bounds && newValue !== oldValue) {
+        fitBounds(newValue.bounds);
+      }
+    },
+    { immediate: true },
+  );
 </script>
 
 <template>

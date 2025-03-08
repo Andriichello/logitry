@@ -51,8 +51,6 @@
     const anchorX = width / 2;
     const anchorY = height + radius;
 
-    console.log({iconWidth, iconHeight, anchorX, anchorY, markerTranslateY})
-
     return L.divIcon({
       iconSize: [iconWidth, iconHeight],
       iconAnchor: [anchorX, anchorY],
@@ -115,7 +113,7 @@
         // marker.value.openPopup();
       }
     } else {
-      marker.value.setOpacity(0.6);
+      marker.value.setOpacity(0.4);
 
       if (marker.value.isPopupOpen()) {
         marker.value.closePopup();
@@ -127,13 +125,11 @@
     if (!marker.value) {
       const label = props.label;
 
-      console.log({icon: divIcon.value})
-
       marker.value = L.marker(
         [props.latitude, props.longitude],
         {icon: divIcon.value}
       )
-        .setOpacity(props.selected ? 1 : 0.6)
+        .setOpacity(props.selected ? 1 : 0.4)
         // .bindPopup(label, {
         //   closeOnClick: false,
         //   autoClose: false,

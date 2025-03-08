@@ -30,6 +30,13 @@ export function toHumanDate(date: Date | string | number) {
     })
 }
 
+export function toHumanWeekday(date: Date | string | number) {
+  return new Date(date)
+    .toLocaleString('en-US', {
+      weekday: 'short',  // Optional: "Mon"
+    })
+}
+
 export function toHumanTime(date: Date | string | number) {
   return new Date(date)
     .toLocaleString('en-US', {

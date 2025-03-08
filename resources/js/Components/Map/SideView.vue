@@ -5,6 +5,7 @@
   import { useMapStore } from '@/stores/map';
   import SideViewRoutes from '@/Components/Map/SideViewRoutes.vue';
   import SideViewRoute from '@/Components/Map/SideViewRoute.vue';
+  import SideViewTrip from '@/Components/Map/SideViewTrip.vue';
 
   const emits = defineEmits([
     'open-from',
@@ -74,7 +75,13 @@
   <div class="w-full h-full flex flex-col justify-start items-start gap-2 p-2">
     <CompanyInfo :company="props.company"/>
 
-    <SideViewRoute v-if="mapStore.route"
+    <SideViewTrip v-if="mapStore.trip"
+                  :route="mapStore.route"
+                  :trip="mapStore.trip"
+                  :countries="props.countries"
+                  @trip-closed="tripClosed"/>
+
+    <SideViewRoute v-else-if="mapStore.route"
                    :route="mapStore.route"
                    :trips="props.trips?.filter(trip => trip.route_id === mapStore.route?.id)"
                    :countries="props.countries"

@@ -55,8 +55,6 @@
       })
       .on('zoomend', () => {
         mapStore.recalculateZoom(map.value ?? null)
-        console.log('zoom', mapStore.zoom);
-        console.log('scale', mapStore.scaledSizes);
       })
       .setView(center, 5);
 
@@ -335,8 +333,6 @@
                   :trips="props.trips"
                   :countries="props.countries"
                   @open-from="openFrom"
-                  @open-where="openTo"
-                  @swap-from-and-where="swapFromAndTo"
                   @open-calendar="openCalendar"
                   @clear-filters="clearFilters"
                   @route-clicked="routeClicked"
@@ -354,7 +350,7 @@
           <div id="map-switcher" class="flex btn btn-md absolute bottom-6 right-4 z-[400] bg-base-100"
                v-if="isShowingMap"
                @click="toggleMap">
-            <span class="text-md">{{ mapStore.route ? 'Route Details': 'Routes List' }}</span>
+            <span class="text-md">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
             <RouteIcon class="w-5 h-5"/>
           </div>
 

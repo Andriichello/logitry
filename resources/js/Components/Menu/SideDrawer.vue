@@ -11,6 +11,18 @@
 
     <ul class="menu bg-base-200 text-base-content min-h-full w-xs">
       <!-- Sidebar content here -->
+      <li></li>
+      <li @click="themeStore.toggle">
+        <div class="flex flex-row justify-start items-center">
+          <Sun v-if="themeStore.isDark"/>
+          <Moon v-else/>
+
+          <span class="text-lg">Change theme</span>
+        </div>
+      </li>
+
+      <li class="grow opacity-0"></li>
+
       <li>
         <div class="flex flex-row justify-center items-center gap-3">
           <div class="flex flex-col-reverse justify-center items-center">
@@ -30,14 +42,7 @@
               </div>
             </div>
           </div>
-        </div>
-      </li>
-      <li @click="themeStore.toggle">
-        <div class="flex flex-row justify-start items-center">
-          <Sun v-if="themeStore.isDark"/>
-          <Moon v-else/>
-
-          <span class="text-lg">Change theme</span>
+          <span class="text-xl">Logitry</span>
         </div>
       </li>
     </ul>

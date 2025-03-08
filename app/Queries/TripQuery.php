@@ -232,13 +232,18 @@ class TripQuery extends BaseQuery implements IndexableInterface
     public function arrivesWithin(?Carbon $beg, ?Carbon $end): static
     {
         $this->where(function (TripQuery $query) use ($beg, $end) {
-            if ($beg) {
-                $query->arrivesAfter($beg);
-            }
+            $query->where(function (TripQuery $q) use ($beg, $end) {
+                if ($beg) {
+                    $q->arrivesAfter($beg);
+                }
 
-            if ($end) {
-                $query->arrivesBefore($end);
-            }
+                if ($end) {
+                    $q->arrivesBefore($end);
+                }
+            });
+
+
+            $query->orWhereNull('arrives_at');
         });
 
         return $this;

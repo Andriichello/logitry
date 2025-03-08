@@ -296,7 +296,7 @@
     <div class="drawer drawer-end">
       <input id="map-drawer" type="checkbox" class="drawer-toggle"/>
 
-      <SideDrawer class="z-[1000] min-w-[25vw]"/>
+      <SideDrawer class="z-[1001] min-w-[25vw]"/>
     </div>
 
     <div id="map-page" class="w-full h-full flex flex-row-reverse relative">

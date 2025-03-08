@@ -3,6 +3,10 @@
   import { useThemeStore } from '@/stores/theme';
 
   const themeStore = useThemeStore();
+
+  function openGitHub() {
+    window.open('https://github.com/Andriichello', '_blank');
+  }
 </script>
 
 <template>
@@ -23,8 +27,31 @@
 
       <li class="grow opacity-0"></li>
 
-      <li>
+      <li @click="openGitHub">
         <div class="flex flex-row justify-center items-center gap-3">
+          <div class="flex flex-col-reverse justify-center items-center opacity-0">
+            <!-- Circle -->
+            <div style="width:25px; height:25px"
+                 class="border-2 border-white rounded-full relative opacity-75">
+              <div style="background-color:blue;" class="w-full h-full opacity-60 rounded-full"></div>
+
+              <div class="absolute w-[2px] h-[2px] bg-white rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            </div>
+
+            <div style="transform: translateY(4px);">
+              <!-- Marker -->
+              <div style="background-color:blue; width:30px; height:30px"
+                   class="border-2 border-white rounded-full rounded-br-none rotate-45">
+                <span class="color-white rotate-45"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="grow flex flex-col justify-center items-center">
+            <span class="text-xl font-bold">Logitry</span>
+            <span class="text-sm">by Andriichello</span>
+          </div>
+
           <div class="flex flex-col-reverse justify-center items-center">
             <!-- Circle -->
             <div style="width:25px; height:25px"
@@ -42,7 +69,6 @@
               </div>
             </div>
           </div>
-          <span class="text-xl">Logitry</span>
         </div>
       </li>
     </ul>

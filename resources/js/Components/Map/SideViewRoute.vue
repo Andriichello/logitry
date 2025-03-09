@@ -206,7 +206,7 @@
 
       <Deferred data="trips">
         <template #fallback>
-          <div class="flex flex-col justify-center items-center gap-2 p-4 mt-4">
+          <div class="w-full flex flex-col justify-center items-center gap-2 p-4 mt-4">
             <Car class="w-8 h-8"/>
 
             <span class="text-lg font-bold">Loading trips</span>

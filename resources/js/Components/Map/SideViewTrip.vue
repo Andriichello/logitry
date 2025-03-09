@@ -144,7 +144,40 @@
     </div>
 
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
-        <div class="w-full flex flex-col justify-start items-start pr-2"
+      <div class="w-full flex flex-row justify-end items-start gap-3 pb-2 pr-3 chat chat-end">
+        <div class="flex flex-row justify-end items-start gap-3 chat-bubble chat-bubble-warning">
+          <div class="flex flex-col justify-baseline items-end">
+            <template v-for="price in route.prices" :key="price.id">
+              <div class="flex flex-row justify-end items-end">
+                <div class="w-full min-h-[28px] flex flex-row justify-end items-center gap-2">
+                <span class="w-full text-md font-bold text-end">
+                  <span v-if="price.unit === 'Seat'">seat</span>
+                  <span v-else-if="price.unit === 'Volume'">m³</span>
+                  <span v-else-if="price.unit === 'Weight'">kg</span>
+                </span>
+
+                  <span>/</span>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="flex flex-col justify-center items-start">
+            <template v-for="price in route.prices" :key="price.id">
+              <div class="w-full flex flex-row justify-end items-baseline">
+                <div class="w-full flex flex-row justify-end items-baseline gap-2">
+                <span>
+                  <span class="w-full text-lg font-semibold text-end">{{ price.from }}</span>
+                  <span class="w-full text-xs font-semibold text-end pl-1">{{ price.currency }}</span>
+                </span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full flex flex-col justify-start items-start pr-2"
             v-if="pointsInOrder.length">
           <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer"
                @click="hidePoints">

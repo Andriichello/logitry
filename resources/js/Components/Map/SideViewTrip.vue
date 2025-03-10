@@ -6,6 +6,7 @@
   import dayjs from 'dayjs';
   import { useMapStore } from '@/stores/map';
   import SideViewStops from '@/Components/Map/SideViewStops.vue';
+  import SideViewPrices from '@/Components/Map/SideViewPrices.vue';
 
   const emits = defineEmits(['trip-clicked', 'trip-closed']);
 
@@ -140,39 +141,9 @@
           </p>
         </div>
 
-        <table class="table table-md bg-base-200">
-          <tbody>
-          <template v-for="price in prices" :key="price.id">
-            <tr>
-              <th class="text-start px-3 text-[16px]">
-                  <span class="font-semibold">
-                    <span v-if="price.unit === 'Seat'">seat</span>
-                    <span v-else-if="price.unit === 'Volume'">m³</span>
-                    <span v-else-if="price.unit === 'Weight'">kg</span>
-                  </span>
-              </th>
-              <td class="text-[16px] w-full flex justify-start items-baseline gap-2">
-                  <span class="font-bold font-mono">
-                    {{ numberAsIntOrFloat(price.from) }}
-                  </span>
-
-                <template v-if="price.to">
-                    <span class="font-medium font-mono">
-                      -
-                    </span>
-                  <span class="font-bold font-mono">
-                      {{ numberAsIntOrFloat(price.to) }}
-                    </span>
-                </template>
-
-                <span class="text-[10px]">
-                    {{ price.currency }}
-                  </span>
-              </td>
-            </tr>
-          </template>
-          </tbody>
-        </table>
+        <SideViewPrices class="w-full bg-base-200"
+                        :route="route"
+                        :trip="trip"/>
       </div>
 
       <div class="w-full flex flex-col justify-end items-start"

@@ -7,6 +7,7 @@ use Database\Factories\RouteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -32,6 +33,7 @@ use Illuminate\Support\Collection;
  * @property User|null $driver
  * @property Point[]|Collection $points
  * @property RoutePrice[]|Collection $prices
+ * @property-read RoutePrice[]|Collection $relevantPrices
  * @property Trip[]|Collection $trips
  *
  * @method static RouteQuery query()
@@ -115,6 +117,22 @@ class Route extends BaseModel
     public function prices(): HasMany
     {
         return $this->hasMany(RoutePrice::class);
+    }
+
+    /**
+     * Relevant prices associated with the model.
+     *
+     * @return HasMany
+     */
+    public function relevantPrices(): HasMany
+    {
+        return $this->prices()
+            ->whereIn('id', function (Builder $query) {
+                $query->selectRaw('MAX(id)')
+                    ->from('route_prices')
+                    ->where('route_id', $this->id)
+                    ->groupBy('unit');
+            });
     }
 
     /**

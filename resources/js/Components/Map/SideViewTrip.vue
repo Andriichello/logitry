@@ -11,7 +11,7 @@
     X,
   } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-  import { minutesToHumanReadable, toHumanDate, toHumanTime, toHumanWeekday } from '@/helpers';
+  import { minutesToHumanReadable, toHumanDate, toHumanTime, toHumanWeekday, numberAsIntOrFloat } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import dayjs from 'dayjs';
   import { useMapStore } from '@/stores/map';
@@ -144,7 +144,8 @@
     </div>
 
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
-      <div class="w-full flex flex-row justify-end items-start gap-3 pb-2 pr-3 chat chat-end">
+      <div class="w-full flex flex-row justify-end items-start gap-3 pb-2 pr-3 chat chat-end"
+           v-if="route.prices?.length">
         <div class="flex flex-row justify-end items-start gap-3 chat-bubble chat-bubble-warning">
           <div class="flex flex-col justify-baseline items-end">
             <template v-for="price in route.prices" :key="price.id">
@@ -167,7 +168,13 @@
               <div class="w-full flex flex-row justify-end items-baseline">
                 <div class="w-full flex flex-row justify-end items-baseline gap-2">
                 <span>
-                  <span class="w-full text-lg font-semibold text-end">{{ price.from }}</span>
+                  <span class="w-full text-lg font-semibold text-end">
+                    {{ numberAsIntOrFloat(price.from) }}
+                  </span>
+                  <span class="w-full text-lg font-semibold text-end"
+                        v-if="price.to">
+                    - {{ numberAsIntOrFloat(price.to) }}
+                  </span>
                   <span class="w-full text-xs font-semibold text-end pl-1">{{ price.currency }}</span>
                 </span>
                 </div>
@@ -179,10 +186,10 @@
 
       <div class="w-full flex flex-col justify-start items-start pr-2"
             v-if="pointsInOrder.length">
-          <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer"
-               @click="hidePoints">
+          <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer">
 
-            <div class="flex flex-row justify-start items-center gap-2">
+            <div class="flex flex-row justify-start items-center gap-2"
+                 @click="hidePoints">
               <ChevronDown class="w-5 h-5 mt-0.5"
                            v-if="mapStore.arePointsHidden"/>
 

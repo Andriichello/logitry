@@ -49,3 +49,19 @@ export function toHumanTime(date: Date | string | number) {
 export function isSameDate(one: Date | string | number, two: Date | string | number) {
   return toHumanDate(one) === toHumanDate(two);
 }
+
+
+export function numberAsIntOrFloat(value: number, digits: number | null = null): number {
+  const intVal = Number.parseInt(value.toString());
+  let floatVal = Number.parseFloat(value.toString());
+
+  if (intVal === floatVal) {
+    return intVal;
+  }
+
+  if (digits !== null && digits >= 0) {
+    floatVal = Math.trunc(floatVal * 10 ** digits) / 10 ** digits;
+  }
+
+  return floatVal;
+}

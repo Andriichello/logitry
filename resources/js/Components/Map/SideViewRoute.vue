@@ -12,7 +12,7 @@
     X,
   } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-  import { minutesToHumanReadable, toHumanDate, toHumanTime } from '@/helpers';
+  import {minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime} from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useMapStore } from '@/stores/map';
   import dayjs from 'dayjs';
@@ -138,10 +138,50 @@
     </div>
 
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
-      <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer"
-           @click="hidePoints">
+      <div class="w-full flex flex-row justify-end items-start gap-3 pb-2 pr-3 chat chat-end"
+           v-if="route.prices?.length">
+        <div class="flex flex-row justify-end items-start gap-3 chat-bubble chat-bubble-warning mr-2">
+          <div class="flex flex-col justify-baseline items-end">
+            <template v-for="price in route.prices" :key="price.id">
+              <div class="flex flex-row justify-end items-end">
+                <div class="w-full min-h-[28px] flex flex-row justify-end items-center gap-2">
+                <span class="w-full text-md font-bold text-end">
+                  <span v-if="price.unit === 'Seat'">seat</span>
+                  <span v-else-if="price.unit === 'Volume'">m³</span>
+                  <span v-else-if="price.unit === 'Weight'">kg</span>
+                </span>
 
-        <div class="flex flex-row justify-start items-center gap-2">
+                  <span>/</span>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <div class="flex flex-col justify-center items-start">
+            <template v-for="price in route.prices" :key="price.id">
+              <div class="w-full flex flex-row justify-end items-baseline">
+                <div class="w-full flex flex-row justify-end items-baseline gap-2">
+                <span>
+                  <span class="w-full text-lg font-semibold text-end">
+                    {{ numberAsIntOrFloat(price.from) }}
+                  </span>
+                  <span class="w-full text-lg font-semibold text-end"
+                        v-if="price.to">
+                    - {{ numberAsIntOrFloat(price.to) }}
+                  </span>
+                  <span class="w-full text-xs font-semibold text-end pl-1">{{ price.currency }}</span>
+                </span>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer">
+
+        <div class="flex flex-row justify-start items-center gap-2"
+             @click="hidePoints">
           <ChevronDown class="w-5 h-5 mt-0.5"
                        v-if="mapStore.arePointsHidden"/>
 
@@ -291,15 +331,15 @@
                   <template v-if="route.base_price">
                     <div class="flex flex-col justify-start items-baseline"
                          @click="emits('trip-clicked', trip)">
-                      <span class="w-full text-lg font-semibold text-end">{{ route.base_price.from }}</span>
+                      <span class="w-full text-lg font-semibold text-end">{{ numberAsIntOrFloat(route.base_price.from) }}</span>
                       <div class="w-full flex flex-row justify-end items-baseline gap-0.5">
-                        <span class="w-full text-xs font-semibold text-end">{{ route.base_price.currency }}</span>
-                        <span>/</span>
                         <span class="w-full text-xs font-bold text-end">
                           <span v-if="route.base_price.unit === 'Seat'">seat</span>
                           <span v-else-if="route.base_price.unit === 'Weight'">kg</span>
                           <span v-else-if="route.base_price.unit === 'Volume'">m³</span>
-                      </span>
+                        </span>
+                        <span>/</span>
+                        <span class="w-full text-xs font-semibold text-end">{{ route.base_price.currency }}</span>
                       </div>
                     </div>
                   </template>

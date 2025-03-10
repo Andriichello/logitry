@@ -26,7 +26,7 @@ class RouteResource extends BaseResource
     public function toArray(Request $request): array
     {
         /** @var RoutePrice|null $basePrice */
-        $basePrice = $this->prices
+        $basePrice = $this->relevantPrices
             ->whereNull('beg_point_id')
             ->whereNull('end_point_id')
             ->sortBy('id')
@@ -47,7 +47,7 @@ class RouteResource extends BaseResource
             'bounds' => (new BoundsHelper())
                 ->forPoints($this->points),
             'points' => $this->points,
-            'prices' => RoutePriceResource::collection($this->prices),
+            'prices' => RoutePriceResource::collection($this->relevantPrices),
             'base_price' => RoutePriceResource::make($basePrice),
             ...$this->getRequested($request),
         ];

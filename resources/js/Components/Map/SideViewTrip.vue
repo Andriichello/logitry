@@ -2,8 +2,7 @@
   import { computed, PropType } from 'vue';
   import { Point, Route, Trip } from '@/api';
   import { ArrowLeftFromLine, ArrowRightFromLine, ChevronDown, ChevronUp, X } from 'lucide-vue-next';
-  import { minutesToHumanReadable, numberAsIntOrFloat } from '@/helpers';
-  import dayjs from 'dayjs';
+  import { minutesToHumanReadable } from '@/helpers';
   import { useMapStore } from '@/stores/map';
   import SideViewStops from '@/Components/Map/SideViewStops.vue';
   import SideViewPrices from '@/Components/Map/SideViewPrices.vue';
@@ -48,21 +47,13 @@
       .slice(1);
   });
 
-  const durationsInOrder = computed(() => {
-    if (props.trip?.reversed) {
-      return [...durations.value].reverse();
-    }
-
-    return durations.value;
-  });
-
   function hidePoints() {
     mapStore.arePointsHidden = !mapStore.arePointsHidden;
   }
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 overflow-y-auto">
+  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 pt-0 overflow-y-auto">
     <div class="w-full flex flex-row justify-between items-baseline gap-2">
       <h3 class="text-md font-semibold">
         Trip
@@ -101,7 +92,7 @@
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
       <div class="w-full flex flex-col justify-start items-start"
            v-if="pointsInOrder.length">
-        <div class="w-full flex flex-row justify-between items-center pt-3 cursor-pointer"
+        <div class="w-full flex flex-row justify-between items-center pt-3 px-2 cursor-pointer"
              @click="hidePoints">
           <div class="w-full flex flex-col justify-between items-baseline">
             <h3 class="text-md font-semibold">
@@ -121,7 +112,7 @@
           </div>
         </div>
 
-        <div class="w-full flex flex-col justify-start items-start rounded"
+        <div class="w-full flex flex-col justify-start items-start rounded pl-1"
              v-if="!mapStore.arePointsHidden">
           <SideViewStops :route="route"
                          :trip="trip"
@@ -129,7 +120,7 @@
         </div>
       </div>
 
-      <div class="w-full flex flex-col justify-end items-start"
+      <div class="w-full flex flex-col justify-end items-start px-2"
            v-if="prices?.length">
 
         <div class="w-full flex flex-col justify-between items-baseline pt-3">

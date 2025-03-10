@@ -111,7 +111,7 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 overflow-y-auto">
+  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 pt-0 overflow-y-auto">
     <div class="w-full flex flex-row justify-between items-baseline gap-2">
       <h3 class="text-md font-semibold">
         Route
@@ -132,7 +132,7 @@
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
       <div class="w-full flex flex-col justify-start items-start"
            v-if="route.points?.length">
-        <div class="w-full flex flex-row justify-between items-center pt-3 cursor-pointer"
+        <div class="w-full flex flex-row justify-between items-center pt-3 px-2 cursor-pointer"
              @click="hidePoints">
           <div class="w-full flex flex-col justify-between items-baseline">
             <h3 class="text-md font-semibold">
@@ -152,14 +152,14 @@
           </div>
         </div>
 
-        <div class="w-full flex flex-col justify-start items-start rounded"
+        <div class="w-full flex flex-col justify-start items-start rounded pl-1"
              v-if="!mapStore.arePointsHidden">
           <SideViewStops :route="route"
                          :countries="countries"/>
         </div>
       </div>
 
-      <div class="w-full flex flex-col justify-end items-start"
+      <div class="w-full flex flex-col justify-end items-start px-2"
            v-if="route.prices?.length">
 
         <div class="w-full flex flex-col justify-between items-baseline pt-3">
@@ -185,7 +185,7 @@
           </div>
         </template>
 
-        <div class="w-full flex flex-col justify-start items-center pt-4 pr-2"
+        <div class="w-full flex flex-col justify-start items-center pt-5 pr-2"
              v-if="trips?.length">
           <div class="w-full flex flex-col justify-start items-start">
 

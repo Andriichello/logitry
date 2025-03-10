@@ -44,10 +44,10 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-center p-3 overflow-y-auto pb-20">
-    <div class="w-full flex flex-col justify-between items-baseline pb-2 gap-1"
+  <div class="w-full h-full flex flex-col justify-start items-center p-3 pt-1 overflow-y-auto pb-20">
+    <div class="w-full flex flex-col justify-between items-baseline pb-2"
          v-if="filters !== null">
-      <div class="w-full flex flex-row justify-between items-baseline gap-2">
+      <div class="w-full flex flex-row justify-between items-end gap-2">
         <h3 class="text-md font-semibold">
           Filters
         </h3>

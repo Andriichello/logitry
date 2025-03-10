@@ -26,7 +26,7 @@
     <tbody class="">
       <template v-for="price in route.prices" :key="price.id">
         <tr>
-          <th class="text-lg text-start px-3">
+          <th class="text-[16px] text-start px-3">
             <span class="font-semibold">
               <span v-if="price.unit === 'Seat'">seat</span>
               <span v-else-if="price.unit === 'Volume'">m³</span>

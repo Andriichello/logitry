@@ -1,21 +1,12 @@
 <script setup lang="ts">
   import { computed, PropType, ref } from 'vue';
   import { Point, Route, Trip } from '@/api';
-  import {
-    ArrowLeftFromLine,
-    ArrowRightFromLine,
-    Car,
-    ChevronDown,
-    ChevronUp,
-    MapPin,
-    MapPinHouse,
-    X,
-  } from 'lucide-vue-next';
-  import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-  import {minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime, toHumanWeekday} from '@/helpers';
+  import { ArrowLeftFromLine, ArrowRightFromLine, Car, ChevronDown, ChevronUp, X } from 'lucide-vue-next';
+  import { minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useMapStore } from '@/stores/map';
   import dayjs from 'dayjs';
+  import SideViewStops from '@/Components/Map/SideViewStops.vue';
 
   const emits = defineEmits(['route-closed', 'trip-clicked', 'trip-closed']);
 
@@ -160,49 +151,10 @@
           </div>
         </div>
 
-        <div class="w-full flex flex-col justify-start items-start bg-base-200 rounded py-1 px-0.5"
+        <div class="w-full flex flex-col justify-start items-start rounded"
              v-if="!mapStore.arePointsHidden">
-          <ul class="w-full timeline timeline-snap-icon timeline-compact timeline-vertical">
-            <template v-for="(point, index) in route.points" :key="point.id">
-              <li>
-                <div class="timeline-middle">
-                  <div class="px-1 pb-2">
-                    <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === route.points.length - 1"/>
-                    <MapPin v-else/>
-                  </div>
-                </div>
-                <div class="timeline-start"
-                     :class="{'mb-4' : index !== (route.points?.length - 1)}">
-                  <div class="w-full flex justify-start items-baseline"
-                       v-if="point.city">
-                  <span class="w-full">
-                    <span class="text-lg font-semibold grow">{{ point.city }}</span><br>
-
-                    <Deferred data="countries">
-                      <template #fallback>
-                        <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
-                      </template>
-
-                      <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ props.countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
-                    </Deferred>
-                  </span>
-                  </div>
-
-                  <div v-else>
-                    <span class="text-lg">{{ point.name }}</span>
-                  </div>
-
-                  <template v-if="durations?.[index]">
-                    <time class="font-mono italic">
-                      {{ minutesToHumanReadable(durations[index]) }}
-                    </time>
-                  </template>
-                </div>
-                <hr />
-              </li>
-            </template>
-          </ul>
-
+          <SideViewStops :route="route"
+                         :countries="countries"/>
         </div>
       </div>
 

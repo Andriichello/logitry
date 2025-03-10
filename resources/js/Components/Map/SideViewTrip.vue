@@ -34,6 +34,14 @@
 
   const mapStore = useMapStore();
 
+  const prices = computed(() => {
+    return props.route.prices;
+  });
+
+  const vehicle = computed(() => {
+    return props.route.vehicle;
+  });
+
   const pointsInOrder = computed(() => {
     if (props.trip.reversed) {
       return [...props.route.points].reverse();
@@ -221,7 +229,7 @@
         </div>
 
       <div class="w-full flex flex-col justify-end items-start"
-           v-if="route.prices?.length">
+           v-if="prices?.length">
 
         <div class="w-full flex flex-col justify-between items-baseline pt-3">
           <h3 class="text-md font-semibold">
@@ -232,19 +240,19 @@
           </p>
         </div>
 
-        <table class="table table-md text-md bg-base-200">
+        <table class="table table-md bg-base-200">
           <tbody>
-          <template v-for="price in route.prices" :key="price.id">
+          <template v-for="price in prices" :key="price.id">
             <tr>
-              <th class="text-[16px] text-start px-3">
+              <th class="text-start px-3 text-[16px]">
                   <span class="font-semibold">
                     <span v-if="price.unit === 'Seat'">seat</span>
                     <span v-else-if="price.unit === 'Volume'">m³</span>
                     <span v-else-if="price.unit === 'Weight'">kg</span>
                   </span>
               </th>
-              <td class="w-full flex justify-start items-baseline gap-2 text-lg">
-                  <span class="font-medium font-mono">
+              <td class="text-[16px] w-full flex justify-start items-baseline gap-2">
+                  <span class="font-bold font-mono">
                     {{ numberAsIntOrFloat(price.from) }}
                   </span>
 
@@ -252,7 +260,7 @@
                     <span class="font-medium font-mono">
                       -
                     </span>
-                  <span class="font-medium font-mono">
+                  <span class="font-bold font-mono">
                       {{ numberAsIntOrFloat(price.to) }}
                     </span>
                 </template>
@@ -263,6 +271,58 @@
               </td>
             </tr>
           </template>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="w-full flex flex-col justify-end items-start"
+        v-if="false">
+        <div class="w-full flex flex-col justify-between items-baseline pt-3">
+          <h3 class="text-md font-semibold">
+            Vehicle
+          </h3>
+          <p class="text-sm text-gray-400">
+            for the current trip
+          </p>
+        </div>
+
+        <table class="w-full table table-md text-md bg-base-200">
+          <tbody>
+            <tr>
+              <td class="text-[16px] w-full flex justify-start items-baseline gap-2">
+                <span class="font-medium font-mono">
+                  Renault Megan (2016)
+                </span>
+              </td>
+            </tr>
+
+            <tr v-if="prices.some(p => p.unit === 'Seat')">
+              <td class="text-[16px] w-full flex justify-start items-baseline gap-2">
+                <span class="font-medium font-mono">
+                  4 seats
+                </span>
+              </td>
+            </tr>
+
+            <template v-if="prices.some(p => p.unit === 'Weight' || p.unit === 'Volume')">
+              <tr v-if="prices.some(p => p.unit === 'Weight')">
+                <td class="text-[16px] w-full flex justify-start items-baseline gap-2">
+                  <div class="w-full flex justify-start items-baseline gap-3">
+                     <span class="font-medium font-mono">
+                      0.308 m³
+                    </span>
+                    <span class="font-medium font-mono">
+                      =
+                    </span>
+                    <span class="grow font-medium font-mono">
+                      2.40 x 1.60 x 1.15 m
+                    </span>
+                  </div>
+
+                </td>
+              </tr>
+            </template>
+
           </tbody>
         </table>
       </div>

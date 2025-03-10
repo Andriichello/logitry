@@ -227,8 +227,8 @@
                       <span v-else-if="price.unit === 'Weight'">kg</span>
                     </span>
                 </th>
-                <td class="w-full flex justify-start items-baseline gap-2 text-lg">
-                    <span class="font-medium font-mono">
+                <td class="text-[16px] w-full flex justify-start items-baseline gap-2">
+                    <span class="font-bold font-mono">
                       {{ numberAsIntOrFloat(price.from) }}
                     </span>
 
@@ -236,7 +236,7 @@
                       <span class="font-medium font-mono">
                         -
                       </span>
-                    <span class="font-medium font-mono">
+                    <span class="font-bold font-mono">
                         {{ numberAsIntOrFloat(price.to) }}
                       </span>
                   </template>

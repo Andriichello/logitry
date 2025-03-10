@@ -54,7 +54,7 @@
 
         <template v-if="showClearFilters">
           <label for="clear_filters"
-                 class="btn btn-sm flex justify-center items-center cursor-pointer p-2 gap-1">
+                 class="btn btn-sm btn-soft btn-error flex justify-center items-center cursor-pointer p-2 gap-1">
             Clear
             <FilterX class="w-5 h-5"/>
           </label>
@@ -73,7 +73,7 @@
           <div class="modal-box max-w-xs">
             <h3 class="text-lg font-bold">Clear all filters?</h3>
             <div class="w-full flex flex-row justify-start items-baseline gap-2 pt-5">
-              <label class="flex-1 btn btn-md btn-outline"
+              <label class="flex-1 btn btn-md btn-outline btn-error"
                      for="clear_filters"
                      @click="emits('clear-filters')">
                 Yes

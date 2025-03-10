@@ -34,7 +34,9 @@
     if (mapStore.route?.id === route.id) {
       // mapStore.route = null;
     } else {
-      mapStore.route = route;
+      if (!mapStore.trip) {
+        mapStore.route = route;
+      }
     }
   }
 
@@ -91,9 +93,10 @@
   <div>
     <template v-for="route in routes" :key="route.id" v-if="map">
       <RouteOnMap :map="map" :route="route"
-        :selected="mapStore.route?.id === route.id"
-        @marker-clicked="markerClicked"
-        @line-clicked="lineClicked"/>
+                  :selected="mapStore.route?.id === route.id"
+                  :hidden="mapStore.route ? mapStore.route?.id !== route.id : false"
+                  @marker-clicked="markerClicked"
+                  @line-clicked="lineClicked"/>
     </template>
   </div>
 </template>

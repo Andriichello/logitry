@@ -21,6 +21,10 @@
       type: Boolean as PropType<boolean>,
       default: false,
     },
+    hidden: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    },
   });
 
   const mapStore = useMapStore();
@@ -153,7 +157,7 @@
 <template>
   <div>
     <template v-if="group">
-      <LineOnMap
+      <LineOnMap v-if="!hidden"
         :size="{width: mapStore.scaledSizes.lineWidth}"
         :points="route.points"
         :selected="selected"
@@ -164,7 +168,7 @@
       />
 
       <template v-for="point in route.points" :key="point.id">
-        <MarkerOnMap
+        <MarkerOnMap v-if="!hidden"
           :size="{
             width: mapStore.scaledSizes.markerWidth,
             height: mapStore.scaledSizes.markerHeight,

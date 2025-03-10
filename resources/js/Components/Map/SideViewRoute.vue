@@ -12,7 +12,7 @@
     X,
   } from 'lucide-vue-next';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-  import {minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime} from '@/helpers';
+  import {minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime, toHumanWeekday} from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useMapStore } from '@/stores/map';
   import dayjs from 'dayjs';
@@ -138,42 +138,43 @@
     </div>
 
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
-      <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer">
-
-        <div class="flex flex-row justify-start items-center gap-2"
+      <div class="w-full flex flex-col justify-start items-start"
+           v-if="route.points?.length">
+        <div class="w-full flex flex-row justify-between items-center pt-3 cursor-pointer"
              @click="hidePoints">
-          <ChevronDown class="w-5 h-5 mt-0.5"
-                       v-if="mapStore.arePointsHidden"/>
+          <div class="w-full flex flex-col justify-between items-baseline">
+            <h3 class="text-md font-semibold">
+              Stops ({{route.points.length }})
+            </h3>
+            <p class="text-sm text-gray-400" v-if="route.travel_time">
+              <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }} travel time</span>
+            </p>
+          </div>
 
-          <ChevronUp class="w-5 h-5 mt-0.5"
-                     v-else/>
+          <div>
+            <ChevronDown class="w-6 h-6"
+                         v-if="mapStore.arePointsHidden"/>
 
-          <h3 class="text-md">
-            Stops ({{route.points?.length }})
-          </h3>
+            <ChevronUp class="w-6 h-6"
+                       v-else/>
+          </div>
         </div>
 
-        <div class="flex flex-row justify-end items-center"
-             v-if="route.travel_time">
-          <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }}</span>
-        </div>
-      </div>
-
-      <div class="w-full flex flex-col justify-start items-start px-1">
-        <ul class="w-full timeline timeline-snap-icon timeline-compact timeline-vertical"
-            v-if="!mapStore.arePointsHidden">
-          <template v-for="(point, index) in route.points" :key="point.id">
-            <li>
-              <div class="timeline-middle">
-                <div class="px-1 pb-2">
-                  <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === route.points.length - 1"/>
-                  <MapPin v-else/>
+        <div class="w-full flex flex-col justify-start items-start bg-base-200 rounded py-1 px-0.5"
+             v-if="!mapStore.arePointsHidden">
+          <ul class="w-full timeline timeline-snap-icon timeline-compact timeline-vertical">
+            <template v-for="(point, index) in route.points" :key="point.id">
+              <li>
+                <div class="timeline-middle">
+                  <div class="px-1 pb-2">
+                    <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === route.points.length - 1"/>
+                    <MapPin v-else/>
+                  </div>
                 </div>
-              </div>
-              <div class="timeline-start"
-                   :class="{'mb-4' : index !== (route.points?.length - 1)}">
-                <div class="w-full flex justify-start items-baseline"
-                     v-if="point.city">
+                <div class="timeline-start"
+                     :class="{'mb-4' : index !== (route.points?.length - 1)}">
+                  <div class="w-full flex justify-start items-baseline"
+                       v-if="point.city">
                   <span class="w-full">
                     <span class="text-lg font-semibold grow">{{ point.city }}</span><br>
 
@@ -185,23 +186,24 @@
                       <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ props.countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
                     </Deferred>
                   </span>
+                  </div>
+
+                  <div v-else>
+                    <span class="text-lg">{{ point.name }}</span>
+                  </div>
+
+                  <template v-if="durations?.[index]">
+                    <time class="font-mono italic">
+                      {{ minutesToHumanReadable(durations[index]) }}
+                    </time>
+                  </template>
                 </div>
+                <hr />
+              </li>
+            </template>
+          </ul>
 
-                <div v-else>
-                  <span class="text-lg">{{ point.name }}</span>
-                </div>
-
-                <template v-if="durations?.[index]">
-                  <time class="font-mono italic">
-                    {{ minutesToHumanReadable(durations[index]) }}
-                  </time>
-                </template>
-              </div>
-              <hr />
-            </li>
-          </template>
-        </ul>
-
+        </div>
       </div>
 
       <div class="w-full flex flex-col justify-end items-start"

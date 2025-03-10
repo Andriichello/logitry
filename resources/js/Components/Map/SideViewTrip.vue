@@ -152,48 +152,47 @@
     </div>
 
     <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
-      <div class="w-full flex flex-col justify-start items-start pr-2"
-            v-if="pointsInOrder.length">
-          <div class="w-full flex flex-row justify-between items-end gap-2 p-2 cursor-pointer">
-
-            <div class="flex flex-row justify-start items-center gap-2"
-                 @click="hidePoints">
-              <ChevronDown class="w-5 h-5 mt-0.5"
-                           v-if="mapStore.arePointsHidden"/>
-
-              <ChevronUp class="w-5 h-5 mt-0.5"
-                         v-else/>
-
-              <h3 class="text-md">
-                Stops ({{pointsInOrder.length }})
-              </h3>
-            </div>
-
-            <div class="flex flex-row justify-end items-center"
-                 v-if="route.travel_time">
-              <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }}</span>
-            </div>
+      <div class="w-full flex flex-col justify-start items-start"
+           v-if="pointsInOrder.length">
+        <div class="w-full flex flex-row justify-between items-center pt-3 cursor-pointer"
+             @click="hidePoints">
+          <div class="w-full flex flex-col justify-between items-baseline">
+            <h3 class="text-md font-semibold">
+              Stops ({{pointsInOrder.length }})
+            </h3>
+            <p class="text-sm text-gray-400" v-if="route.travel_time">
+              <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }} travel time</span>
+            </p>
           </div>
 
-          <div class="w-full flex flex-col justify-start items-start px-1">
-            <ul class="timeline timeline-snap-icon timeline-compact timeline-vertical"
-                v-if="!mapStore.arePointsHidden">
-              <template v-for="(point, index) in pointsInOrder" :key="point.id">
-                <li>
-                  <div class="timeline-middle">
-                    <div class="px-1 pb-2">
-                      <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === pointsInOrder.length - 1"/>
-                      <MapPin v-else/>
-                    </div>
+          <div>
+            <ChevronDown class="w-6 h-6"
+                         v-if="mapStore.arePointsHidden"/>
+
+            <ChevronUp class="w-6 h-6"
+                       v-else/>
+          </div>
+        </div>
+
+        <div class="w-full flex flex-col justify-start items-start bg-base-200 rounded py-1 px-0.5"
+             v-if="!mapStore.arePointsHidden">
+          <ul class="timeline timeline-snap-icon timeline-compact timeline-vertical">
+            <template v-for="(point, index) in pointsInOrder" :key="point.id">
+              <li>
+                <div class="timeline-middle">
+                  <div class="px-1 pb-2">
+                    <MapPinHouse class="w-6 h-6" v-if="index === 0 || index === pointsInOrder.length - 1"/>
+                    <MapPin v-else/>
                   </div>
-                  <div class="timeline-start"
-                       :class="{'mb-4' : index !== (pointsInOrder.length - 1)}">
-                    <time class="font-mono italic"
-                          v-if="timesInOrder?.[index]">
-                      {{ toHumanTime(timesInOrder[index]) }}<span class="text-sm"> ({{ toHumanWeekday(timesInOrder[index]) }}, {{ toHumanDate(timesInOrder[index]) }})</span>
-                    </time>
-                    <div class="w-full flex justify-start items-baseline"
-                         v-if="point.city">
+                </div>
+                <div class="timeline-start"
+                     :class="{'mb-4' : index !== (pointsInOrder.length - 1)}">
+                  <time class="font-mono italic"
+                        v-if="timesInOrder?.[index]">
+                    {{ toHumanTime(timesInOrder[index]) }}<span class="text-sm"> ({{ toHumanWeekday(timesInOrder[index]) }}, {{ toHumanDate(timesInOrder[index]) }})</span>
+                  </time>
+                  <div class="w-full flex justify-start items-baseline"
+                       v-if="point.city">
                               <span class="w-full">
                                 <span class="text-lg font-semibold grow">{{ point.city }}</span><br>
 
@@ -205,28 +204,28 @@
                                   <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
                                 </Deferred>
                               </span>
-                    </div>
-
-                    <div v-else>
-                      <span class="text-lg">{{ point.name }}</span>
-                    </div>
-
-                    <template v-if="trip.reversed">
-                      <template v-if="index < (route.points.length - 1)">
-                        <time class="font-mono italic" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
-                      </template>
-                    </template>
-
-                    <template v-else>
-                      <time class="font-mono italic" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
-                    </template>
                   </div>
-                  <hr />
-                </li>
-              </template>
-            </ul>
-          </div>
+
+                  <div v-else>
+                    <span class="text-lg">{{ point.name }}</span>
+                  </div>
+
+                  <template v-if="trip.reversed">
+                    <template v-if="index < (route.points.length - 1)">
+                      <time class="font-mono italic" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
+                    </template>
+                  </template>
+
+                  <template v-else>
+                    <time class="font-mono italic" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
+                  </template>
+                </div>
+                <hr />
+              </li>
+            </template>
+          </ul>
         </div>
+      </div>
 
       <div class="w-full flex flex-col justify-end items-start"
            v-if="prices?.length">

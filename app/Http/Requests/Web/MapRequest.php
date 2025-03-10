@@ -206,7 +206,7 @@ class MapRequest extends BaseRequest
             ->setTime(0, 0, 0, 1);
 
         $query = Trip::query()
-            ->arrivesWithin($today, null);
+            ->departsAfter($today);
 
         $company = $this->company();
 

@@ -3,7 +3,10 @@
     "name": "andriichello/logitry",
     "type": "project",
     "description": "The Logitry application.",
-    "keywords": ["laravel", "logitry"],
+    "keywords": [
+        "laravel",
+        "logitry"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -65,7 +68,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "laravel/telescope"
+            ]
         }
     },
     "config": {

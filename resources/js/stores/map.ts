@@ -134,6 +134,9 @@ export const useMapStore = defineStore('map', {
     setSelections(selections: {route: Route | null, trip: Trip | null}) {
       this.selections.route = selections.route;
       this.selections.trip = selections.trip;
+
+      this.route = selections.route;
+      this.trip = selections.trip;
     },
     recalculateZoom(map: L.Map | null) {
       if (map === null) {

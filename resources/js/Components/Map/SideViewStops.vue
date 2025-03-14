@@ -15,7 +15,7 @@
       required: true,
     },
     trip: {
-      type: Array as PropType<Trip[]> | null,
+      type: Object as PropType<Trip> | null,
       default: null,
     },
     countries: {

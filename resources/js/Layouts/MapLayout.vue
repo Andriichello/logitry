@@ -43,7 +43,9 @@
 
   onMounted(() => {
     onResize();
+
     window.addEventListener('resize', onResize);
+    window.addEventListener('popstate', onBack);
 
     const p = props?.routes?.[0]?.points?.[0];
     const center = p ? [p.latitude, p.longitude] : [50.0755, 14.4378];
@@ -69,7 +71,24 @@
 
   onUnmounted(() => {
     window.removeEventListener('resize', onResize);
+    window.removeEventListener('popstate', onBack);
   });
+
+  window.history.pushState(null, '', window.location.href);
+
+  function onBack(event: PopStateEvent) {
+    event.preventDefault();
+
+    try {
+      const selections = event.state ? JSON.parse(event.state) : null;
+
+      if (selections) {
+        mapStore.setSelections(selections);
+      }
+    } catch {
+      //
+    }
+  }
 
   function onResize() {
     isNarrowScreen.value = window.innerWidth < 800;
@@ -108,7 +127,7 @@
     document.getElementById('map-drawer')?.click();
   }
 
-  function reloadWithFilters() {
+  function urlWithFilters() {
     const params = [];
 
     if (mapStore.filters.abbreviation) {
@@ -145,7 +164,11 @@
       url += `?${params.join('&')}`;
     }
 
-    useForm().get(url);
+    return url;
+  }
+
+  function reloadWithFilters() {
+    useForm().get(urlWithFilters());
   }
 
   function applyCalendar({beg, end}: {beg: dayjs.Dayjs | null, end: dayjs.Dayjs | null}) {
@@ -225,28 +248,70 @@
     }
   }
 
-  function routeClicked(route: Route) {
-    mapStore.route = route;
-    mapStore.filters.route = route.id;
+  function selectRoute(route: Route | null) {
+    if (mapStore.route !== route) {
+      mapStore.route = route;
+      mapStore.filters.route = route?.id ?? null;
+      mapStore.selections.route = route;
 
+      const params = new URLSearchParams(window.location.search);
+
+      if (route) {
+        params.set('route', route.id);
+      } else {
+        params.delete('route');
+      }
+
+      const url = '/map' + '?' + params.toString();
+
+      if (!window.location.href.endsWith(url)) {
+        window.history.pushState(JSON.stringify(mapStore.selections), '', url);
+      }
+    }
+  }
+
+  function selectTrip(trip: Trip | null) {
+    if (mapStore.trip !== trip) {
+      mapStore.trip = trip;
+      mapStore.filters.trip = trip?.id ?? null;
+      mapStore.selections.trip = trip;
+
+      const params = new URLSearchParams(window.location.search);
+
+      if (trip) {
+        params.set('trip', trip.id);
+      } else {
+        params.delete('trip');
+      }
+
+      const url = '/map' + '?' + params.toString();
+
+      if (!window.location.href.endsWith(url)) {
+        window.history.pushState(JSON.stringify(mapStore.selections), '', url);
+      }
+    }
+  }
+
+  function routeClicked(route: Route) {
+    console.log('route clicked', route);
+
+    selectRoute(route);
     fitBounds(route.bounds ?? props.bounds);
   }
 
   function routeClosed(route: Route) {
-    mapStore.route = null;
-    mapStore.filters.route = null;
+    console.log('route closed', route);
 
+    selectRoute(null);
     fitBounds(props.bounds);
   }
 
   function tripClicked(trip: Trip) {
-    mapStore.trip = trip;
-    mapStore.filters.trip = trip.id;
+    selectTrip(trip);
   }
 
   function tripClosed(trip: Trip) {
-    mapStore.trip = null;
-    mapStore.filters.trip = null;
+    selectTrip(null);
   }
 
   function toggleMap() {
@@ -288,52 +353,6 @@
   //       }
   //     }
   //   });
-
-  watch(
-    () => mapStore.route,
-    (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        const params = new URLSearchParams(window.location.search);
-
-        if (newValue) {
-          params.set('route', newValue.id);
-        } else {
-          params.delete('route');
-        }
-
-        const url = '/map' + '?' + params.toString();
-        window.history.replaceState(null, '', url);
-      }
-
-      if (newValue && newValue.bounds && newValue !== oldValue) {
-        fitBounds(newValue.bounds);
-      }
-    },
-    { immediate: true },
-  );
-
-  watch(
-    () => mapStore.trip,
-    (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        const params = new URLSearchParams(window.location.search);
-
-        if (newValue) {
-          params.set('trip', newValue.id);
-        } else {
-          params.delete('trip');
-        }
-
-        const url = '/map' + '?' + params.toString();;
-        window.history.replaceState(null, '', url);
-      }
-
-      if (newValue && newValue.bounds && newValue !== oldValue) {
-        fitBounds(newValue.bounds);
-      }
-    },
-    { immediate: true },
-  );
 </script>
 
 <template>
@@ -379,7 +398,7 @@
                   v-if="!isShowingMap || !isNarrowScreen"
                   :company="props.company"
                   :routes="props.routes"
-                  :trips="props.trips"
+                  :trips="props?.trips"
                   :countries="props.countries"
                   @open-from="openFrom"
                   @open-calendar="openCalendar"

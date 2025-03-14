@@ -27,9 +27,18 @@
   const toast = useToast();
 
   const mapStore = useMapStore();
-  console.log(JSON.stringify(props.filters));
-
   mapStore.setFilters(props.filters);
+  mapStore.setSelections(props.selections);
+
+  if (mapStore.filters.trip && !mapStore.trip) {
+    setTimeout(() => toast.error('No such trip found.'), 100);
+  } else if (mapStore.filters.route && !mapStore.route) {
+    setTimeout(() => toast.error('No such route found.'), 100);
+  } else if (mapStore.filters.trip && !mapStore.trip) {
+    setTimeout(() => toast.error('No such trip found.'), 100);
+  } else if (mapStore.filters.route && !mapStore.route) {
+    setTimeout(() => toast.error('No such route found.'), 100);
+  }
 
   const map = inject<L.Map>('map');
 
@@ -38,8 +47,8 @@
       // mapStore.route = null;
     } else {
       if (!mapStore.trip) {
-        mapStore.route = route;
-        mapStore.filters.route = route.id;
+        // mapStore.route = route;
+        // mapStore.filters.route = route.id;
       }
     }
   }
@@ -48,8 +57,8 @@
     if (mapStore.route?.id === route.id) {
       // mapStore.route = null;
     } else {
-      mapStore.route = route;
-      mapStore.filters.route = route.id;
+      // mapStore.route = route;
+      // mapStore.filters.route = route.id;
     }
   }
 
@@ -92,40 +101,6 @@
     },
     { immediate: true },
   );
-
-  watch(
-    () => props.filters, (newValue, oldValue) => {
-      if (newValue && newValue !== oldValue) {
-        mapStore.setFilters(newValue);
-
-        if (mapStore.filters.trip && !mapStore.trip) {
-          toast.error('No such trip found.')
-        } else if (mapStore.filters.route && !mapStore.route) {
-          toast.error('No such route found.')
-        }
-      }
-    },
-    { immediate: true },
-  );
-
-  watch(
-    () => props.selections, (newValue, oldValue) => {
-      if (newValue && newValue !== oldValue) {
-        mapStore.setSelections(newValue);
-
-        mapStore.route = mapStore.selections.route;
-        mapStore.trip = mapStore.selections.trip;
-      }
-
-      if (mapStore.filters.trip && !mapStore.trip) {
-        setTimeout(() => toast.error('No such trip found.'), 100);
-      } else if (mapStore.filters.route && !mapStore.route) {
-        setTimeout(() => toast.error('No such route found.'), 100);
-      }
-    },
-    { immediate: true },
-  );
-
 </script>
 
 <template>

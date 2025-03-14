@@ -353,6 +353,16 @@
   //       }
   //     }
   //   });
+
+  watch(
+    () => mapStore.routeEvents.clicks,
+    (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (map.route !== mapStore.routeEvents.route) {
+          selectRoute(mapStore.routeEvents.route);
+        }
+      }
+    });
 </script>
 
 <template>

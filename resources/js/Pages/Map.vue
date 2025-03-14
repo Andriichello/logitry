@@ -47,6 +47,8 @@
       // mapStore.route = null;
     } else {
       if (!mapStore.trip) {
+        mapStore.routeEvents.route = route;
+        mapStore.routeEvents.clicks++;
         // mapStore.route = route;
         // mapStore.filters.route = route.id;
       }
@@ -57,6 +59,8 @@
     if (mapStore.route?.id === route.id) {
       // mapStore.route = null;
     } else {
+      mapStore.routeEvents.route = route;
+      mapStore.routeEvents.clicks++;
       // mapStore.route = route;
       // mapStore.filters.route = route.id;
     }

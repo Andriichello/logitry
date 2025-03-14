@@ -51,6 +51,13 @@ export interface MapSelections {
   trip: Trip | null,
 }
 
+export interface MapRouteEvents {
+  route: Route | null,
+  clicks: number,
+  closes: number,
+}
+
+
 export interface MapState {
   /** Currently applied zoom settings */
   zoom: MapZoom;
@@ -62,6 +69,9 @@ export interface MapState {
   filters: MapFilters;
   /** Currently applied selections */
   selections: MapSelections;
+
+  /** Used to pass route events to parent layout */
+  routeEvents: MapRouteEvents;
 
   /** Variable for handling map clicks for clearing selections */
   clicks: number;
@@ -112,6 +122,11 @@ export const useMapStore = defineStore('map', {
       selections: {
         route: null,
         trip: null,
+      },
+      routeEvents: {
+        route: null,
+        clicks: 0,
+        closes: 0,
       },
       clicks: 0,
       route: null,

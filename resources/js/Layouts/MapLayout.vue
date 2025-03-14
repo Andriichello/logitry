@@ -349,7 +349,7 @@
     </div>
 
     <div id="map-page" class="w-full h-full flex flex-row-reverse relative">
-      <div id="map" class="h-[100vh] relative">
+      <div id="map" class="h-full min-h-full relative">
         <slot/>
       </div>
 
@@ -417,7 +417,7 @@
 
 <style scoped>
   .side {
-    @apply h-[100vh] max-h-[100vh];
+    @apply h-full max-h-full;
 
     min-width: 35vw;
     max-width: 500px;
@@ -434,7 +434,7 @@
 
   @media (max-width: 800px) {
     .side {
-      @apply h-[100vh] max-h-[100vh];
+      @apply h-full max-h-full;
 
       min-width: 35vw;
       max-width: 100%;

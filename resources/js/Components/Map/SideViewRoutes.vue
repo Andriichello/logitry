@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  import { PropType, computed } from 'vue';
+  import { computed, PropType } from 'vue';
   import { Route, Trip } from '@/api';
-  import { Route as RouteIcon, X, Filter, FilterX } from 'lucide-vue-next';
+  import { FilterX, Route as RouteIcon, X } from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { MapFilters } from '@/stores/map';
   import { Deferred } from '@inertiajs/vue3';
@@ -89,7 +89,8 @@
 
       </div>
 
-      <SideViewFilters :filters="filters"
+      <SideViewFilters class="pt-1"
+                       :filters="filters"
                        :countries="countries"
                        @swap-from-and-where="emits('swap-from-and-where')"
                        @open-from="emits('open-from')"
@@ -107,7 +108,7 @@
       </div>
     </div>
 
-    <div class="w-full grow flex flex-col justify-start gap-1 items-start"
+    <div class="w-full h-full grow flex flex-col justify-start gap-1 items-start"
          v-if="props.routes?.length">
 
       <template v-for="(route, index) in props.routes" :key="route.id">
@@ -149,7 +150,7 @@
       </template>
     </div>
 
-    <div class="flex flex-col justify-center items-center gap-2 p-4"
+    <div class="w-full h-full flex flex-col justify-center items-center gap-2 p-4"
          v-else>
       <RouteIcon class="w-8 h-8"/>
 

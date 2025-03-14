@@ -81,10 +81,10 @@ export const useMapStore = defineStore('map', {
         circleRadius: 20,
       },
       scaledSizes: {
-        lineWidth: 4,
-        markerWidth: 150,
-        markerHeight: 150,
-        circleRadius: 20,
+        lineWidth: 2,
+        markerWidth: 30,
+        markerHeight: 30,
+        circleRadius: 4,
       },
       filters: {
         abbreviation: null,

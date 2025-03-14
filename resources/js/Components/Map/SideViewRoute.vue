@@ -195,16 +195,18 @@
               </h3>
 
               <div class="w-full flex flex-row justify-start items-end gap-2" v-if="forwardTrips.length && returnTrips.length">
-                <span class="text-sm font-medium grow">Direction: </span>
-                <div class="self-center filter">
-                  <input class="btn btn-sm btn-success" type="radio" value="forward" name="trips_mode" :aria-label="'Forward ' + '(' + forwardTrips.length + ')'"
-                         :class="{'btn-outline': tripsMode !== 'forward'}"
-                         @click="tripsMode = 'forward'"/>
-                  <input class="btn btn-sm btn-error" type="radio" value="backward" name="trips_mode" :aria-label="'Return ' + '(' + returnTrips.length + ')'"
-                         :class="{'btn-outline': tripsMode !== 'backward'}"
-                         @change="$event.target.checked && (tripsMode = 'backward')"/>
-                  <input class="btn btn-sm filter-reset ml-1" type="radio" value="all" name="trips_mode" aria-label="All"
-                         @change="$event.target.checked && (tripsMode = 'all')"/>
+                <span class="text-sm font-medium">Direction: </span>
+                <div class="w-full flex flex-row justify-end items-center gap-2">
+                  <div class="filter">
+                    <input class="btn btn-sm btn-success" type="radio" value="forward" name="trips_mode" :aria-label="'Forward ' + '(' + forwardTrips.length + ')'"
+                           :class="{'btn-outline': tripsMode !== 'forward'}"
+                           @click="tripsMode = 'forward'"/>
+                    <input class="btn btn-sm btn-error" type="radio" value="backward" name="trips_mode" :aria-label="'Return ' + '(' + returnTrips.length + ')'"
+                           :class="{'btn-outline': tripsMode !== 'backward'}"
+                           @change="$event.target.checked && (tripsMode = 'backward')"/>
+                    <input class="btn btn-sm filter-reset ml-1" type="radio" value="all" name="trips_mode" aria-label="All"
+                           @change="$event.target.checked && (tripsMode = 'all')"/>
+                  </div>
                 </div>
               </div>
             </div>

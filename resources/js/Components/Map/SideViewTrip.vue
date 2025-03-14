@@ -41,12 +41,6 @@
     return props.route.points;
   });
 
-  const durations = computed(() => {
-    return props.route.points
-      .map((p: Point) => p.travel_time)
-      .slice(1);
-  });
-
   function hidePoints() {
     mapStore.arePointsHidden = !mapStore.arePointsHidden;
   }

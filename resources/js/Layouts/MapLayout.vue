@@ -59,9 +59,10 @@
       .setView(center, 5);
 
     lightMap.value = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png');
-    darkMap.value = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png');
+    // darkMap.value = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png');
 
-    map.value.addLayer(themeStore.isDark ? darkMap.value : lightMap.value);
+    map.value.addLayer(lightMap.value);
+    // map.value.addLayer(themeStore.isDark ? darkMap.value : lightMap.value);
 
     fitBounds(mapStore.route?.bounds ?? props.bounds);
   });
@@ -263,18 +264,18 @@
     },
   );
 
-  watch(
-    () => themeStore.isDark,
-    (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        if (map.value) {
-          setTimeout(() => {
-            map.value.removeLayer(oldValue ? darkMap.value : lightMap.value);
-            map.value.addLayer(newValue ? darkMap.value : lightMap.value);
-          });
-        }
-      }
-    });
+  // watch(
+  //   () => themeStore.isDark,
+  //   (newValue, oldValue) => {
+  //     if (newValue !== oldValue) {
+  //       if (map.value) {
+  //         setTimeout(() => {
+  //           map.value.removeLayer(oldValue ? darkMap.value : lightMap.value);
+  //           map.value.addLayer(newValue ? darkMap.value : lightMap.value);
+  //         });
+  //       }
+  //     }
+  //   });
 
   watch(
     () => mapStore.route,

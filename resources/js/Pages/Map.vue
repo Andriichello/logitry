@@ -10,7 +10,7 @@
 <script setup lang="ts">
   import 'leaflet/dist/leaflet.css';
   import { inject, onMounted, PropType, watch } from 'vue';
-  import {MapFilters, useMapStore} from '@/stores/map';
+  import { MapFilters, MapSelections, useMapStore } from '@/stores/map';
   import { Company, Trip } from '@/api';
   import { Route } from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
@@ -21,11 +21,14 @@
     routes: Array as PropType<Route[]> | null,
     trips: Array as PropType<Trip[]> | null,
     filters: Object as PropType<MapFilters> | null,
+    selections: Object as PropType<MapSelections> | null,
   });
 
   const toast = useToast();
 
   const mapStore = useMapStore();
+  console.log(JSON.stringify(props.filters));
+
   mapStore.setFilters(props.filters);
 
   const map = inject<L.Map>('map');
@@ -36,6 +39,7 @@
     } else {
       if (!mapStore.trip) {
         mapStore.route = route;
+        mapStore.filters.route = route.id;
       }
     }
   }
@@ -45,6 +49,7 @@
       // mapStore.route = null;
     } else {
       mapStore.route = route;
+      mapStore.filters.route = route.id;
     }
   }
 
@@ -87,6 +92,40 @@
     },
     { immediate: true },
   );
+
+  watch(
+    () => props.filters, (newValue, oldValue) => {
+      if (newValue && newValue !== oldValue) {
+        mapStore.setFilters(newValue);
+
+        if (mapStore.filters.trip && !mapStore.trip) {
+          toast.error('No such trip found.')
+        } else if (mapStore.filters.route && !mapStore.route) {
+          toast.error('No such route found.')
+        }
+      }
+    },
+    { immediate: true },
+  );
+
+  watch(
+    () => props.selections, (newValue, oldValue) => {
+      if (newValue && newValue !== oldValue) {
+        mapStore.setSelections(newValue);
+
+        mapStore.route = mapStore.selections.route;
+        mapStore.trip = mapStore.selections.trip;
+      }
+
+      if (mapStore.filters.trip && !mapStore.trip) {
+        setTimeout(() => toast.error('No such trip found.'), 100);
+      } else if (mapStore.filters.route && !mapStore.route) {
+        setTimeout(() => toast.error('No such route found.'), 100);
+      }
+    },
+    { immediate: true },
+  );
+
 </script>
 
 <template>

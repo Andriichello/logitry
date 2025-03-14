@@ -37,6 +37,18 @@ export interface MapFilters {
   beg: dayjs.Dayjs | null,
   /** Currently selected end date */
   end: dayjs.Dayjs | null,
+
+  /** Currently selected route id */
+  route: number | null,
+  /** Currently selected trip id */
+  trip: number | null,
+}
+
+export interface MapSelections {
+  /** Currently selected route */
+  route: Route | null,
+  /** Currently selected trip */
+  trip: Trip | null,
 }
 
 export interface MapState {
@@ -48,6 +60,8 @@ export interface MapState {
   scaledSizes: MapSizes;
   /** Currently applied filters */
   filters: MapFilters;
+  /** Currently applied selections */
+  selections: MapSelections;
 
   /** Variable for handling map clicks for clearing selections */
   clicks: number;
@@ -92,6 +106,12 @@ export const useMapStore = defineStore('map', {
         to: null,
         beg: null,
         end: null,
+        route: null,
+        trip: null,
+      },
+      selections: {
+        route: null,
+        trip: null,
       },
       clicks: 0,
       route: null,
@@ -102,12 +122,18 @@ export const useMapStore = defineStore('map', {
     }
   },
   actions: {
-    setFilters(filters: {abbreviation: string | null, beg: string | null, end: string | null, from: string | null, to: string | null}) {
+    setFilters(filters: {abbreviation: string | null, beg: string | null, end: string | null, from: string | null, to: string | null, route: number | null, trip: number | null}) {
       this.filters.abbreviation = filters.abbreviation;
       this.filters.beg = filters.beg ? dayjs(filters.beg) : null;
       this.filters.end = filters.end ? dayjs(filters.end) : null;
       this.filters.from = filters.from;
       this.filters.to = filters.to;
+      this.filters.route = filters.route;
+      this.filters.trip = filters.trip;
+    },
+    setSelections(selections: {route: Route | null, trip: Trip | null}) {
+      this.selections.route = selections.route;
+      this.selections.trip = selections.trip;
     },
     recalculateZoom(map: L.Map | null) {
       if (map === null) {

@@ -131,6 +131,14 @@
       params.push(`to=${mapStore.filters.to}`);
     }
 
+    if (mapStore.filters.route) {
+      params.push(`route=${mapStore.filters.route}`);
+    }
+
+    if (mapStore.filters.trip) {
+      params.push(`trip=${mapStore.filters.trip}`);
+    }
+
     let url = '/map';
 
     if (params.length) {
@@ -219,22 +227,26 @@
 
   function routeClicked(route: Route) {
     mapStore.route = route;
+    mapStore.filters.route = route.id;
 
     fitBounds(route.bounds ?? props.bounds);
   }
 
   function routeClosed(route: Route) {
     mapStore.route = null;
+    mapStore.filters.route = null;
 
     fitBounds(props.bounds);
   }
 
   function tripClicked(trip: Trip) {
     mapStore.trip = trip;
+    mapStore.filters.trip = trip.id;
   }
 
   function tripClosed(trip: Trip) {
     mapStore.trip = null;
+    mapStore.filters.trip = null;
   }
 
   function toggleMap() {
@@ -280,6 +292,42 @@
   watch(
     () => mapStore.route,
     (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        const params = new URLSearchParams(window.location.search);
+
+        if (newValue) {
+          params.set('route', newValue.id);
+        } else {
+          params.delete('route');
+        }
+
+        const url = '/map' + '?' + params.toString();
+        window.history.replaceState(null, '', url);
+      }
+
+      if (newValue && newValue.bounds && newValue !== oldValue) {
+        fitBounds(newValue.bounds);
+      }
+    },
+    { immediate: true },
+  );
+
+  watch(
+    () => mapStore.trip,
+    (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        const params = new URLSearchParams(window.location.search);
+
+        if (newValue) {
+          params.set('trip', newValue.id);
+        } else {
+          params.delete('trip');
+        }
+
+        const url = '/map' + '?' + params.toString();;
+        window.history.replaceState(null, '', url);
+      }
+
       if (newValue && newValue.bounds && newValue !== oldValue) {
         fitBounds(newValue.bounds);
       }

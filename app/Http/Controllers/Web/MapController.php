@@ -37,10 +37,11 @@ class MapController extends BaseController
         if ($company === null) {
             $props = [
                 'company' => null,
+                'filters' => $request->filters(),
+                'selections' => $request->selections(),
                 'routes' => [],
                 'bounds' => null,
                 'trips' => null,
-                'filters' => $request->filters(),
             ];
 
             return ApiResponse::ok($props);
@@ -67,12 +68,13 @@ class MapController extends BaseController
         $props = [
             'company' => ($company = $request->company())
                 ? new CompanyResource($company) : null,
+            'filters' => $request->filters(),
+            'selections' => $request->selections(),
             'routes' => RouteResource::collection($routes),
             'bounds' => (new BoundsHelper())
                 ->forRoutes($routes->all(), 0.05),
             'trips' => TripResource::collection($trips),
             'trip_highlights' => TripHighlightResource::collection($tripHighlights),
-            'filters' => $request->filters(),
         ];
 
         return ApiResponse::ok($props);
@@ -94,9 +96,10 @@ class MapController extends BaseController
         if ($company === null) {
             $props = [
                 'company' => null,
+                'filters' => $request->filters(),
+                'selections' => $request->selections(),
                 'routes' => [],
                 'bounds' => null,
-                'filters' => $request->filters(),
                 'trips' => null,
                 'trip_highlights' => null,
             ];
@@ -120,10 +123,11 @@ class MapController extends BaseController
         $props = [
             'company' => ($company = $request->company())
                 ? new CompanyResource($company) : null,
+            'filters' => $request->filters(),
+            'selections' => $request->selections(),
             'routes' => RouteResource::collection($routes),
             'bounds' => (new BoundsHelper())
                 ->forRoutes($routes->all(), 0.05),
-            'filters' => $request->filters(),
 //            'trips' => Inertia::defer(
 //                function() use($request) {
 //                    sleep(5);

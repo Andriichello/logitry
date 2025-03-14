@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Web;
 
 use App\Http\Requests\BaseRequest;
+use App\Http\Resources\Specific\RouteResource;
+use App\Http\Resources\Specific\TripResource;
 use App\Models\Company;
 use App\Models\Route;
 use App\Models\Trip;
@@ -60,6 +62,16 @@ class MapRequest extends BaseRequest
                 'sometimes',
                 'nullable',
                 'string',
+            ],
+            'route' => [
+                'sometimes',
+                'nullable',
+                'integer',
+            ],
+            'trip' => [
+                'sometimes',
+                'nullable',
+                'integer',
             ],
         ];
     }
@@ -327,6 +339,48 @@ class MapRequest extends BaseRequest
             'end' => $this->get('end'),
             'from' => $this->get('from'),
             'to' => $this->get('to'),
+            'route' => $this->get('route'),
+            'trip' => $this->get('trip'),
         ];
+    }
+
+    /**
+     * Returns an array of selections that are applied on the map.
+     *
+     * @return array{
+     *     route: RouteResource|null,
+     *     trip: TripResource|null,
+     * }
+     */
+    public function selections(): array
+    {
+        $selections = [
+            'route' => null,
+            'trip' => null,
+        ];
+
+        $company = $this->company();
+
+        $routeId = $this->get('route');
+
+        if (!empty($routeId)) {
+            $route = Route::query()
+                ->where('company_id', $company?->id)
+                ->find($routeId);
+
+            $selections['route'] = $route ? new RouteResource($route) : null;
+        }
+
+        $tripId = $this->get('trip');
+
+        if (!empty($tripId)) {
+            $trip = Trip::query()
+                ->withinCompanies($company?->id)
+                ->find($tripId);
+
+            $selections['trip'] = $trip ? new TripResource($trip) : null;
+        }
+
+        return $selections;
     }
 }

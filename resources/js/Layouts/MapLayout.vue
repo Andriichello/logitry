@@ -152,7 +152,7 @@
       params.push(`trip=${mapStore.filters.trip}`);
     }
 
-    let url = '/' + mapStore.filters.abbreviation + '/map';
+    let url = '/' + props.company?.abbreviation + '/map';
 
     if (params.length) {
       url += `?${params.join('&')}`;
@@ -256,7 +256,7 @@
         params.delete('route');
       }
 
-      const url = '/map' + '?' + params.toString();
+      const url = '/' + props.company?.abbreviation + '/map' + '?' + params.toString();
 
       if (!window.location.href.endsWith(url)) {
         window.history.pushState(JSON.stringify(mapStore.selections), '', url);
@@ -278,7 +278,7 @@
         params.delete('trip');
       }
 
-      const url = '/map' + '?' + params.toString();
+      const url = '/' + props.company?.abbreviation + '/map' + '?' + params.toString();
 
       if (!window.location.href.endsWith(url)) {
         window.history.pushState(JSON.stringify(mapStore.selections), '', url);

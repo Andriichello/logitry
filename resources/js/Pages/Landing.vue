@@ -15,6 +15,7 @@
   import { useMapStore } from '@/stores/map';
   import { Bounds, Company, Trip } from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
+  import { useToast } from 'vue-toastification';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -22,6 +23,7 @@
     bounds: Object as PropType<Bounds> | null,
   });
 
+  const toast = useToast();
   const mapStore = useMapStore();
 
   const map = ref(null as L.Map | null);
@@ -118,7 +120,10 @@
             Leave your details, and our manager will contact you to discuss route options.
             No upfront commitment - just a quick call to find the best route for you.
           </p>
-          <button class="w-full btn btn-lg btn-success">Talk to a Manager</button>
+          <button class="w-full btn btn-lg btn-success"
+                  @click="toast.info('Not implemented yet', { timeout: 2000 })">
+            Talk to a Manager
+          </button>
         </div>
       </div>
     </div>

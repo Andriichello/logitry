@@ -1,6 +1,16 @@
 <script setup lang="ts">
-  import { Sun, Moon } from 'lucide-vue-next';
+  import { Sun, Moon, ChevronsRight } from 'lucide-vue-next';
   import { useThemeStore } from '@/stores/theme';
+  import { PropType } from 'vue';
+
+  const emits = defineEmits(['collapse']);
+
+  const props = defineProps({
+    target: {
+      type: String as PropType<string>,
+      required: true,
+    }
+  });
 
   const themeStore = useThemeStore();
 
@@ -11,20 +21,29 @@
 
 <template>
   <div class="drawer-side">
-    <label for="map-drawer" aria-label="close sidebar" class="drawer-overlay"/>
-
+    <label :for="target" aria-label="close sidebar" class="drawer-overlay"/>
+    <!-- Sidebar content here -->
     <ul class="menu bg-base-200 text-base-content min-h-full w-xs">
-      <!-- Sidebar content here -->
-      <li></li>
-      <li @click="themeStore.toggle">
-        <div class="flex flex-row justify-start items-center">
-          <Sun v-if="themeStore.isDark"/>
-          <Moon v-else/>
+      <li @click="emits('collapse')"
+          class="w-fit flex flex-row gap-0 mt-2.5 mb-2 text-black active:text-white">
+        <div class="-translate-x-9 bg-gray-300 pl-2">
+          <ChevronsRight class="w-6 h-6" />
 
-          <span class="text-lg">Change theme</span>
+          <span class="text-lg font-mono pt-0.5">Collapse</span>
         </div>
       </li>
 
+
+      <li @click="themeStore.toggle">
+        <div class="flex flex-row justify-center items-center">
+          <Sun class="w-6 h-6" v-if="themeStore.isDark"/>
+          <Moon class="w-6 h-6" v-else/>
+
+          <span class="text-lg">Switch to {{ themeStore.isDark ? 'Light' : 'Dark' }}</span>
+
+          <Sun class="w-6 h-6 opacity-0"/>
+        </div>
+      </li>
       <li class="grow opacity-0"></li>
 
       <li @click="openGitHub">

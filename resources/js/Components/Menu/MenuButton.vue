@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="w-12 h-12 p-2 btn bg-base-100">
+  <div class="w-12 h-12 p-2 btn bg-gray-300 text-black">
     <AlignJustify/>
   </div>
 </template>

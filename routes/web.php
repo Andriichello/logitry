@@ -32,6 +32,12 @@ Route::group(['as' => 'web.'], function () {
     Route::get('/map/data', [Web\MapController::class, 'get'])
         ->name('map.data');
 
+    Route::get('/{abbreviation}', [Web\LandingController::class, 'view'])
+        ->name('landing.view');
+
+    Route::get('/{abbreviation}/data', [Web\LandingController::class, 'get'])
+        ->name('landing.data');
+
     Route::get('/me', [MeController::class, 'me'])
         ->name('me.view');
 });

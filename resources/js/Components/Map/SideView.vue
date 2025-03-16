@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { PropType } from 'vue';
+  import { router } from '@inertiajs/vue3';
   import { Company, Route, Trip } from '@/api';
   import CompanyInfo from '@/Components/Map/CompanyInfo.vue';
   import { useMapStore } from '@/stores/map';
@@ -72,8 +73,10 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-start gap-2 p-2">
-    <CompanyInfo :company="props.company"/>
+  <div class="w-full h-full flex flex-col justify-start items-start gap-2 p-2 bg-base-200">
+    <CompanyInfo class="cursor-pointer bg-base-200"
+                 :company="props.company"
+                 @click="router.visit(`/${company?.abbreviation}`)"/>
 
     <SideViewTrip v-if="mapStore.trip"
                   :route="mapStore.route"

@@ -26,10 +26,10 @@ Route::group(['as' => 'web.'], function () {
     Route::get('/home', [Web\HomeController::class, 'view'])
         ->name('home.view');
 
-    Route::get('/map', [Web\MapController::class, 'view'])
+    Route::get('/{abbreviation}/map', [Web\MapController::class, 'view'])
         ->name('map.view');
 
-    Route::get('/map/data', [Web\MapController::class, 'get'])
+    Route::get('/{abbreviation}/map/data', [Web\MapController::class, 'get'])
         ->name('map.data');
 
     Route::get('/{abbreviation}', [Web\LandingController::class, 'view'])

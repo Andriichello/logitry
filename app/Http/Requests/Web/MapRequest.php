@@ -8,7 +8,6 @@ use App\Http\Resources\Specific\TripResource;
 use App\Models\Company;
 use App\Models\Route;
 use App\Models\Trip;
-use App\Models\User;
 use App\Queries\RouteQuery;
 use App\Queries\TripQuery;
 use Carbon\Carbon;
@@ -36,11 +35,6 @@ class MapRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'abbreviation' => [
-                'sometimes',
-                'nullable',
-                'string',
-            ],
             'beg' => [
                 'sometimes',
                 'nullable',
@@ -123,6 +117,16 @@ class MapRequest extends BaseRequest
     }
 
     /**
+     * Get the abbreviation of the company.
+     *
+     * @return string|null
+     */
+    public function abbreviation(): ?string
+    {
+        return $this->route('abbreviation');
+    }
+
+    /**
      * Get the company, which is viewed on the map.
      *
      * @return Company|null
@@ -130,18 +134,10 @@ class MapRequest extends BaseRequest
     public function company(): ?Company
     {
         if (empty($this->company)) {
-            $abbreviation = $this->get('abbreviation');
+            $abbreviation = $this->abbreviation();
 
             if (!empty($abbreviation)) {
                 return $this->company = Company::findBy(abb: $abbreviation);
-            }
-
-            $user = $this->user();
-
-            if ($user instanceof User) {
-                if ($user->company) {
-                    return $this->company = $user->company;
-                }
             }
         }
 
@@ -334,7 +330,7 @@ class MapRequest extends BaseRequest
     public function filters(): array
     {
         return [
-            'abbreviation' => $this->get('abbreviation'),
+            'abbreviation' => $this->abbreviation(),
             'beg' => $this->beg(),
             'end' => $this->get('end'),
             'from' => $this->get('from'),

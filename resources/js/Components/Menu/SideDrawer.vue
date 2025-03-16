@@ -33,9 +33,10 @@
         </div>
       </li>
 
+      <li class="grow opacity-0"></li>
 
       <li @click="themeStore.toggle">
-        <div class="flex flex-row justify-center items-center">
+        <div class="flex flex-row justify-center items-center py-3">
           <Sun class="w-6 h-6" v-if="themeStore.isDark"/>
           <Moon class="w-6 h-6" v-else/>
 
@@ -44,7 +45,8 @@
           <Sun class="w-6 h-6 opacity-0"/>
         </div>
       </li>
-      <li class="grow opacity-0"></li>
+
+      <li class="m-3"></li>
 
       <li @click="openGitHub">
         <div class="flex flex-row justify-center items-center gap-3">

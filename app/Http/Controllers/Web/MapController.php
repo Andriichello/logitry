@@ -12,7 +12,6 @@ use App\Http\Resources\Specific\TripHighlightResource;
 use App\Http\Resources\Specific\TripResource;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Arr;
 use Inertia\Inertia;
 use Inertia\Response;
 use Inertia\ResponseFactory;
@@ -54,6 +53,7 @@ class MapController extends BaseController
                     [
                         ...$request->query(),
                         'beg' => now()->format('Y-m-d'),
+                        'abbreviation' => $request->abbreviation(),
                     ]
                 );
         }
@@ -114,6 +114,7 @@ class MapController extends BaseController
                     [
                         ...$request->query(),
                         'beg' => now()->format('Y-m-d'),
+                        'abbreviation' => $request->abbreviation(),
                     ]
                 );
         }

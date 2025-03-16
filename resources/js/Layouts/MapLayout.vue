@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
-  import { onMounted, onUnmounted, PropType, provide, ref, watch, computed } from 'vue';
-  import { Bounds, Company, Route, RoutePrice, Trip, TripHighlight } from '@/api';
+  import { onMounted, onUnmounted, PropType, provide, ref, watch } from 'vue';
+  import { Bounds, Company, Route, Trip, TripHighlight } from '@/api';
   import CompassButton from '@/Components/Map/CompassButton.vue';
   import { useThemeStore } from '@/stores/theme';
   import { useMapStore } from '@/stores/map';
@@ -12,10 +12,8 @@
   import { MapPinned, Route as RouteIcon } from 'lucide-vue-next';
   import dayjs from 'dayjs';
   import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
-  import {useForm} from "@inertiajs/vue3";
-  import SideViewFrom from "@/Components/Map/SideViewFrom.vue";
-  import { toast } from '@lucide/lab';
-  import { useToast } from 'vue-toastification';
+  import { useForm } from '@inertiajs/vue3';
+  import SideViewFrom from '@/Components/Map/SideViewFrom.vue';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -130,10 +128,6 @@
   function urlWithFilters() {
     const params = [];
 
-    if (mapStore.filters.abbreviation) {
-      params.push(`abbreviation=${mapStore.filters.abbreviation}`);
-    }
-
     if (mapStore.filters.beg) {
       params.push(`beg=${mapStore.filters.beg.format('YYYY-MM-DD')}`);
     }
@@ -158,7 +152,7 @@
       params.push(`trip=${mapStore.filters.trip}`);
     }
 
-    let url = '/map';
+    let url = '/' + mapStore.filters.abbreviation + '/map';
 
     if (params.length) {
       url += `?${params.join('&')}`;
@@ -380,7 +374,7 @@
     </div>
 
     <div id="map-page" class="w-full h-full flex flex-row-reverse relative">
-      <div id="map" class="h-full min-h-full relative">
+      <div id="map" class="h-full relative">
         <slot/>
       </div>
 

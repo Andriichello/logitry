@@ -4,6 +4,8 @@ namespace App\Http\Requests\Web;
 
 use App\Http\Requests\BaseRequest;
 use App\Models\Company;
+use App\Models\Route;
+use App\Queries\RouteQuery;
 
 /**
  * Class LandingRequest.
@@ -58,5 +60,26 @@ class LandingRequest extends BaseRequest
         }
 
         return $this->company ?? null;
+    }
+
+    /**
+     * Returns a query for routes to show on map.
+     *
+     * @return RouteQuery
+     */
+    public function routes(): RouteQuery
+    {
+        $query = Route::query();
+
+        $company = $this->company();
+
+        if ($company) {
+            $query->where('company_id', $company->id);
+        }
+
+        $query->withCount('trips')
+            ->orderBy('trips_count', 'desc');
+
+        return $query;
     }
 }

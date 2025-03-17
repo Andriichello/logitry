@@ -12,7 +12,7 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-row justify-start items-center gap-2 p-2">
+  <div class="w-full flex flex-row justify-start items-center gap-3 p-2">
     <div class="btn btn-square btn-lg btn-primary opacity-80 hover:opacity-100">
       <Building2 class="w-6 h-6"/>
     </div>

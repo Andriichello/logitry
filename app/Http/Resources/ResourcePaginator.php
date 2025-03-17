@@ -16,7 +16,7 @@ class ResourcePaginator extends Paginator
     /**
      * Resource collection class.
      *
-     * @var class-string<BaseCollection>
+     * @var class-string<BaseCollection|BaseResource>
      */
     protected string $collectionClass;
 
@@ -31,7 +31,7 @@ class ResourcePaginator extends Paginator
      * ResourcePaginator constructor.
      *
      * @param Paginator|LengthAwarePaginator $paginator
-     * @param class-string<BaseCollection> $collectionClass
+     * @param class-string<BaseCollection|BaseResource> $collectionClass
      *
      * @throws Exception
      */
@@ -49,7 +49,10 @@ class ResourcePaginator extends Paginator
         $this->paginator = $paginator;
         $this->collectionClass = $collectionClass;
 
-        if (!is_subclass_of($collectionClass, ResourceCollection::class)) {
+        $isValid = is_subclass_of($collectionClass, BaseResource::class)
+            || is_subclass_of($collectionClass, ResourceCollection::class);
+
+        if (!$isValid) {
             $message = 'Invalid collectionClass.' .
                 ' It must be an instance of ResourceCollection.';
 
@@ -65,15 +68,8 @@ class ResourcePaginator extends Paginator
      */
     public function toArray(): array
     {
-        $collection = $this->getResourceCollection();
-        $resource = new ($collection->collects)([]);
-
-        $schema = $resource instanceof BaseResource
-            ? $resource->getSimpleSchema() : null;
-
         return [
-            'schema' => $schema?->toArray(),
-            'data' => $collection,
+            'data' => $this->getResourceCollection(),
             'meta' => $this->meta(),
         ];
     }
@@ -167,6 +163,10 @@ class ResourcePaginator extends Paginator
      */
     public function getResourceCollection(): ResourceCollection|BaseCollection
     {
+        if (is_subclass_of($this->collectionClass, BaseResource::class)) {
+            return $this->collectionClass::collection($this->items);
+        }
+
         return new $this->collectionClass($this->items);
     }
 

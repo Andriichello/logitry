@@ -151,17 +151,13 @@ class MapRequest extends BaseRequest
      */
     public function routes(): RouteQuery
     {
-        $today = now()->setTime(0, 0, 0, 1);
-
-        $query = Route::query()
-            ->tripsArriveWithin($today, null);
+        $query = Route::query();
 
         $beg = $this->beg();
         $end = $this->end();
 
         if ($beg || $end) {
-            $query = Route::query()
-                ->tripsDepartWithin($beg, $end);
+            $query = Route::query();
         }
 
         $company = $this->company();

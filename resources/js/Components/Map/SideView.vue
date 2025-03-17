@@ -10,6 +10,7 @@
   import { ChevronRight } from 'lucide-vue-next';
 
   const emits = defineEmits([
+    'change-page',
     'open-from',
     'open-where',
     'swap-from-and-where',
@@ -36,9 +37,16 @@
     countries: {
       type: Object as PropType<Record<string, string>> | null,
     },
+    meta: {
+      type: Object as PropType<Record<string, any>> | null,
+    },
   });
 
   const mapStore = useMapStore();
+
+  function changePage(page: number) {
+    emits('change-page', page);
+  }
 
   function openFrom() {
     emits('open-from');
@@ -103,7 +111,9 @@
                     :routes="props.routes"
                     :trips="props.trips"
                     :countries="props.countries"
+                    :meta="props.meta"
                     :filters="props.company ? mapStore.filters : null"
+                    @change-page="changePage"
                     @open-from="openFrom"
                     @open-where="openWhere"
                     @swap-from-and-where="emits('swap-from-and-where')"

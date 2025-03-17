@@ -8,8 +8,10 @@
   import SideViewFilters from '@/Components/Map/SideViewFilters.vue';
   import dayjs from 'dayjs';
   import { useToast } from 'vue-toastification';
+  import ContactMe from '@/Components/Map/ContactMe.vue';
 
   const emits = defineEmits([
+    'change-page',
     'open-from',
     'open-where',
     'swap-from-and-where',
@@ -34,6 +36,9 @@
     countries: {
       type: Object as PropType<Record<string, string>> | null,
     },
+    meta: {
+      type: Object as PropType<Record<string, any>> | null,
+    },
   });
 
   const toast = useToast();
@@ -44,29 +49,49 @@
       || props.filters?.end
       || (props.filters?.beg && !props.filters.beg.isSame(dayjs(), 'day'))
   })
+
+  /**
+   * Computes the list of pages to display for pagination.
+   */
+  const paginationPages = computed(() => {
+    if (!props.meta) return [];
+    const { current_page, last_page } = props.meta;
+
+    const pages = [];
+    if (last_page <= 5) {
+      // Case 1: Last page <= 5, show all pages
+      for (let i = 1; i <= last_page; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Case 2: More than 5 pages
+      if (current_page <= 3) {
+        // Show first 4 pages and last page
+        pages.push(1, 2, 3, 4, '...', last_page);
+      } else if (current_page >= last_page - 2) {
+        // Show first page and last 4 pages
+        pages.push(1, '...', last_page - 3, last_page - 2, last_page - 1, last_page);
+      } else {
+        // Show first page, 3 around the current, and last page
+        pages.push(
+          1,
+          '...',
+          current_page - 1,
+          current_page,
+          current_page + 1,
+          '...',
+          last_page
+        );
+      }
+    }
+    return pages;
+  });
+
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto">
-    <div class="w-full flex flex-col justify-center items-center px-4 py-2">
-      <div class="w-full max-w-lg flex flex-col justify-center items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
-          <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-2xl font-semibold">Contact Me</h3>
-            <p class="text-md opacity-80">
-              Fill out your details for our manager to contact you regarding pickup, destination, date, time, and seats
-            </p>
-          </div>
-
-          <div class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3"
-               @click="toast.info('Not implemented yet', {position: 'bottom-center', timeout: 2000})">
-            <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
-            <span class="w-full">Contact Me</span>
-            <ChevronRight class="w-6 h-6 mb-0.5"/>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ContactMe/>
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="w-full h-[1px]">
@@ -74,7 +99,7 @@
       </div>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center bg-base-200/60 px-4 py-2">
+    <div class="w-full flex flex-col justify-center items-center px-4 py-2">
       <div class="w-full max-w-lg flex flex-col justify-center items-center">
         <div class="w-full flex flex-col justify-between items-between rounded-right py-3 gap-4 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
@@ -144,13 +169,13 @@
             </p>
           </div>
 
-          <ul class="w-full list bg-base-200/60 border border-base-content/40 rounded shadow-md"
+          <ul class="w-full list bg-base-200/60 border border-base-content/50 rounded shadow-md"
               v-if="props.routes?.length">
 
             <template v-for="(route, index) in props.routes" :key="route.id">
-              <li class="list-row pt-3 pb-2 px-4">
+              <li class="list-row pt-3 pb-2 px-4 rounded-none first:rounded-t last:rounded-b">
                 <div class="list-col-grow">
-                  <div class="text-lg font-semibold font-mono">{{ route.name }}</div>
+                  <div class="text-xl font-semibold font-mono">{{ route.name }}</div>
                   <div class="w-full flex flex-wrap flex-row justify-start items-baseline self-start gap-2 opacity-75 translate-y-[-4px]">
                     <Deferred data="trips">
                       <template #fallback>
@@ -166,6 +191,7 @@
                     </Deferred>
 
                     <div class="flex flex-row justify-start items-center p-0.5 px-2 rounded"
+                         :class="{'pl-1': trips?.filter(trip => trip.route_id === route.id)?.length === 0}"
                          v-if="route.points?.length">
                       <span class="text-md">{{ route.points?.length }} stops</span>
                     </div>
@@ -176,9 +202,9 @@
                     </div>
                   </div>
                 </div>
-                <button class="btn btn-primary pt-0.5 opacity-80 hover:opacity-100"
+                <button class="btn btn-md btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
                         @click="emits('route-clicked', route)">
-                  View
+                  <ChevronRight class="w-5 h-5"/>
                 </button>
               </li>
             </template>
@@ -193,21 +219,39 @@
             </div>
 
             <div class="w-full btn btn-lg btn-outline btn-error flex flex-row cursor-pointer"
-                 v-if="showClearFilters"
+                 v-if="showClearFilters || (!routes.length && meta?.total > 1)"
                  @click="emits('clear-filters')">
               <span class="pt-0.5 pl-2">Clear all filters</span>
               <FilterX class="w-5 h-5"/>
             </div>
           </div>
 
-          <div class="w-full h-full grow flex flex-row justify-end items-center gap-4 pl-1 pt-1"
-               v-if="props.routes?.length">
-            <span class="text-md opacity-80 mt-0.5">Page: </span>
+          <div v-if="routes.length && meta?.total > 1"
+              class="w-full h-full flex flex-col justify-between items-end px-4 gap-2">
 
-            <div class="flex flex-row justify-end items-baseline gap-2">
-              <button class="h-9 btn btn-md btn-outline">1</button>
-              <button class="h-9 btn btn-md btn-ghost">2</button>
-              <button class="h-9 btn btn-md btn-ghost">3</button>
+            <span class="w-full text-sm text-center opacity-60 pr-4.5">
+              Showing {{ meta.from }}-{{ meta.to }} of {{ meta.total }}
+            </span>
+
+            <div v-if="meta.last_page !== 1"
+              class="w-full h-full grow flex flex-row justify-end items-center gap-4 pl-1 pt-1">
+              <span class="text-md opacity-80 mt-0.5">Page: </span>
+
+              <div class="flex flex-row justify-center items-center gap-2">
+                <template v-for="page in paginationPages" :key="page">
+                  <!-- Dynamic Pagination Buttons -->
+                  <button v-if="page !== '...'"
+                          class="btn btn-md"
+                          :class="{'btn-active': page === meta.curent_page, 'btn-ghost opacity-50 hover:opacity-100': page !== meta.current_page}"
+                          @click="page !== meta.current_page && emits('change-page', page)">
+                    {{ page }}
+                  </button>
+
+                  <button v-else class="btn btn-ghost user-select-none w-6" disabled>
+                    {{ page }}
+                  </button>
+                </template>
+              </div>
             </div>
           </div>
         </div>

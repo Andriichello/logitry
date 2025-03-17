@@ -22,6 +22,7 @@
     trips: Array as PropType<Trip[]> | null,
     trip_highlights: Array as PropType<TripHighlight[]> | null,
     countries: Object as PropType<Record<string, string>> | null,
+    meta: Object as PropType<Record<string, any>>,
   });
 
   const themeStore = useThemeStore();
@@ -123,7 +124,7 @@
     document.getElementById('map-drawer')?.click();
   }
 
-  function urlWithFilters() {
+  function urlWithFilters(page: number = 1, size: number = null) {
     const params = [];
 
     if (mapStore.filters.beg) {
@@ -150,6 +151,14 @@
       params.push(`trip=${mapStore.filters.trip}`);
     }
 
+    if (page > 0) {
+      params.push(`page[number]=${page}`);
+    }
+
+    if (size > 0) {
+      params.push(`page[size]=${size}`);
+    }
+
     let url = '/' + props.company?.abbreviation + '/map';
 
     if (params.length) {
@@ -169,6 +178,10 @@
 
     closeCalendar();
     reloadWithFilters();
+  }
+
+  function changePage(page: number) {
+    useForm().get(urlWithFilters(page, props.meta?.per_page));
   }
 
   function openFrom() {
@@ -235,8 +248,12 @@
       shouldReload = true;
     }
 
+    if (props.meta?.current_page !== 1) {
+      shouldReload = true;
+    }
+
     if (shouldReload) {
-      reloadWithFilters();
+      useForm().get(urlWithFilters(1));
     }
   }
 
@@ -403,7 +420,9 @@
                   :company="props.company"
                   :routes="props.routes"
                   :trips="props?.trips"
+                  :meta="props.meta"
                   :countries="props.countries"
+                  @change-page="changePage"
                   @open-from="openFrom"
                   @open-calendar="openCalendar"
                   @clear-filters="clearFilters"

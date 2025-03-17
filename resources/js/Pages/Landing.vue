@@ -16,6 +16,7 @@
   import { Bounds, Company, Trip } from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
   import { useToast } from 'vue-toastification';
+  import ContactMe from '@/Components/Map/ContactMe.vue';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -123,12 +124,12 @@
             </p>
           </div>
 
-          <div class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3"
+          <button class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3 border-base-content/50"
                @click="toast.info('Not implemented yet', {position: 'bottom-center', timeout: 2000})">
             <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
-            <span class="w-full">Contact Me</span>
+            <span class="w-full pt-0.5">Contact Me</span>
             <ChevronRight class="w-6 h-6 mb-0.5"/>
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -158,12 +159,12 @@
             </p>
           </div>
 
-          <div class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3"
+          <button class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3 border-base-content/50"
                @click="router.visit(`/${props.company?.abbreviation}/map`)">
             <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
-            <span class="w-full">View Routes</span>
+            <span class="w-full  pt-0.5">View Routes</span>
             <ChevronRight class="w-6 h-6 mb-0.5"/>
-          </div>
+          </button>
         </div>
       </div>
     </div>

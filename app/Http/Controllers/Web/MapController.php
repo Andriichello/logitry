@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Web;
 use App\Helpers\BoundsHelper;
 use App\Helpers\CountriesHelper;
 use App\Http\Controllers\BaseController;
+use App\Http\Controllers\Traits\WithPagination;
 use App\Http\Requests\Web\MapRequest;
+use App\Http\Resources\ResourcePaginator;
 use App\Http\Resources\Specific\CompanyResource;
 use App\Http\Resources\Specific\RouteResource;
 use App\Http\Resources\Specific\TripHighlightResource;
 use App\Http\Resources\Specific\TripResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Route;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,9 +21,13 @@ use Inertia\ResponseFactory;
 
 /**
  * Class MapController.
+ *
+ * @SuppressWarnings(PHPMD)
  */
 class MapController extends BaseController
 {
+    use WithPagination;
+
     /**
      * Returns map data.
      *
@@ -58,7 +65,11 @@ class MapController extends BaseController
                 );
         }
 
-        $routes = $request->routes()->get();
+        $routes = new ResourcePaginator(
+            $this->paginate($request->routes()),
+            RouteResource::class,
+        );
+
         $trips = $request->trips()->get();
 
         $tripHighlights = $request->tripsForHighlights()
@@ -75,6 +86,7 @@ class MapController extends BaseController
                 ->forRoutes($routes->all(), 0.05),
             'trips' => TripResource::collection($trips),
             'trip_highlights' => TripHighlightResource::collection($tripHighlights),
+            'meta' => $routes->meta(),
         ];
 
         return ApiResponse::ok($props);
@@ -119,14 +131,17 @@ class MapController extends BaseController
                 );
         }
 
-        $routes = $request->routes()->get();
+        $routes = new ResourcePaginator(
+            $this->paginate($request->routes()),
+            RouteResource::class,
+        );
 
         $props = [
             'company' => ($company = $request->company())
                 ? new CompanyResource($company) : null,
             'filters' => $request->filters(),
             'selections' => $request->selections(),
-            'routes' => RouteResource::collection($routes),
+            'routes' => Inertia::merge(RouteResource::collection($routes->all())),
             'bounds' => (new BoundsHelper())
                 ->forRoutes($routes->all(), 0.05),
 //            'trips' => Inertia::defer(
@@ -153,8 +168,19 @@ class MapController extends BaseController
                 fn($country) => $country['name'],
                 (new CountriesHelper())->list()
             ),
+            'meta' => $routes->meta(),
         ];
 
         return inertia('Map', $props);
+    }
+
+    /**
+     * Get the default size of the page for pagination.
+     *
+     * @return int
+     */
+    public function getDefaultPageSize(): int
+    {
+        return 100;
     }
 }

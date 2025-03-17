@@ -19,7 +19,7 @@
 </script>
 
 <template>
-  <main class="w-full h-full overflow-auto">
+  <main class="w-full h-full">
     <input type="checkbox" value="light" class="toggle theme-controller mt-1"
            :checked="!themeStore.isDark"
            @change="themeStore.toggle" hidden/>
@@ -47,7 +47,9 @@
         </div>
       </div>
 
-      <slot/>
+      <div class="w-full h-full flex flex-col justify-start overflow-auto">
+        <slot/>
+      </div>
     </div>
   </main>
 </template>

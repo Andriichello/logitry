@@ -72,8 +72,6 @@
     window.removeEventListener('popstate', onBack);
   });
 
-  window.history.pushState(null, '', window.location.href);
-
   function onBack(event: PopStateEvent) {
     event.preventDefault();
 
@@ -421,18 +419,18 @@
                        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
         <template v-if="isNarrowScreen">
-          <div id="map-switcher" class="flex btn btn-md absolute bottom-6 right-4 z-[400] bg-base-100"
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-6 right-4 z-[400] opacity-90 hover:opacity-100"
                v-if="isShowingMap"
                @click="toggleMap">
             <span class="text-md">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
             <RouteIcon class="w-5 h-5"/>
           </div>
 
-          <div id="map-switcher" class="flex btn btn-md absolute bottom-6 right-4 z-[400] bg-gray-200"
-               v-else
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-6 right-4 z-[400] opacity-90 hover:opacity-100"
+               v-else-if="routes?.length"
                @click="toggleMap">
-            <span class="text-md text-neutral">View on Map</span>
-            <MapPinned class="w-6 h-6" color="black"/>
+            <span class="text-md">View on Map</span>
+            <MapPinned class="w-6 h-6"/>
           </div>
         </template>
       </template>

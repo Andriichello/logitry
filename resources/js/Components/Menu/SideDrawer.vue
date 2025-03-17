@@ -1,7 +1,9 @@
 <script setup lang="ts">
-  import { Sun, Moon, ChevronsRight } from 'lucide-vue-next';
+  import { ChevronsRight, Moon, Sun } from 'lucide-vue-next';
   import { useThemeStore } from '@/stores/theme';
   import { PropType } from 'vue';
+  import CompanyInfo from '@/Components/Map/CompanyInfo.vue';
+  import { Company } from '@/api';
 
   const emits = defineEmits(['collapse']);
 
@@ -9,7 +11,11 @@
     target: {
       type: String as PropType<string>,
       required: true,
-    }
+    },
+    company: {
+      type: Object as PropType<Company> | null,
+      default: null,
+    },
   });
 
   const themeStore = useThemeStore();
@@ -25,12 +31,17 @@
     <!-- Sidebar content here -->
     <ul class="menu bg-base-200 text-base-content min-h-full w-xs">
       <li @click="emits('collapse')"
-          class="w-fit flex flex-row gap-0 mt-2.5 mb-2 text-black active:text-white">
-        <div class="-translate-x-9 bg-gray-300 pl-2">
+          class="w-fit flex flex-row gap-0 mt-2.5 mb-2 text-white opacity-90 hover:opacity-100">
+        <div class="-translate-x-9 bg-primary pl-2">
           <ChevronsRight class="w-6 h-6" />
 
           <span class="text-lg font-mono pt-0.5">Collapse</span>
         </div>
+      </li>
+
+      <li v-if="props.company">
+        <CompanyInfo class="py-3"
+                     :company="props.company"/>
       </li>
 
       <li class="grow opacity-0"></li>

@@ -7,6 +7,7 @@
   import SideViewRoutes from '@/Components/Map/SideViewRoutes.vue';
   import SideViewRoute from '@/Components/Map/SideViewRoute.vue';
   import SideViewTrip from '@/Components/Map/SideViewTrip.vue';
+  import { ChevronRight } from 'lucide-vue-next';
 
   const emits = defineEmits([
     'open-from',
@@ -73,10 +74,16 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-start gap-2 p-2 bg-base-200">
-    <CompanyInfo class="cursor-pointer bg-base-200"
+  <div class="w-full h-full flex flex-col justify-start items-start bg-base-100">
+    <CompanyInfo class="cursor-pointer px-4 py-4"
                  :company="props.company"
                  @click="router.visit(`/${company?.abbreviation}`)"/>
+
+    <div class="w-full flex flex-col justify-center items-center">
+      <div class="w-full h-[1px]">
+        <div class="w-full h-full bg-base-content opacity-10"></div>
+      </div>
+    </div>
 
     <SideViewTrip v-if="mapStore.trip"
                   :route="mapStore.route"

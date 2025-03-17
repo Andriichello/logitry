@@ -231,11 +231,7 @@
       </template>
 
       <div class="w-full flex justify-between items-center gap-2">
-        <button class="flex-1 btn btn-lg" @click="emits('close-calendar')">
-          Cancel
-        </button>
-
-        <button class="flex-1 btn btn-primary btn-lg"
+        <button class="flex-1 btn btn-primary btn-lg opacity-90 hover:opacity-100"
                 :class="{ 'btn-disabled': fromDate === null }"
                 @click="applyCalendar">
           Apply

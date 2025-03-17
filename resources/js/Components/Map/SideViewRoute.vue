@@ -1,13 +1,14 @@
 <script setup lang="ts">
   import { computed, PropType, ref } from 'vue';
   import { Point, Route, Trip } from '@/api';
-  import { ArrowLeftFromLine, ArrowRightFromLine, Car, ChevronDown, ChevronUp, X } from 'lucide-vue-next';
+  import { ArrowLeftFromLine, ArrowRightFromLine, Car, ChevronDown, ChevronRight, ChevronUp, X } from 'lucide-vue-next';
   import { minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useMapStore } from '@/stores/map';
   import dayjs from 'dayjs';
   import SideViewStops from '@/Components/Map/SideViewStops.vue';
   import SideViewPrices from '@/Components/Map/SideViewPrices.vue';
+  import { useToast } from 'vue-toastification';
 
   const emits = defineEmits(['route-closed', 'trip-clicked', 'trip-closed']);
 
@@ -24,6 +25,8 @@
       type: Object as PropType<Record<string, string>> | null,
     },
   });
+
+  const toast = useToast();
 
   const mapStore = useMapStore();
 
@@ -111,25 +114,51 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 pt-0 overflow-y-auto">
-    <div class="w-full flex flex-row justify-between items-baseline gap-2">
+  <div class="w-full flex flex-col justify-between items-baseline pt-0 overflow-y-auto pb-20">
+    <div class="w-full flex flex-col justify-center items-center px-4 py-2">
+      <div class="w-full max-w-lg flex flex-col justify-center items-center">
+        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
+          <div class="w-full flex flex-col justify-start items-start gap-2">
+            <h3 class="text-2xl font-semibold">Contact Me</h3>
+            <p class="text-md opacity-80">
+              Fill out your details for our manager to contact you regarding pickup, destination, date, time, and seats
+            </p>
+          </div>
+
+          <div class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3"
+               @click="toast.info('Not implemented yet', {position: 'bottom-center', timeout: 2000})">
+            <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
+            <span class="w-full">Contact Me</span>
+            <ChevronRight class="w-6 h-6 mb-0.5"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full flex flex-col justify-center items-center">
+      <div class="w-full h-[1px]">
+        <div class="w-full h-full bg-base-content opacity-10"></div>
+      </div>
+    </div>
+
+    <div class="w-full flex flex-row justify-between items-baseline gap-2 px-3 pt-3">
       <h3 class="text-md font-semibold">
         Route
       </h3>
 
-      <div class="rounded flex justify-center items-center cursor-pointer p-2 translate-x-[8px]"
+      <div class="rounded flex justify-center items-center cursor-pointer p-2"
            @click="emits('route-closed', route)">
         <X class="w-5 h-5"/>
       </div>
     </div>
 
-    <div class="w-full flex flex-row justify-between items-baseline gap-2 px-2">
+    <div class="w-full flex flex-row justify-between items-baseline gap-2 py-2 px-2 pl-5">
       <h3 class="text-xl font-semibold">
         {{ route.name ?? 'Route' }}
       </h3>
     </div>
 
-    <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
+    <div class="w-full h-full flex flex-col justify-start items-start px-3">
       <div class="w-full flex flex-col justify-start items-start"
            v-if="route.points?.length">
         <div class="w-full flex flex-row justify-between items-center pt-3 px-2 cursor-pointer"

@@ -3,7 +3,7 @@
   import { MapFilters } from '@/stores/map';
   import { Deferred } from '@inertiajs/vue3';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-  import { Calendar, MapPin } from 'lucide-vue-next';
+  import { Calendar, ChevronRight, MapPin } from 'lucide-vue-next';
 
   const emits = defineEmits(['open-from', 'open-where', 'swap-from-and-where', 'open-calendar']);
 
@@ -51,98 +51,90 @@
     const country = props.countries?.[key];
 
     return { a2: key, name: country, flag: getUnicodeFlagIcon(key.toUpperCase()) };
-  };
+  }
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-center gap-1 items-center">
-    <div class="w-full flex justify-start items-center rounded hover:bg-base-300">
-      <div class="w-full flex justify-center items-center">
-        <div class="w-full flex flex-col justify-start items-start gap-1">
-          <div class="w-full min-h-full flex justify-start items-center gap-2 text-md">
-            <div class="w-full flex flex-col justify-start items-start px-2 py-1 cursor-pointer "
-                 @click="emits('open-from')">
-              <div class="text-xs opacity-60 font-bold">
-                Countries
-              </div>
+  <div class="w-full flex flex-col justify-start items-start gap-1">
+    <p class="text-md opacity-80">
+      Countries to search routes for
+    </p>
 
-              <div class="w-full min-h-full flex justify-start items-center gap-2 text-md font-bold">
-                <Deferred data="countries">
-                  <template #fallback>
-                    <div v-for="a2 in from" :key="a2">
-                      <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</div>
-                      <div>
-                        <span class="loading loading-dots loading-xs mt-1"/>
-                        {{ a2.toUpperCase() }}
-                      </div>
-                    </div>
-                  </template>
+    <div class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 mb-2">
+      <div class="min-h-11 w-full flex flex-row justify-between items-center gap-2 py-1 font-normal"
+           @click="emits('open-from')">
+        <MapPin class="w-6 h-6" v-if="!from?.length"/>
 
-                  <div class="w-full flex flex-wrap flex-row justify-start items-start" v-if="fromCountries?.length">
-                    <div v-for="(country, index) in fromCountries" :key="country.a2"
-                         class="flex justify-center items-center gap-1">
-                      <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(country.a2?.toUpperCase()) }}</div>
-                      <div>{{ country.a2?.toUpperCase() ?? country.name ?? '' }}</div>
-                      <div class="pr-2"
-                        v-if="index !== fromCountries.length - 1">,</div>
-                    </div>
-                  </div>
-
-                  <div class="w-full flex flex-wrap flex-row justify-start items-center gap-1"
-                       v-else>
-                    <MapPin class="w-5 h-5"/>
-                    <span class="mt-1">All</span>
-                  </div>
-                </Deferred>
+        <Deferred data="countries">
+          <template #fallback>
+            <div v-for="a2 in from" :key="a2">
+              <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</div>
+              <div>
+                <span class="loading loading-dots loading-xs mt-1"/>
+                {{ a2.toUpperCase() }}
               </div>
             </div>
+          </template>
+
+          <div class="w-full flex flex-wrap flex-row justify-start items-start pt-1" v-if="fromCountries?.length">
+            <div v-for="(country, index) in fromCountries" :key="country.a2"
+                 class="flex justify-center items-center gap-1">
+              <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(country.a2?.toUpperCase()) }}</div>
+              <div>{{ country.a2?.toUpperCase() ?? country.name ?? '' }}</div>
+              <div class="pr-2"
+                   v-if="index !== fromCountries.length - 1">,</div>
+            </div>
           </div>
-        </div>
+
+          <div class="w-full flex flex-wrap flex-row justify-start items-center gap-1"
+               v-else>
+            <span class="mt-1">Countries</span>
+          </div>
+        </Deferred>
+
+        <ChevronRight class="w-6 h-6"/>
       </div>
     </div>
 
-    <div class="w-full flex justify-start items-center">
-      <div class="w-full flex flex-col justify-start items-start gap-1">
-        <div class="w-full border-t-1 opacity-15"/>
-        <div class="w-full min-h-full flex justify-start items-center gap-3 font-bold text-md rounded hover:bg-base-300">
-          <div class="w-full flex flex-col justify-start items-start px-2 py-1 rounded cursor-pointer"
-               @click="emits('open-calendar')">
-            <div class="text-xs font-bold opacity-60">
-              Departure
-            </div>
+    <p class="text-md opacity-80">
+      Departure date or an interval
+    </p>
 
-            <div class="w-full min-h-full flex justify-start items-center gap-1 text-md">
-              <Calendar class="w-5 h-5"/>
+    <div class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3"
+         @click="emits('open-calendar')">
+      <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal">
+        <Calendar class="w-6 h-6"/>
 
-              <template v-if="props.filters.beg && props.filters.end">
-                <div class="w-full flex justify-start items-center gap-2 mt-1">
-                  <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
+        <span class="w-full text-start mt-0.5">
+          <template v-if="props.filters.beg && props.filters.end">
+            <div class="w-full flex justify-start items-center gap-2 mt-1">
+              <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
 
-                  <template v-if="!props.filters.beg?.isSame(props.filters.end, 'day')">
-                    <div>-</div>
-                    <div>{{ props.filters.end?.format('ddd, DD MMM') ?? 'End Date' }}</div>
-                  </template>
-                </div>
-              </template>
-
-              <template v-else-if="props.filters.beg">
-                <div class="w-full flex justify-start items-center gap-2 mt-1">
-                  <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
-                  <div>-</div>
-                  <div>Future</div>
-                </div>
-              </template>
-
-              <template v-else>
-                <div class="w-full flex justify-start items-center gap-2 mt-1">
-                  <div>Start date</div>
-                  <div>-</div>
-                  <div>End date</div>
-                </div>
+              <template v-if="!props.filters.beg?.isSame(props.filters.end, 'day')">
+                <div class="font-normal px-2">-</div>
+                <div>{{ props.filters.end?.format('ddd, DD MMM') ?? 'End Date' }}</div>
               </template>
             </div>
-          </div>
-        </div>
+          </template>
+
+          <template v-else-if="props.filters.beg">
+            <div class="w-full flex justify-start items-center gap-2 mt-1">
+              <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
+              <div class="font-normal px-2">-</div>
+              <div>Future</div>
+            </div>
+          </template>
+
+          <template v-else>
+            <div class="w-full flex justify-start items-center gap-2 mt-1">
+              <div>Start date</div>
+              <div class="font-normal px-2">-</div>
+              <div>End date</div>
+            </div>
+          </template>
+        </span>
+
+        <ChevronRight class="w-6 h-6"/>
       </div>
     </div>
   </div>

@@ -151,7 +151,11 @@
       params.push(`trip=${mapStore.filters.trip}`);
     }
 
-    if (page > 0) {
+    if (mapStore.filters.has_trips) {
+      params.push(`has_trips=1`);
+    }
+
+    if (page > 1) {
       params.push(`page[number]=${page}`);
     }
 
@@ -182,6 +186,11 @@
 
   function changePage(page: number) {
     useForm().get(urlWithFilters(page, props.meta?.per_page));
+  }
+
+  function toggleHasTrips(hasTrips: boolean) {
+    mapStore.filters.has_trips = !hasTrips;
+    reloadWithFilters();
   }
 
   function openFrom() {
@@ -245,6 +254,11 @@
 
     if (mapStore.filters.end) {
       mapStore.filters.end = null;
+      shouldReload = true;
+    }
+
+    if (mapStore.filters.has_trips) {
+      mapStore.filters.has_trips = false;
       shouldReload = true;
     }
 
@@ -423,6 +437,7 @@
                   :meta="props.meta"
                   :countries="props.countries"
                   @change-page="changePage"
+                  @toggle-has-trips="toggleHasTrips"
                   @open-from="openFrom"
                   @open-calendar="openCalendar"
                   @clear-filters="clearFilters"

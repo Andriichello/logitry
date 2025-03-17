@@ -42,6 +42,9 @@ export interface MapFilters {
   route: number | null,
   /** Currently selected trip id */
   trip: number | null,
+
+  /** If true, then only routes with trips will be returned */
+  has_trips: boolean | null,
 }
 
 export interface MapSelections {
@@ -118,6 +121,7 @@ export const useMapStore = defineStore('map', {
         end: null,
         route: null,
         trip: null,
+        has_trips: false,
       },
       selections: {
         route: null,
@@ -137,7 +141,7 @@ export const useMapStore = defineStore('map', {
     }
   },
   actions: {
-    setFilters(filters: {abbreviation: string | null, beg: string | null, end: string | null, from: string | null, to: string | null, route: number | null, trip: number | null}) {
+    setFilters(filters: {abbreviation: string | null, beg: string | null, end: string | null, from: string | null, to: string | null, route: number | null, trip: number | null, has_trips: boolean | null}) {
       this.filters.abbreviation = filters.abbreviation;
       this.filters.beg = filters.beg ? dayjs(filters.beg) : null;
       this.filters.end = filters.end ? dayjs(filters.end) : null;
@@ -145,6 +149,7 @@ export const useMapStore = defineStore('map', {
       this.filters.to = filters.to;
       this.filters.route = filters.route;
       this.filters.trip = filters.trip;
+      this.filters.has_trips = filters.has_trips;
     },
     setSelections(selections: {route: Route | null, trip: Trip | null}) {
       this.selections.route = selections.route;

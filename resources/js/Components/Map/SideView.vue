@@ -10,6 +10,7 @@
   import { ChevronRight } from 'lucide-vue-next';
 
   const emits = defineEmits([
+    'toggle-has-trips',
     'change-page',
     'open-from',
     'open-where',
@@ -79,6 +80,10 @@
   function tripClosed(trip: Trip) {
     emits('trip-closed', trip);
   }
+
+  function toggleHasTrips(hasTrips: boolean) {
+    emits('toggle-has-trips', hasTrips);
+  }
 </script>
 
 <template>
@@ -113,6 +118,7 @@
                     :countries="props.countries"
                     :meta="props.meta"
                     :filters="props.company ? mapStore.filters : null"
+                    @toggle-has-trips="toggleHasTrips"
                     @change-page="changePage"
                     @open-from="openFrom"
                     @open-where="openWhere"

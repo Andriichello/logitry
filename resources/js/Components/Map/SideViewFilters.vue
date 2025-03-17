@@ -3,9 +3,9 @@
   import { MapFilters } from '@/stores/map';
   import { Deferred } from '@inertiajs/vue3';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
-  import { Calendar, ChevronRight, MapPin } from 'lucide-vue-next';
+  import { Calendar, ChevronRight, MapPin, Route } from 'lucide-vue-next';
 
-  const emits = defineEmits(['open-from', 'open-where', 'swap-from-and-where', 'open-calendar']);
+  const emits = defineEmits(['toggle-has-trips', 'open-from', 'open-where', 'swap-from-and-where', 'open-calendar']);
 
   const props = defineProps({
     filters: {
@@ -13,6 +13,10 @@
       required: true,
     },
     countries: Object as PropType<Record<string, string>> | null,
+  });
+
+  const hasTrips = computed(() => {
+    return props.filters?.has_trips;
   });
 
   const from = computed(() => {
@@ -135,6 +139,21 @@
         </span>
 
         <ChevronRight class="w-6 h-6"/>
+      </div>
+    </button>
+
+    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0">
+      <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal"
+           @click="emits('toggle-has-trips', hasTrips)">
+        <Route class="w-6 h-6" :class="{'opacity-60': !hasTrips}"/>
+
+        <span class="w-full text-start mt-0.5"
+          :class="{'opacity-60': !hasTrips}">
+          Only routes with trips
+        </span>
+
+        <input id="with_trips" type="checkbox" class="toggle" v-model="hasTrips"
+          @change="emits('toggle-has-trips', !$event.target.checked)"/>
       </div>
     </button>
   </div>

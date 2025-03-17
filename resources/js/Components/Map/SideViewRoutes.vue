@@ -11,6 +11,7 @@
   import ContactMe from '@/Components/Map/ContactMe.vue';
 
   const emits = defineEmits([
+    'toggle-has-trips',
     'change-page',
     'open-from',
     'open-where',
@@ -87,6 +88,9 @@
     return pages;
   });
 
+  function toggleHasTrips(hasTrips: boolean) {
+    emits('toggle-has-trips', hasTrips);
+  }
 </script>
 
 <template>
@@ -124,6 +128,7 @@
 
             <SideViewFilters :filters="filters"
                              :countries="countries"
+                             @toggle-has-trips="toggleHasTrips"
                              @swap-from-and-where="emits('swap-from-and-where')"
                              @open-from="emits('open-from')"
                              @open-where="emits('open-where')"
@@ -159,9 +164,9 @@
       </div>
     </div>
 
-    <div class="w-full grow flex flex-col justify-start items-center px-4 py-2">
+    <div class="w-full grow flex flex-col justify-start items-center px-4 py-2 pb-20">
       <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
+        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
             <h3 class="text-2xl font-semibold">Routes</h3>
             <p class="text-md opacity-80">
@@ -188,10 +193,14 @@
                            v-if="trips?.filter(trip => trip.route_id === route.id)?.length">
                         <span class="text-md">{{ trips?.filter(trip => trip.route_id === route.id)?.length }} {{ trips?.filter(trip => trip.route_id === route.id)?.length > 1 ? 'trips' : 'trip' }}<span class="opacity-0" v-if="trips?.filter(trip => trip.route_id === route.id)?.length === 1">s</span> </span>
                       </div>
+
+                      <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
+                           v-else>
+                        <span class="text-md">No trips</span>
+                      </div>
                     </Deferred>
 
                     <div class="flex flex-row justify-start items-center p-0.5 px-2 rounded"
-                         :class="{'pl-1': trips?.filter(trip => trip.route_id === route.id)?.length === 0}"
                          v-if="route.points?.length">
                       <span class="text-md">{{ route.points?.length }} stops</span>
                     </div>
@@ -227,7 +236,7 @@
           </div>
 
           <div v-if="routes.length && meta?.total > 1"
-              class="w-full h-full flex flex-col justify-between items-end px-4 gap-2">
+              class="w-full h-full flex flex-col justify-between items-end px-4 pt-2 gap-1">
 
             <span class="w-full text-sm text-center opacity-60 pr-4.5">
               Showing {{ meta.from }}-{{ meta.to }} of {{ meta.total }}

@@ -67,6 +67,10 @@ class MapRequest extends BaseRequest
                 'nullable',
                 'integer',
             ],
+            'has_trips' => [
+                'sometimes',
+                'nullable',
+            ]
         ];
     }
 
@@ -153,11 +157,18 @@ class MapRequest extends BaseRequest
     {
         $query = Route::query();
 
-        $beg = $this->beg();
-        $end = $this->end();
+        if ($this->boolean('has_trips')) {
+            $today = now()->setTime(0, 0, 0, 1);
 
-        if ($beg || $end) {
-            $query = Route::query();
+            $query->tripsArriveWithin($today, null);
+
+            $beg = $this->beg();
+            $end = $this->end();
+
+            if ($beg || $end) {
+                $query = Route::query()
+                    ->tripsDepartWithin($beg, $end);
+            }
         }
 
         $company = $this->company();
@@ -333,6 +344,7 @@ class MapRequest extends BaseRequest
             'to' => $this->get('to'),
             'route' => $this->get('route'),
             'trip' => $this->get('trip'),
+            'has_trips' => $this->boolean('has_trips'),
         ];
     }
 

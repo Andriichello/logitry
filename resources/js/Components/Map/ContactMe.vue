@@ -16,7 +16,7 @@
 
 <template>
 
-  <div class="w-full flex flex-col justify-center items-center bg-base-200/80 px-4 py-2"
+  <div class="w-full flex flex-col justify-center items-center bg-base-200/80 px-4 py-2 pt-0"
        :class="{'pb-1': !isOpen}">
     <div class="w-full max-w-lg flex flex-col justify-center items-center">
       <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">

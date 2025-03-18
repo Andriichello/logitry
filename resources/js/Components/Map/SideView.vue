@@ -90,8 +90,8 @@
   <div class="w-full h-full flex flex-col justify-start items-start bg-base-100 overflow-y-auto">
     <div class="w-full flex flex-col justify-start items-start bg-base-100 sticky top-0 z-[1001]">
 
-      <div class="w-full flex justify-between items-center px-4 py-2 shadow-lg">
-        <CompanyInfo class="cursor-pointer px-0"
+      <div class="w-full flex justify-between items-center px-2 pt-2 pb-2.5 shadow-lg">
+        <CompanyInfo class="w-fit cursor-pointer px-0 py-0"
                      :company="props.company"
                      @click="router.visit(`/${company?.abbreviation}`)"/>
       </div>

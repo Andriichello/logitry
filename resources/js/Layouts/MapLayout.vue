@@ -446,21 +446,21 @@
                   @trip-clicked="tripClicked"
                   @trip-closed="tripClosed"/>
 
-        <MenuButton id="menu-button" class="absolute top-4 right-4 z-[1001] text-xs"
+        <MenuButton id="menu-button" class="absolute top-2 right-2 z-[1001] text-xs"
                     @click="clickDrawer"/>
 
-        <CompassButton id="compass" class="absolute bottom-6 right-4 z-[1001] hidden"
+        <CompassButton id="compass" class="absolute bottom-6 right-2 z-[1001] hidden"
                        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
         <template v-if="isNarrowScreen">
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-6 right-4 z-[400] opacity-90 hover:opacity-100"
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-4.5 right-2 z-[400] opacity-90 hover:opacity-100"
                v-if="isShowingMap"
                @click="toggleMap">
             <span class="text-md">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
             <RouteIcon class="w-5 h-5"/>
           </div>
 
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-6 right-4 z-[400] opacity-90 hover:opacity-100"
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-4.5 right-2 z-[400] opacity-90 hover:opacity-100"
                v-else-if="routes?.length"
                @click="toggleMap">
             <span class="text-md">View on Map</span>

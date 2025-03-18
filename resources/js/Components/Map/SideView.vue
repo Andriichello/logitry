@@ -87,14 +87,19 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-start bg-base-100">
-    <CompanyInfo class="cursor-pointer px-4 py-4"
-                 :company="props.company"
-                 @click="router.visit(`/${company?.abbreviation}`)"/>
+  <div class="w-full h-full flex flex-col justify-start items-start bg-base-100 overflow-y-auto">
+    <div class="w-full flex flex-col justify-start items-start bg-base-100 sticky top-0 z-[1001]">
 
-    <div class="w-full flex flex-col justify-center items-center">
-      <div class="w-full h-[1px]">
-        <div class="w-full h-full bg-base-content opacity-10"></div>
+      <div class="w-full flex justify-between items-center px-4 py-2 shadow-lg">
+        <CompanyInfo class="cursor-pointer px-0"
+                     :company="props.company"
+                     @click="router.visit(`/${company?.abbreviation}`)"/>
+      </div>
+
+      <div class="w-full flex flex-col justify-center items-center">
+        <div class="w-full h-[1px]">
+          <div class="w-full h-full bg-base-content opacity-10"></div>
+        </div>
       </div>
     </div>
 

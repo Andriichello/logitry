@@ -47,7 +47,7 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 pt-0 overflow-y-auto">
+  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 pt-0">
     <div class="w-full flex flex-row justify-between items-baseline gap-2">
       <h3 class="text-md font-semibold">
         Trip
@@ -83,7 +83,7 @@
       </div>
     </div>
 
-    <div class="w-full h-full flex flex-col justify-start items-start overflow-y-auto pb-20">
+    <div class="w-full h-full flex flex-col justify-start items-start pb-20">
       <div class="w-full flex flex-col justify-start items-start"
            v-if="pointsInOrder.length">
         <div class="w-full flex flex-row justify-between items-center pt-3 px-2 cursor-pointer"

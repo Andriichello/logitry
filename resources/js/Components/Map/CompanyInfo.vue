@@ -18,8 +18,13 @@
     </div>
 
     <div class="w-full flex flex-col justify-start items-start">
-      <h3 class="text-xl font-bold">{{ props.company ? (props.company.name ?? 'Company') : 'Not found' }}</h3>
-      <span class="text-sm">{{ props.company ? (props.company.abbreviation ?? 'Abbreviation') : 'no such company' }}</span>
+      <h3 class="text-xl font-bold truncate">
+        {{ props.company ? (props.company.name ?? 'Company') : 'Not found' }}
+      </h3>
+
+      <span class="text-sm">
+        {{ props.company ? (props.company.abbreviation ?? 'Abbreviation') : 'no such company' }}
+      </span>
     </div>
   </div>
 </template>

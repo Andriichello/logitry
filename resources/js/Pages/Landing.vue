@@ -114,7 +114,7 @@
 <template>
   <div class="w-full h-full grow flex flex-col justify-start items-start pb-20">
 
-    <div class="w-full flex flex-col justify-center items-center py-6 px-4">
+    <div class="w-full flex flex-col justify-center items-center py-6 px-4 shadow-sm">
       <div class="w-full max-w-xl flex flex-col justify-center items-center">
         <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
@@ -140,7 +140,7 @@
       </div>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center bg-base-200/60 py-6 px-4">
+    <div class="w-full flex flex-col justify-center items-center bg-base-200/60 py-6 px-4 shadow-sm">
       <div class="w-full max-w-xl flex flex-col justify-center items-center">
         <div id="map" class="w-full min-h-[200px] rounded-lg"
           style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">

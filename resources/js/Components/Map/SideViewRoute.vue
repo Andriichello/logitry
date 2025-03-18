@@ -115,8 +115,8 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline pt-0 overflow-y-auto pb-20">
-    <ContactMe/>
+  <div class="w-full flex flex-col justify-between items-baseline pt-0 pb-20">
+    <ContactMe class="shadow-sm"/>
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="w-full h-[1px]">

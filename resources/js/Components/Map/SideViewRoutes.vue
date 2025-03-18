@@ -94,8 +94,8 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-center overflow-y-auto">
-    <ContactMe/>
+  <div class="w-full h-full flex flex-col justify-start items-center">
+    <ContactMe class="shadow-sm"/>
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="w-full h-[1px]">
@@ -103,7 +103,7 @@
       </div>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center px-4 py-2">
+    <div class="w-full flex flex-col justify-center items-center px-4 py-2 shadow-">
       <div class="w-full max-w-lg flex flex-col justify-center items-center">
         <div class="w-full flex flex-col justify-between items-between rounded-right py-3 gap-4 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">

@@ -397,7 +397,7 @@
     <div class="drawer drawer-end">
       <input id="map-drawer" type="checkbox" class="drawer-toggle"/>
 
-      <SideDrawer class="z-[1001] min-w-[25vw]"
+      <SideDrawer class="z-[1005] min-w-[25vw]"
                   target="map-drawer"
                   @collapse="clickDrawer"/>
     </div>
@@ -446,10 +446,10 @@
                   @trip-clicked="tripClicked"
                   @trip-closed="tripClosed"/>
 
-        <MenuButton id="menu-button" class="absolute top-4 right-4 z-[400] text-xs"
+        <MenuButton id="menu-button" class="absolute top-4 right-4 z-[1001] text-xs"
                     @click="clickDrawer"/>
 
-        <CompassButton id="compass" class="absolute bottom-6 right-4 z-[400] hidden"
+        <CompassButton id="compass" class="absolute bottom-6 right-4 z-[1001] hidden"
                        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
         <template v-if="isNarrowScreen">

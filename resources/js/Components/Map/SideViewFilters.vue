@@ -60,11 +60,11 @@
 
 <template>
   <div class="w-full flex flex-col justify-start items-start gap-1">
-    <p class="text-md opacity-80">
-      Countries to search routes for
-    </p>
+<!--    <p class="text-md opacity-80">-->
+<!--      Countries to search routes for-->
+<!--    </p>-->
 
-    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 mb-2 border-base-content/0">
+    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0">
       <div class="min-h-11 w-full flex flex-row justify-between items-center gap-2 py-1 font-normal"
            @click="emits('open-from')">
         <MapPin class="w-6 h-6" v-if="!from?.length"/>
@@ -100,9 +100,9 @@
       </div>
     </button>
 
-    <p class="text-md opacity-80">
-      Departure date or an interval
-    </p>
+<!--    <p class="text-md opacity-80">-->
+<!--      Departure date or an interval-->
+<!--    </p>-->
 
     <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0"
          @click="emits('open-calendar')">

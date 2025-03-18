@@ -158,13 +158,7 @@
       </div>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center">
-      <div class="w-full h-[1px]">
-        <div class="w-full h-full bg-base-content opacity-10"></div>
-      </div>
-    </div>
-
-    <div class="w-full grow flex flex-col justify-start items-center px-4 py-2 pb-20">
+    <div class="w-full grow flex flex-col justify-start items-center px-4 pb-2 pb-20">
       <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">

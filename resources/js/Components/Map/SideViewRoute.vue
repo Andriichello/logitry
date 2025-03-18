@@ -1,7 +1,16 @@
 <script setup lang="ts">
   import { computed, PropType, ref } from 'vue';
   import { Point, Route, Trip } from '@/api';
-  import { ArrowLeftFromLine, ArrowRightFromLine, Car, ChevronDown, ChevronRight, ChevronUp, X } from 'lucide-vue-next';
+  import {
+    ArrowLeftFromLine,
+    ArrowRightFromLine,
+    Car,
+    ChevronDown,
+    ChevronRight,
+    ChevronUp,
+    FilterX,
+    X,
+  } from 'lucide-vue-next';
   import { minutesToHumanReadable, numberAsIntOrFloat, toHumanDate, toHumanTime } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
   import { useMapStore } from '@/stores/map';
@@ -124,53 +133,54 @@
       </div>
     </div>
 
-    <div class="w-full flex flex-row justify-between items-baseline gap-2 px-3 pt-3">
-      <h3 class="text-md font-semibold">
-        Route
-      </h3>
-
-      <div class="rounded flex justify-center items-center cursor-pointer p-2"
-           @click="emits('route-closed', route)">
-        <X class="w-5 h-5"/>
-      </div>
-    </div>
-
-    <div class="w-full flex flex-row justify-between items-baseline gap-2 py-2 px-2 pl-5">
-      <h3 class="text-xl font-semibold">
-        {{ route.name ?? 'Route' }}
-      </h3>
-    </div>
-
-    <div class="w-full h-full flex flex-col justify-start items-start px-3">
-      <div class="w-full flex flex-col justify-start items-start"
-           v-if="route.points?.length">
-        <div class="w-full flex flex-row justify-between items-center pt-3 px-2 cursor-pointer"
-             @click="hidePoints">
-          <div class="w-full flex flex-col justify-between items-baseline">
-            <h3 class="text-md font-semibold">
-              Stops ({{route.points.length }})
-            </h3>
-            <p class="text-sm text-gray-400" v-if="route.travel_time">
-              <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }} travel time</span>
+    <div class="w-full grow flex flex-col justify-start items-center px-4 pt-2">
+      <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
+        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
+          <div class="w-full flex flex-col justify-start items-start gap-2">
+            <h3 class="text-2xl font-semibold font-mono">{{ route.name }}</h3>
+            <p class="text-md opacity-80">
+              Here you can see route details, stops, trips.
             </p>
           </div>
 
-          <div>
-            <ChevronDown class="w-6 h-6"
-                         v-if="mapStore.arePointsHidden"/>
+          <div class="w-full flex flex-col justify-center items-center px-4 pt-0 bg-base-200/80 border border-base-content/60 rounded"
+               :class="{'pb-1': mapStore.arePointsHidden}">
+            <div class="w-full max-w-lg flex flex-col justify-center items-center">
+              <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 font-mono">
+                <div class="w-full flex flex-col justify-start items-start">
+                  <div class="w-full flex flex-row justify-between items-start gap-2">
+                    <h3 class="w-full text-xl font-semibold pt-1 opacity-80"
+                        :class="{'cursor-pointer': mapStore.arePointsHidden, 'opacity-100': !mapStore.arePointsHidden}"
+                        @click="mapStore.arePointsHidden && hidePoints()">
+                      Stops ({{ route.points.length }})
+                    </h3>
 
-            <ChevronUp class="w-6 h-6"
-                       v-else/>
+                    <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
+                            @click="hidePoints">
+                      {{ !mapStore.arePointsHidden ? 'Hide' : 'Show' }} list
+                    </button>
+                  </div>
+
+                  <p class="w-full text-md opacity-80"
+                     :class="{'cursor-pointer': mapStore.arePointsHidden}"
+                     @click="mapStore.arePointsHidden && hidePoints()">
+                    {{ minutesToHumanReadable(route.travel_time) }} travel time
+                  </p>
+                </div>
+
+                <div class="w-full flex flex-col justify-start items-start rounded pt-1"
+                     v-if="!mapStore.arePointsHidden">
+                  <SideViewStops :route="route"
+                                 :countries="countries"/>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="w-full flex flex-col justify-start items-start rounded pl-1"
-             v-if="!mapStore.arePointsHidden">
-          <SideViewStops :route="route"
-                         :countries="countries"/>
-        </div>
       </div>
+    </div>
 
+    <div class="w-full h-full flex flex-col justify-start items-start px-3">
       <div class="w-full flex flex-col justify-end items-start px-2"
            v-if="route.prices?.length">
 

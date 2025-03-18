@@ -104,7 +104,7 @@
                :class="{'pt-1': index !== 0}">
             <MapPinHouse class="w-6 h-6 translate-x-[2px]"
                          v-if="index === 0 || index === pointsInOrder.length - 1"/>
-            <MapPin class="w-6 h-6"
+            <MapPin class="w-6 h-6 opacity-80"
                     v-else/>
           </div>
         </div>
@@ -122,10 +122,10 @@
 
               <Deferred data="countries">
                 <template #fallback>
-                  <span class="text-md">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
+                  <span class="text-md opacity-80">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
                 </template>
 
-                <span class="text-md font-light">{{ getUnicodeFlagIcon(point.country) }} {{ countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
+                <span class="text-md font-light opacity-90">{{ getUnicodeFlagIcon(point.country) }} {{ countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
               </Deferred>
             </div>
           </div>
@@ -136,12 +136,12 @@
 
           <template v-if="trip?.reversed">
             <template v-if="index < (route.points.length - 1)">
-              <time class="font-mono italic" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
+              <time class="font-mono opacity-90" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
             </template>
           </template>
 
           <template v-else>
-            <time class="font-mono italic" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
+            <time class="font-mono opacity-90" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
           </template>
         </div>
 

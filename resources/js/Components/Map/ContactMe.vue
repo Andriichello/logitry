@@ -15,7 +15,6 @@
 </script>
 
 <template>
-
   <div class="w-full flex flex-col justify-center items-center bg-base-200/80 px-4 py-2 pt-0"
        :class="{'pb-1': !isOpen}">
     <div class="w-full max-w-lg flex flex-col justify-center items-center">
@@ -28,7 +27,7 @@
               Contact Me
             </h3>
 
-            <button class="btn btn-sm h-fit py-1 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
+            <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
                     @click="isOpen = !isOpen">
               {{ isOpen ? 'Hide' : 'Show' }}
             </button>

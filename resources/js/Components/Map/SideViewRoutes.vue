@@ -47,6 +47,7 @@
   const showClearFilters = computed(() => {
     return props.filters?.from?.length
       || props.filters?.to?.length
+      || props.filters?.has_trips
       || props.filters?.end
       || (props.filters?.beg && !props.filters.beg.isSame(dayjs(), 'day'))
   })
@@ -103,9 +104,9 @@
       </div>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center px-4 py-2 shadow-">
+    <div class="w-full flex flex-col justify-center items-center px-4 pt-5">
       <div class="w-full max-w-lg flex flex-col justify-center items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right py-3 gap-4 font-mono">
+        <div class="w-full flex flex-col justify-between items-between rounded-right gap-4 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
             <div class="w-full flex flex-row justify-between items-end gap-2">
               <h3 class="text-2xl font-semibold">Filters</h3>
@@ -158,11 +159,11 @@
       </div>
     </div>
 
-    <div class="w-full grow flex flex-col justify-start items-center px-4 pb-2 pb-20">
+    <div class="w-full grow flex flex-col justify-start items-center px-4 pt-2 pb-20">
       <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-2xl font-semibold">Routes</h3>
+            <h3 class="text-2xl font-semibold font-mono">Routes</h3>
             <p class="text-md opacity-80">
               Here are your search results
             </p>
@@ -213,9 +214,9 @@
             </template>
           </ul>
 
-          <div class="w-full h-full grow flex flex-col justify-start items-center gap-5"
+          <div class="w-full h-full grow flex flex-col justify-start items-center"
                v-else>
-            <div class="w-full flex flex-col justify-start items-center py-4 gap-3">
+            <div class="w-full flex flex-col justify-start items-center pt-8 pb-3 gap-3">
               <RouteIcon class="w-8 h-8"/>
 
               <span class="text-xl font-bold">No routes found</span>

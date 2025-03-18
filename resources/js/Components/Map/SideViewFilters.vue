@@ -145,10 +145,10 @@
     <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0">
       <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal"
            @click="emits('toggle-has-trips', hasTrips)">
-        <Route class="w-6 h-6" :class="{'opacity-60': !hasTrips}"/>
+        <Route class="w-6 h-6" :class="{'opacity-50': !hasTrips}"/>
 
         <span class="w-full text-start mt-0.5"
-          :class="{'opacity-60': !hasTrips}">
+          :class="{'opacity-50': !hasTrips}">
           Only routes with trips
         </span>
 

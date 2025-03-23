@@ -9,14 +9,16 @@
 <script setup lang="ts">
   import 'leaflet/dist/leaflet.css';
   import L from 'leaflet';
-  import { ChevronRight } from 'lucide-vue-next';
   import { router } from '@inertiajs/vue3';
   import { onMounted, onUnmounted, PropType, ref } from 'vue';
   import { useMapStore } from '@/stores/map';
-  import { Bounds, Company, Trip } from '@/api';
+  import { Bounds, Company } from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
   import { useToast } from 'vue-toastification';
-  import ContactMe from '@/Components/Map/ContactMe.vue';
+  import OutlineButton from '@/Components/Reusable/OutlineButton.vue';
+  import TitleAndDescription from '@/Components/Landing/TitleAndDescription.vue';
+  import SectionDivider from '@/Components/Landing/SectionDivider.vue';
+  import Section from '@/Components/Landing/Section.vue';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -114,84 +116,69 @@
 <template>
   <div class="w-full h-full grow flex flex-col justify-start items-start pb-20">
 
-    <div class="w-full flex flex-col justify-center items-center py-6 pt-6 px-4 shadow-sm">
-      <div class="w-full max-w-xl flex flex-col justify-center items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
-          <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-3xl font-semibold">Contact Me</h3>
-            <p class="text-md opacity-80">
-              Fill out your details for our manager to contact you regarding pickup, destination, date, time, and seats.
-            </p>
-          </div>
+    <Section class="shadow-sm">
+      <TitleAndDescription>
+        <template #title>
+          Contact Me
+        </template>
 
-          <button class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3 border-base-content/50"
-               @click="toast.info('Not implemented yet', {position: 'bottom-center', timeout: 2000})">
-            <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
-            <span class="w-full pt-0.5">Contact Me</span>
-            <ChevronRight class="w-6 h-6 mb-0.5"/>
-          </button>
-        </div>
+        <template #description>
+          Fill out your details for our manager to contact you regarding pickup, destination, date, time, and seats.
+        </template>
+      </TitleAndDescription>
+
+      <OutlineButton right-icon="ChevronRight" size="lg" class="w-full py-1"
+                     @click="toast.info('Not implemented yet.', {timeout: 2000})">
+        Contact Me
+      </OutlineButton>
+    </Section>
+
+    <SectionDivider/>
+
+    <Section class="bg-base-200/60 shadow-sm">
+      <div id="map" class="w-full min-h-[200px] mb-3 rounded-lg shadow-lg"
+           style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+        <template v-for="route in (props.routes ?? [])" :key="route.id" v-if="map">
+          <RouteOnMap :route="route"
+                      :map="map"
+                      :selected="true"/>
+        </template>
       </div>
-    </div>
 
-    <div class="w-full flex flex-col justify-center items-center">
-      <div class="w-full h-[1px]">
-        <div class="w-full h-full bg-base-content opacity-10"></div>
-      </div>
-    </div>
+      <TitleAndDescription>
+        <template #title>
+          Our routes
+        </template>
 
-    <div class="w-full flex flex-col justify-center items-center bg-base-200/60 py-6 px-4 shadow-sm">
-      <div class="w-full max-w-xl flex flex-col justify-center items-center">
-        <div id="map" class="w-full min-h-[200px] rounded-lg"
-          style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-          <template v-for="route in (props.routes ?? [])" :key="route.id" v-if="map">
-            <RouteOnMap :route="route"
-                        :map="map"
-                        :selected="true"/>
-          </template>
-        </div>
+        <template #description>
+          Map preview of our most popular routes.
+        </template>
+      </TitleAndDescription>
 
-        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
-          <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-3xl font-semibold">Our routes</h3>
-            <p class="text-md opacity-80">
-              Map preview of our most popular routes.
-            </p>
-          </div>
+      <OutlineButton right-icon="ChevronRight" size="lg" class="w-full py-1"
+                     @click="router.visit(`/${props.company?.abbreviation}/map`)">
+        View Routes
+      </OutlineButton>
+    </Section>
 
-          <button class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3 border-base-content/50"
-               @click="router.visit(`/${props.company?.abbreviation}/map`)">
-            <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
-            <span class="w-full  pt-0.5">View Routes</span>
-            <ChevronRight class="w-6 h-6 mb-0.5"/>
-          </button>
-        </div>
-      </div>
-    </div>
+    <SectionDivider/>
 
-    <div class="w-full flex flex-col justify-center items-center">
-      <div class="w-full h-[1px]">
-        <div class="w-full h-full bg-base-content opacity-10"></div>
-      </div>
-    </div>
+    <Section>
+      <TitleAndDescription>
+        <template #title>
+          About Us
+        </template>
 
-    <div class="w-full flex flex-col justify-center items-center py-6 px-4">
-      <div class="w-full max-w-xl flex flex-col justify-center items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
-          <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-3xl font-semibold">About Us</h3>
-            <p class="text-md opacity-80">
-              We are a company dedicated to providing reliable and efficient transportation services.
-              <br><br>
-              With a focus on customer satisfaction, our goal is to offer seamless travel experiences
-              for all our clients.
-              <br><br>
-              From carefully planned routes to exceptional service, we strive to
-              make your journey safe, comfortable, and enjoyable.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <template #description>
+          We are a company dedicated to providing reliable and efficient transportation services.
+          <br><br>
+          With a focus on customer satisfaction, our goal is to offer seamless travel experiences
+          for all our clients.
+          <br><br>
+          From carefully planned routes to exceptional service, we strive to
+          make your journey safe, comfortable, and enjoyable.
+        </template>
+      </TitleAndDescription>
+    </Section>
   </div>
 </template>

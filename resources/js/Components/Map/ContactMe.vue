@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue';
-  import { ChevronRight } from 'lucide-vue-next';
   import { useToast } from 'vue-toastification';
+  import OutlineButton from '@/Components/Reusable/OutlineButton.vue';
 
   const props = defineProps({
     collapsed: {
@@ -27,10 +27,10 @@
               Contact Me
             </h3>
 
-            <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
-                    @click="isOpen = !isOpen">
+            <OutlineButton class="px-3 border-base-content/60 opacity-80"
+                           @click="isOpen = !isOpen">
               {{ isOpen ? 'Hide' : 'Show' }}
-            </button>
+            </OutlineButton>
           </div>
 
           <p class="w-full text-md opacity-80 pt-2" v-if="isOpen">
@@ -43,13 +43,13 @@
           </p>
         </div>
 
-        <button class="btn btn-lg btn-outline flex flex-row justify-center items-center gap-1 px-3 border-base-content/50"
-                @click="toast.info('Not implemented yet', {position: 'bottom-center', timeout: 2000})"
-                v-if="isOpen" >
-          <ChevronRight class="w-6 h-6 mb-0.5 opacity-0"/>
-          <span class="w-full pt-0.5">Contact Me</span>
-          <ChevronRight class="w-6 h-6 mb-0.5"/>
-        </button>
+        <OutlineButton class="w-full px-3"
+                       size="lg"
+                       right-icon="ChevronRight"
+                       @click="toast.info('Not implemented yet', {position: 'bottom-center', timeout: 2000})"
+                       v-if="isOpen">
+          Contact Me
+        </OutlineButton>
       </div>
     </div>
   </div>

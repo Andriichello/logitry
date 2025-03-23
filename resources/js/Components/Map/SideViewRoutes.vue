@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, PropType } from 'vue';
+  import { computed, PropType, ref } from 'vue';
   import { Route, Trip } from '@/api';
   import { ChevronRight, FilterX, Route as RouteIcon } from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
@@ -9,6 +9,7 @@
   import dayjs from 'dayjs';
   import { useToast } from 'vue-toastification';
   import ContactMe from '@/Components/Map/ContactMe.vue';
+  import OutlineButton from '@/Components/Reusable/OutlineButton.vue';
 
   const emits = defineEmits([
     'toggle-has-trips',
@@ -44,13 +45,14 @@
 
   const toast = useToast();
 
+  const isClearFiltersModal = ref(false);
   const showClearFilters = computed(() => {
     return props.filters?.from?.length
       || props.filters?.to?.length
       || props.filters?.has_trips
       || props.filters?.end
-      || (props.filters?.beg && !props.filters.beg.isSame(dayjs(), 'day'))
-  })
+      || (props.filters?.beg && !props.filters.beg.isSame(dayjs(), 'day'));
+  });
 
   /**
    * Computes the list of pages to display for pagination.
@@ -112,18 +114,23 @@
               <h3 class="text-2xl font-semibold">Filters</h3>
 
               <template v-if="showClearFilters">
-                <label for="clear_filters"
-                       class="h-8 btn btn-md btn-error btn-outline flex flex-row cursor-pointer">
-                  <span class="pt-0.5 pl-2">Clear</span>
-                  <FilterX class="w-5 h-5"/>
-                </label>
+                <OutlineButton right-icon="FilterX" size="md"
+                               icon-size="8"
+                               :invisible-offset="false"
+                               class="btn-error border-error gap-0"
+                               v-if="showClearFilters || (!routes.length && meta?.total > 1)"
+                                @click="isClearFiltersModal = true">
+                  Clear
+                </OutlineButton>
               </template>
 
               <template v-else>
-                <div class="h-8 btn btn-md btn-error flex justify-center items-center cursor-pointer opacity-0">
-                  <span class="pt-0.5">Clear</span>
-                  <FilterX class="w-5 h-5"/>
-                </div>
+                <OutlineButton right-icon="FilterX" size="lg"
+                               class="w-full btn-error border-error"
+                               v-if="showClearFilters || (!routes.length && meta?.total > 1)"
+                               @click="emits('clear-filters')">
+                  Clear
+                </OutlineButton>
               </template>
             </div>
 
@@ -137,20 +144,23 @@
           </div>
 
           <!-- Put this part before </body> tag -->
-          <input type="checkbox" id="clear_filters" class="modal-toggle" />
-          <div class="modal" role="dialog">
+          <input type="checkbox" id="clear_filters" class="modal-toggle"
+            v-model="isClearFiltersModal"/>
+          <div class="modal z-[3000]" role="dialog">
             <div class="modal-box max-w-xs">
               <h3 class="text-lg font-bold">Clear all filters?</h3>
               <div class="w-full flex flex-row justify-start items-baseline gap-2 pt-5">
-                <label class="flex-1 btn btn-md btn-outline btn-error"
-                       for="clear_filters"
-                       @click="emits('clear-filters')">
-                  Yes
-                </label>
-                <label class="flex-1 btn btn-md btn-soft"
-                       for="clear_filters">
+                <OutlineButton size="lg"
+                               class="grow"
+                               @click="isClearFiltersModal = false">
                   No
-                </label>
+                </OutlineButton>
+
+                <OutlineButton size="lg"
+                               class="grow btn-error border-error"
+                               @click="emits('clear-filters'); (isClearFiltersModal = false)">
+                  Yes
+                </OutlineButton>
               </div>
             </div>
             <label id="close_filters" class="modal-backdrop" for="clear_filters">Close</label>
@@ -222,12 +232,12 @@
               <span class="text-xl font-bold">No routes found</span>
             </div>
 
-            <div class="w-full btn btn-lg btn-outline btn-error flex flex-row cursor-pointer"
-                 v-if="showClearFilters || (!routes.length && meta?.total > 1)"
-                 @click="emits('clear-filters')">
-              <span class="pt-0.5 pl-2">Clear all filters</span>
-              <FilterX class="w-5 h-5"/>
-            </div>
+            <OutlineButton right-icon="FilterX" size="lg"
+                           class="w-full btn-error border-error px-3"
+                           v-if="showClearFilters || (!routes.length && meta?.total > 1)"
+                           @click="emits('clear-filters')">
+              Clear all filters
+            </OutlineButton>
           </div>
 
           <div v-if="routes.length && meta?.total > 1"

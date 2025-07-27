@@ -154,11 +154,10 @@
         <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
             <h3 class="text-2xl font-semibold font-mono flex items-center gap-2">
-<!--              <ArrowLeft class="w-6 h-6 pl-1 pb-1"/>-->
               {{ route.name }}
             </h3>
             <p class="text-md opacity-80">
-              Here you can see route details, stops, trips.
+              Route details
             </p>
           </div>
 
@@ -200,7 +199,7 @@
       </div>
     </div>
 
-    <div class="w-full h-full flex flex-col justify-start items-start px-3">
+    <div class="w-full h-full flex flex-col justify-start items-start px-4">
       <div class="w-full max-w-lg flex flex-col justify-end items-start self-center"
            v-if="route.prices?.length">
 
@@ -227,7 +226,7 @@
           </div>
         </template>
 
-        <div class="w-full flex flex-col justify-start items-center pt-5 pr-2"
+        <div class="w-full flex flex-col justify-start items-center pt-5"
              v-if="trips?.length">
           <div class="w-full flex flex-col justify-start items-start">
 

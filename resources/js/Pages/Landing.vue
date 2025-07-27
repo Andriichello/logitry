@@ -12,7 +12,7 @@
   import { router } from '@inertiajs/vue3';
   import { onMounted, onUnmounted, PropType, ref } from 'vue';
   import { useMapStore } from '@/stores/map';
-  import { Bounds, Company } from '@/api';
+  import {Bounds, Company, Route} from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
   import { useToast } from 'vue-toastification';
   import OutlineButton from '@/Components/Reusable/OutlineButton.vue';
@@ -116,7 +116,7 @@
 <template>
   <div class="w-full h-full grow flex flex-col justify-start items-start pb-20">
 
-    <Section class="shadow-sm">
+    <Section class="shadow-sm" v-if="false">
       <TitleAndDescription>
         <template #title>
           Contact Me
@@ -136,7 +136,8 @@
     <SectionDivider/>
 
     <Section class="bg-base-200/60 shadow-sm">
-      <div id="map" class="w-full min-h-[200px] mb-3 rounded-lg shadow-lg"
+      <div id="map" class="w-full min-h-[200px] mb-3 rounded-lg shadow-lg cursor-pointer"
+           @click="router.visit(`/${props.company?.abbreviation}/map`)"
            style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
         <template v-for="route in (props.routes ?? [])" :key="route.id" v-if="map">
           <RouteOnMap :route="route"

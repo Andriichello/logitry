@@ -130,6 +130,7 @@
                     @swap-from-and-where="emits('swap-from-and-where')"
                     @open-calendar="openCalendar"
                     @clear-filters="clearFilters"
-                    @route-clicked="routeClicked"/>
+                    @route-clicked="routeClicked"
+                    @back-to-company="router.visit(`/${company?.abbreviation}`)"/>
   </div>
 </template>

@@ -136,7 +136,7 @@ export const useMapStore = defineStore('map', {
       route: null,
       trip: null,
       point: null,
-      arePointsHidden: false,
+      arePointsHidden: true,
       isShowingFilters: false,
     }
   },

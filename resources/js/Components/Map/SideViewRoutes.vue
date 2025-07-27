@@ -4,7 +4,7 @@
   import {ArrowLeft, ChevronRight, FilterX, Route as RouteIcon} from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { MapFilters } from '@/stores/map';
-  import { Deferred } from '@inertiajs/vue3';
+  import {Deferred, router} from '@inertiajs/vue3';
   import SideViewFilters from '@/Components/Map/SideViewFilters.vue';
   import dayjs from 'dayjs';
   import { useToast } from 'vue-toastification';
@@ -19,7 +19,9 @@
     'swap-from-and-where',
     'open-calendar',
     'clear-filters',
-    'route-clicked']);
+    'route-clicked',
+    'back-to-company',
+  ]);
 
   const props = defineProps({
     routes: {
@@ -99,6 +101,20 @@
 <template>
   <div class="w-full h-full flex flex-col justify-start items-center">
     <ContactMe class="shadow-sm" v-if="false"/>
+
+    <div class="w-full flex flex-col justify-start items-center px-4 font-mono">
+      <div class="w-full max-w-lg flex flex-col justify-start items-center">
+        <div class="w-full flex flex-col justify-start items-start gap-2 pt-3.5 pb-2.5">
+          <div class="w-full max-w-lg flex justify-start items-center">
+            <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
+                 @click="emits('back-to-company')">
+              <ArrowLeft class="w-5 h-5 pb-1"/>
+              <p>Back to company page</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="w-full h-[1px]">

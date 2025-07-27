@@ -109,7 +109,7 @@
             <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
                  @click="emits('back-to-company')">
               <ArrowLeft class="w-5 h-5 pb-1"/>
-              <p>Back to company page</p>
+              <p>Routes</p>
             </div>
           </div>
         </div>
@@ -195,13 +195,14 @@
             </p>
           </div>
 
-          <ul class="w-full list bg-base-200/60 border border-base-content/50 rounded shadow-md"
+          <ul class="w-full list bg-base-200/60 rounded gap-2.5 pt-2"
               v-if="props.routes?.length">
 
             <template v-for="(route, index) in props.routes" :key="route.id">
-              <li class="list-row pt-3 pb-2 px-4 rounded-none first:rounded-t last:rounded-b">
+              <li class="list-row pt-3 pb-2 px-4 rounded border border-base-content/30 rounded-xl cursor-pointer hover:bg-base-300/60 hover:border-base-content/50 hover:shadow-xs"
+                  @click="emits('route-clicked', route)">
                 <div class="list-col-grow">
-                  <div class="text-xl font-semibold font-mono">{{ route.name }}</div>
+                  <div class="text-xl font-semibold font-mono pb-3">{{ route.name }}</div>
                   <div class="w-full flex flex-wrap flex-row justify-start items-baseline self-start gap-2 opacity-75 translate-y-[-4px]">
                     <Deferred data="trips">
                       <template #fallback>
@@ -232,10 +233,6 @@
                     </div>
                   </div>
                 </div>
-                <button class="btn btn-md btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
-                        @click="emits('route-clicked', route)">
-                  <ChevronRight class="w-5 h-5"/>
-                </button>
               </li>
             </template>
           </ul>

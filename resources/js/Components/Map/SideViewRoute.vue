@@ -135,7 +135,7 @@
             <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
                  @click="emits('route-closed', route)">
               <ArrowLeft class="w-5 h-5 pb-1"/>
-              <p>Back to routes</p>
+              <p>Route details</p>
             </div>
           </div>
         </div>
@@ -156,12 +156,9 @@
             <h3 class="text-2xl font-semibold font-mono flex items-center gap-2">
               {{ route.name }}
             </h3>
-            <p class="text-md opacity-80">
-              Route details
-            </p>
           </div>
 
-          <div class="w-full flex flex-col justify-center items-center px-4 pt-0 bg-base-200/80 border border-base-content/60 rounded"
+          <div class="w-full flex flex-col justify-center items-center px-4 pt-0 border border-base-content/30 rounded rounded-xl"
                :class="{'pb-1': mapStore.arePointsHidden}">
             <div class="w-full max-w-lg flex flex-col justify-center items-center">
               <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 font-mono">
@@ -173,7 +170,7 @@
                       Stops ({{ route.points.length }})
                     </h3>
 
-                    <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
+                    <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100  hover:bg-base-300/60 hover:border-base-content/50 hover:shadow-xs font-semibold"
                             @click="hidePoints">
                       {{ !mapStore.arePointsHidden ? 'Hide' : 'Show' }} list
                     </button>
@@ -253,10 +250,11 @@
             </div>
 
             <template v-for="(trip, index) in filteredTrips" :key="trip.id">
+
               <div class="w-full flex flex-col justify-start items-center pb-1">
                 <div class="w-full border-t-1 opacity-15 pt-1" v-if="index > 0"/>
 
-                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2 rounded hover:bg-base-300 px-2">
+                <div class="w-full flex flex-row justify-start items-center cursor-pointer gap-2 rounded hover:bg-base-300/80 hover:shadow-xs pl-3 pr-4 pt-2 pb-2">
 
                   <div class="rounded flex justify-center items-center text-error tooltip tooltip-right tooltip-error"
                        v-if="trip.reversed">

@@ -55,7 +55,7 @@
             <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
                  @click="emits('trip-closed', trip)">
               <ArrowLeft class="w-5 h-5 pb-1"/>
-              <p>Back to route details</p>
+              <p>Trip details</p>
             </div>
           </div>
         </div>
@@ -75,9 +75,6 @@
             <h3 class="text-2xl font-semibold">
               {{ route.name }}
             </h3>
-            <p class="text-md opacity-80">
-              Trip details
-            </p>
 
             <div class="w-full flex justify-between items-center gap-2">
               <div class="rounded flex justify-center items-center text-error tooltip tooltip-open tooltip-right tooltip-error"
@@ -112,7 +109,7 @@
           </div>
 
           <div class="w-full h-full flex flex-col justify-start items-start pb-20">
-            <div class="w-full flex flex-col justify-center items-center px-4 pt-0 bg-base-200/80 border border-base-content/60 rounded"
+            <div class="w-full flex flex-col justify-center items-center px-4 pt-0 border border-base-content/30 rounded-xl"
                  :class="{'pb-1': mapStore.arePointsHidden}"
                  v-if="pointsInOrder.length">
               <div class="w-full max-w-lg flex flex-col justify-center items-center">
@@ -125,7 +122,7 @@
                         Stops ({{ route.points.length }})
                       </h3>
 
-                      <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 font-semibold"
+                      <button class="btn btn-sm h-fit py-1 pt-1.5 text-[14px] btn-outline border-base-content/60 opacity-80 hover:opacity-100 hover:bg-base-300/60 hover:border-base-content/50 hover:shadow-xs font-semibold"
                               @click="hidePoints">
                         {{ !mapStore.arePointsHidden ? 'Hide' : 'Show' }} list
                       </button>

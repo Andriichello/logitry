@@ -9,11 +9,12 @@
   import SideDrawer from '@/Components/Menu/SideDrawer.vue';
   import MenuButton from '@/Components/Menu/MenuButton.vue';
   import SideView from '@/Components/Map/SideView.vue';
-  import { MapPinned, Route as RouteIcon } from 'lucide-vue-next';
+  import { X, MapPinned, Route as RouteIcon } from 'lucide-vue-next';
   import dayjs from 'dayjs';
   import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
-  import { useForm } from '@inertiajs/vue3';
+  import {Deferred, useForm} from '@inertiajs/vue3';
   import SideViewFrom from '@/Components/Map/SideViewFrom.vue';
+  import {minutesToHumanReadable} from "@/helpers";
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -453,14 +454,55 @@
                        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
         <template v-if="isNarrowScreen">
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
+          <div class="absolute bottom-3 left-2 right-2 bg-base-100/90 z-[400] rounded px-3 pt-2 pb-16"
+               v-if="isShowingMap && mapStore.route">
+
+            <div class="w-full flex flex-row justify-between items-start gap-2">
+              <div class="list-col-grow">
+                <div class="text-xl font-semibold font-mono pb-3">{{ mapStore.route.name }}</div>
+                <div class="w-full flex flex-wrap flex-row justify-start items-baseline self-start gap-2 opacity-75 translate-y-[-4px]">
+                  <Deferred data="trips">
+                    <template #fallback>
+                      <div class="flex flex-row justify-center items-center gap-2 p-0.5 pr-2 rounded">
+                        <span class="text-md"><span class="loading loading-dots loading-xs mr-1"/>trips</span>
+                      </div>
+                    </template>
+
+                    <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
+                         v-if="trips?.filter(trip => trip.route_id === mapStore.route.id)?.length">
+                      <span class="text-md">{{ trips?.filter(trip => trip.route_id === mapStore.route.id)?.length }} {{ trips?.filter(trip => trip.route_id === mapStore.route.id)?.length > 1 ? 'trips' : 'trip' }}<span class="opacity-0" v-if="trips?.filter(trip => trip.route_id === mapStore.route.id)?.length === 1">s</span> </span>
+                    </div>
+
+                    <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
+                         v-else>
+                      <span class="text-md">No trips</span>
+                    </div>
+                  </Deferred>
+
+                  <div class="flex flex-row justify-start items-center p-0.5 px-2 rounded"
+                       v-if="mapStore.route.points?.length">
+                    <span class="text-md">{{ mapStore.route.points?.length }} stops</span>
+                  </div>
+
+                  <div class="flex flex-row justify-center items-center p-0.5 px-2 rounded"
+                       v-if="mapStore.route.travel_time">
+                    <span class="text-md">{{ minutesToHumanReadable(mapStore.route.travel_time) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <X class="w-8 h-8 p-1 cursor-pointer" @click="routeClosed(mapStore.route)"/>
+            </div>
+          </div>
+
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 left-4 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
                v-if="isShowingMap"
                @click="toggleMap">
             <span class="text-md pt-1 pb-0.5">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
             <RouteIcon class="w-5 h-5"/>
           </div>
 
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 left-4 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
                v-else-if="routes?.length"
                @click="toggleMap">
             <span class="text-md pt-1 pb-0.5">View on Map</span>

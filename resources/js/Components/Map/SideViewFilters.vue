@@ -105,7 +105,7 @@
 <!--      Departure date or an interval-->
 <!--    </p>-->
 
-    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0"
+    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0 hover:bg-base-300/60 hover:border-base-content/30 hover:shadow-xs"
          @click="emits('open-calendar')">
       <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal">
         <Calendar class="w-6 h-6"/>
@@ -143,7 +143,7 @@
       </div>
     </button>
 
-    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0">
+    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0 hover:bg-base-300/60 hover:border-base-content/30 hover:shadow-xs">
       <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal"
            @click="emits('toggle-has-trips', hasTrips)">
         <Route class="w-6 h-6" :class="{'opacity-50': !hasTrips}"/>

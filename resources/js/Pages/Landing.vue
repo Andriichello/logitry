@@ -156,7 +156,7 @@
         </template>
       </TitleAndDescription>
 
-      <OutlineButton right-icon="ChevronRight" size="lg" class="w-full py-1"
+      <OutlineButton right-icon="ChevronRight" size="lg" class="w-full py-1 hover:bg-base-300/60 hover:border-base-content/30 hover:shadow-xs"
                      @click="router.visit(`/${props.company?.abbreviation}/map`)">
         View Routes
       </OutlineButton>

@@ -31,7 +31,7 @@
     <!-- Sidebar content here -->
     <ul class="menu bg-base-200 text-base-content min-h-full w-xs">
       <li @click="emits('collapse')"
-          class="w-fit flex flex-row gap-0 mt-2.5 mb-2 text-white opacity-90 hover:opacity-100">
+          class="w-fit flex flex-row gap-0 mt-[3px] mb-2 text-white opacity-90 hover:opacity-100">
         <div class="-translate-x-9 bg-primary pl-2">
           <ChevronsRight class="w-6 h-6" />
 

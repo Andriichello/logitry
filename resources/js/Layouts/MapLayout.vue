@@ -453,17 +453,17 @@
                        @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
 
         <template v-if="isNarrowScreen">
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-4.5 right-2 z-[400] opacity-90 hover:opacity-100"
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
                v-if="isShowingMap"
                @click="toggleMap">
-            <span class="text-md">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
+            <span class="text-md pt-1 pb-0.5">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
             <RouteIcon class="w-5 h-5"/>
           </div>
 
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-4.5 right-2 z-[400] opacity-90 hover:opacity-100"
+          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
                v-else-if="routes?.length"
                @click="toggleMap">
-            <span class="text-md">View on Map</span>
+            <span class="text-md pt-1 pb-0.5">View on Map</span>
             <MapPinned class="w-6 h-6"/>
           </div>
         </template>

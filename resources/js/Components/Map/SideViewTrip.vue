@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed, PropType } from 'vue';
   import { Point, Route, Trip } from '@/api';
-  import { ArrowLeftFromLine, ArrowRightFromLine, ChevronDown, ChevronUp, X } from 'lucide-vue-next';
+  import {ArrowLeft, ArrowLeftFromLine, ArrowRightFromLine, ChevronDown, ChevronUp, X} from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { useMapStore } from '@/stores/map';
   import SideViewStops from '@/Components/Map/SideViewStops.vue';
@@ -47,15 +47,24 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline gap-2 p-3 pt-0">
-    <div class="w-full flex flex-row justify-between items-baseline gap-2">
-      <h3 class="text-md font-semibold">
-        Trip
-      </h3>
+  <div class="w-full flex flex-col justify-between items-baseline pt-0 font-mono">
+    <div class="w-full grow flex flex-col justify-start items-center px-4">
+      <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
+        <div class="w-full flex flex-col justify-start items-start gap-2 pt-3.5 pb-2.5">
+          <div class="w-full max-w-lg flex justify-start items-center">
+            <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
+                 @click="emits('trip-closed', trip)">
+              <ArrowLeft class="w-5 h-5 pb-1"/>
+              <p>Back to route details</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <div class="rounded flex justify-center items-center cursor-pointer p-2 translate-x-[8px]"
-           @click="emits('trip-closed', trip)">
-        <X class="w-5 h-5"/>
+    <div class="w-full flex flex-col justify-center items-center">
+      <div class="w-full h-[1px]">
+        <div class="w-full h-full bg-base-content opacity-10"></div>
       </div>
     </div>
 

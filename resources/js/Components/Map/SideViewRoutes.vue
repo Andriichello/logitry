@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed, PropType, ref } from 'vue';
   import { Route, Trip } from '@/api';
-  import { ChevronRight, FilterX, Route as RouteIcon } from 'lucide-vue-next';
+  import {ArrowLeft, ChevronRight, FilterX, Route as RouteIcon} from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { MapFilters } from '@/stores/map';
   import { Deferred } from '@inertiajs/vue3';
@@ -98,7 +98,7 @@
 
 <template>
   <div class="w-full h-full flex flex-col justify-start items-center">
-    <ContactMe class="shadow-sm"/>
+    <ContactMe class="shadow-sm" v-if="false"/>
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="w-full h-[1px]">
@@ -117,7 +117,7 @@
                 <OutlineButton right-icon="FilterX" size="md"
                                icon-size="8"
                                :invisible-offset="false"
-                               class="btn-error border-error gap-0"
+                               class="btn-error border-error gap-0 max-h-8"
                                v-if="showClearFilters || (!routes.length && meta?.total > 1)"
                                 @click="isClearFiltersModal = true">
                   Clear

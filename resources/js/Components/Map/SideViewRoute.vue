@@ -2,6 +2,7 @@
   import { computed, PropType, ref } from 'vue';
   import { Point, Route, Trip } from '@/api';
   import {
+    ArrowLeft,
     ArrowLeftFromLine,
     ArrowRightFromLine,
     Car,
@@ -124,8 +125,22 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-between items-baseline pt-0 pb-20">
-    <ContactMe class="shadow-sm"/>
+  <div class="w-full flex flex-col justify-between items-baseline pt-0 pb-20 font-mono">
+    <ContactMe class="shadow-sm" v-if="false"/>
+
+    <div class="w-full grow flex flex-col justify-start items-center px-4">
+      <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
+        <div class="w-full flex flex-col justify-start items-start gap-2 pt-3.5 pb-2.5">
+          <div class="w-full max-w-lg flex justify-start items-center">
+            <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
+                 @click="emits('route-closed', route)">
+              <ArrowLeft class="w-5 h-5 pb-1"/>
+              <p>Back to routes</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="w-full h-[1px]">
@@ -133,11 +148,15 @@
       </div>
     </div>
 
+
     <div class="w-full grow flex flex-col justify-start items-center px-4 pt-2">
       <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
         <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 gap-4 font-mono">
           <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-2xl font-semibold font-mono">{{ route.name }}</h3>
+            <h3 class="text-2xl font-semibold font-mono flex items-center gap-2">
+<!--              <ArrowLeft class="w-6 h-6 pl-1 pb-1"/>-->
+              {{ route.name }}
+            </h3>
             <p class="text-md opacity-80">
               Here you can see route details, stops, trips.
             </p>
@@ -162,6 +181,7 @@
                   </div>
 
                   <p class="w-full text-md opacity-80"
+                     v-if="route.travel_time"
                      :class="{'cursor-pointer': mapStore.arePointsHidden}"
                      @click="mapStore.arePointsHidden && hidePoints()">
                     {{ minutesToHumanReadable(route.travel_time) }} travel time
@@ -181,7 +201,7 @@
     </div>
 
     <div class="w-full h-full flex flex-col justify-start items-start px-3">
-      <div class="w-full flex flex-col justify-end items-start px-2"
+      <div class="w-full max-w-lg flex flex-col justify-end items-start self-center"
            v-if="route.prices?.length">
 
         <div class="w-full flex flex-col justify-between items-baseline pt-3">
@@ -304,7 +324,7 @@
           </div>
         </div>
 
-        <div class="flex flex-col justify-center items-center gap-2 p-4"
+        <div class="w-full flex flex-col justify-center items-center gap-2 p-4"
              v-else>
           <Car class="w-8 h-8"/>
 

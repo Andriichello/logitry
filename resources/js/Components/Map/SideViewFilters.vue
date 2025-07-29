@@ -62,7 +62,7 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-4">
+  <div class="w-full flex flex-col gap-1">
     <!-- Date Filter -->
     <div class="mb-4">
       <button

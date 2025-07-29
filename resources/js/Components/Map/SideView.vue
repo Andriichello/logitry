@@ -92,7 +92,7 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col overflow-y-auto">
+  <div class="w-full h-full flex flex-col overflow-y-auto overflow-x-hidden">
     <!-- Trip Details View -->
     <div v-if="mapStore.trip" class="flex flex-col h-full">
       <SideViewTrip

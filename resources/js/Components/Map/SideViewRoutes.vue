@@ -115,35 +115,35 @@
       </button>
     </div>
 
-    <!-- Filters -->
-    <div class="p-4 border-b" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Filters</h3>
-        <button
-          v-if="showClearFilters || (!routes.length && meta?.total > 1)"
-          @click="showClearFilters ? isClearFiltersModal = true : emits('clear-filters')"
-          class="text-sm border px-3 py-1 rounded flex items-center gap-1"
-          :class="themeStore.isDark ? 'text-gray-300 border-gray-600 hover:bg-gray-800' : 'text-gray-500 border-gray-300 hover:bg-gray-50'"
-        >
-          <FilterX class="w-3 h-3" />
-          Clear
-        </button>
+    <!-- Routes List with Filters -->
+    <div class="flex-1 overflow-y-auto overflow-x-hidden">
+      <!-- Filters -->
+      <div class="p-4 border-b" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Filters</h3>
+          <button
+            v-if="showClearFilters || (!routes.length && meta?.total > 1)"
+            @click="showClearFilters ? isClearFiltersModal = true : emits('clear-filters')"
+            class="text-sm border px-3 py-1 rounded flex items-center gap-1"
+            :class="themeStore.isDark ? 'text-gray-300 border-gray-600 hover:bg-gray-800' : 'text-gray-500 border-gray-300 hover:bg-gray-50'"
+          >
+            <FilterX class="w-3 h-3" />
+            Clear
+          </button>
+        </div>
+
+        <SideViewFilters
+          :filters="filters"
+          :countries="countries"
+          @toggle-has-trips="toggleHasTrips"
+          @swap-from-and-where="emits('swap-from-and-where')"
+          @open-from="emits('open-from')"
+          @open-where="emits('open-where')"
+          @open-calendar="emits('open-calendar')"
+        />
       </div>
 
-      <SideViewFilters
-        :filters="filters"
-        :countries="countries"
-        @toggle-has-trips="toggleHasTrips"
-        @swap-from-and-where="emits('swap-from-and-where')"
-        @open-from="emits('open-from')"
-        @open-where="emits('open-where')"
-        @open-calendar="emits('open-calendar')"
-      />
-    </div>
-
-    <!-- Routes List -->
-    <div class="flex-1 overflow-y-auto">
-      <div class="p-4">
+      <div class="p-4 pb-20">
         <h3 class="font-semibold mb-2" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Routes</h3>
         <p class="text-sm mb-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">Here are your search results</p>
 
@@ -214,10 +214,10 @@
     </div>
 
     <!-- Mobile View on Map Button -->
-    <div class="lg:hidden p-4 border-t" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
+    <div class="md:hidden fixed bottom-4 left-0 right-0 px-4 z-10">
       <button
         @click="emits('toggle-map')"
-        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700"
+        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 shadow-lg"
       >
         <MapPin class="w-4 h-4" />
         View on Map

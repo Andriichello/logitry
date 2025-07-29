@@ -98,7 +98,7 @@
   }
 
   function onResize() {
-    isNarrowScreen.value = window.innerWidth < 799;
+    isNarrowScreen.value = window.innerWidth < 600;
   }
 
   function toBounds(given) {
@@ -353,9 +353,7 @@
     if (map.value) {
       setTimeout(() => {
         map.value.invalidateSize();
-
-        fitBounds(mapStore.route?.bounds ?? props.bounds);
-      }, 100);
+      }, 250);
     }
   }
 
@@ -399,7 +397,7 @@
 </script>
 
 <template>
-  <div id="app" class="min-h-screen" :class="themeStore.isDark ? 'bg-gray-900' : 'bg-gray-50'">
+  <div id="app" class="h-screen overflow-hidden" :class="themeStore.isDark ? 'bg-gray-900' : 'bg-gray-50'">
     <!-- Header -->
     <header class="shadow-sm border-b" :class="themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'">
       <div class="flex items-center justify-between px-4 py-3">
@@ -431,13 +429,13 @@
       <!-- Side Panel -->
       <div
         :class="[
-          'transition-all duration-300 flex flex-col border-r lg:relative absolute inset-y-0 left-0 z-20',
-          isShowingMap ? 'w-0 overflow-hidden lg:w-0' : 'w-full lg:w-80 xl:w-96',
+          'transition-all duration-300 flex flex-col border-r lg:relative absolute inset-y-0 left-0 z-20 overflow-auto overflow-x-hidden',
+          isShowingMap ? 'w-0 overflow-hidden lg:w-0' : isNarrowScreen ? 'w-full max-w-[100%] w-[100%]' : 'w-full max-w-[33%] w-[33%]',
           themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         ]"
       >
         <template v-if="isShowingCalendar">
-          <div class="side w-full px-4 py-4">
+          <div class="w-full w-sm px-4 py-4">
             <BookingCalendar :months="5"
                             :beg="mapStore.filters.beg"
                             :end="mapStore.filters.end"
@@ -448,7 +446,7 @@
         </template>
 
         <template v-else-if="isShowingFrom">
-          <div class="side w-full px-4 py-4">
+          <div class="w-full px-4 py-4">
             <SideViewFrom title="Countries"
                           :from="mapStore.filters.from?.length ? mapStore.filters.from.split(',') : []"
                           :countries="props.countries"
@@ -458,7 +456,7 @@
         </template>
 
         <template v-else>
-          <SideView class="side" id="side"
+          <SideView class="w-full"
                     :company="props.company"
                     :routes="props.routes"
                     :trips="props?.trips"
@@ -478,13 +476,13 @@
       </div>
 
       <!-- Map Area -->
-      <div id="map" class="flex-1 relative bg-gray-100 opacity-20" :class="isShowingMap ? '' : 'lg:block hidden'">
+      <div id="map" class="flex-1 relative bg-gray-100 lg:block z-[1]">
         <slot/>
 
         <!-- Desktop Collapse button -->
         <button
           @click="toggleMap"
-          class="hidden lg:block absolute top-4 left-4 bg-purple-600 text-white px-3 py-2 rounded text-sm"
+          class="hidden lg:block absolute top-4 left-4 bg-purple-600 text-white px-3 py-2 rounded text-sm z-[1000]"
         >
           {{ isShowingMap ? '»' : '«' }} {{ isShowingMap ? 'Expand' : 'Collapse' }}
         </button>
@@ -512,24 +510,24 @@
             <span v-if="mapStore.route.points?.length">{{ mapStore.route.points?.length }} stops</span>
             <span v-if="mapStore.route.travel_time">{{ minutesToHumanReadable(mapStore.route.travel_time) }}</span>
           </div>
-          <button
-            @click="toggleMap"
-            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 mt-3"
-          >
-            <ArrowRight class="w-4 h-4" />
-            {{ mapStore.trip ? 'Trip Details' : 'Route Details' }}
-          </button>
+<!--          <button-->
+<!--            @click="toggleMap"-->
+<!--            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 mt-3"-->
+<!--          >-->
+<!--            <ArrowRight class="w-4 h-4" />-->
+<!--            {{ mapStore.trip ? 'Trip Details' : 'Route Details' }}-->
+<!--          </button>-->
         </div>
       </div>
 
       <!-- Mobile Toggle Button -->
       <button
-        v-if="isShowingMap"
         @click="toggleMap"
-        class="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-30"
+        class="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-50"
+        v-if="isShowingMap"
       >
         <Menu class="w-4 h-4" />
-        {{ mapStore.trip ? 'Trip Details' : (mapStore.route ? 'Route Details' : 'Routes List') }}
+        {{ isShowingMap ? (mapStore.trip ? 'Trip Details' : (mapStore.route ? 'Route Details' : 'Routes List')) : 'View Map' }}
       </button>
     </div>
   </div>
@@ -537,31 +535,31 @@
 
 <style scoped>
   .side {
-    @apply h-full max-h-full;
+    @apply h-full max-h-full max-w-lg;
 
-    min-width: 35vw;
-    max-width: 500px;
+    width: 25%;
+    max-width: 25%;
   }
 
   #side {
-    min-width: 35vw;
-    max-width: 500px;
+    width: 25%;
+    max-width: 25%;
   }
 
   #map {
     @apply flex-1;
   }
 
-  @media (max-width: 799px) {
+  @media (max-width: 600px) {
     .side {
-      @apply h-full max-h-full;
+      @apply h-full max-h-full max-w-full;
 
-      min-width: 35vw;
+      width: 100%;
       max-width: 100%;
     }
 
     #side {
-      min-width: 35vw;
+      width: 100%;
       max-width: 100%;
     }
 

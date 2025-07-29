@@ -13,9 +13,9 @@
 </script>
 
 <template>
-  <div id="app" class="min-h-screen" :class="themeStore.isDark ? 'bg-gray-900' : 'bg-gray-50'">
+  <div id="app" class="h-screen overflow-hidden" :class="themeStore.isDark ? 'bg-gray-900' : 'bg-gray-50'">
     <!-- Header -->
-    <header class="shadow-sm border-b" :class="themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'">
+    <header class="border-b" :class="themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'">
       <div class="flex items-center justify-between px-4 py-3">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 bg-purple-600 rounded flex items-center justify-center">
@@ -41,8 +41,10 @@
     </header>
 
     <!-- Main Content -->
-    <div class="flex-1">
-      <slot/>
+    <div class="h-[calc(100vh-73px)] overflow-auto">
+      <div class="max-w-lg mx-auto">
+        <slot/>
+      </div>
     </div>
   </div>
 </template>

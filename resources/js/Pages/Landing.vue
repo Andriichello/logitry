@@ -78,7 +78,7 @@
   });
 
   function onResize() {
-    isNarrowScreen.value = window.innerWidth < 799;
+    isNarrowScreen.value = window.innerWidth < 600;
   }
 
   function toBounds(given) {
@@ -116,7 +116,7 @@
 </script>
 
 <template>
-  <div class="p-6 flex-1 overflow-y-auto">
+  <div class="p-3 pt-5 flex-1 overflow-y-auto">
     <div class="space-y-6">
       <!-- Map Preview -->
       <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center relative">
@@ -150,7 +150,7 @@
       </div>
 
       <!-- About Us -->
-      <div>
+      <div class="max-w-xl mx-auto space-y-4">
         <h3 class="text-xl font-bold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">About Us</h3>
         <div class="space-y-3 text-sm" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">
           <p>We are a company dedicated to providing reliable and efficient transportation services.</p>

@@ -3,8 +3,7 @@
   import { Point, Route, Trip } from '@/api';
   import {
     ArrowLeft,
-    ArrowLeftFromLine,
-    ArrowRightFromLine,
+    ArrowRight,
     Car,
     ChevronDown,
     ChevronRight,
@@ -143,7 +142,7 @@
       </button>
     </div>
 
-    <div class="flex-1 overflow-y-auto p-4">
+    <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-20">
       <h2 class="text-xl font-bold mb-4" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.name }}</h2>
 
       <!-- Stops -->
@@ -297,8 +296,8 @@
                 : 'border-gray-200 hover:bg-gray-50'"
             >
               <div class="flex items-center gap-3">
-                <ArrowRightFromLine v-if="!trip.reversed" class="w-4 h-4 text-green-600" />
-                <ArrowLeftFromLine v-else class="w-4 h-4 text-red-600" />
+                <ArrowRight v-if="!trip.reversed" class="w-4 h-4 text-green-600" />
+                <ArrowLeft v-else class="w-4 h-4 text-red-600" />
                 <div>
                   <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">
                     {{ toHumanTime(trip.departs_at) }}
@@ -336,10 +335,10 @@
     </div>
 
     <!-- Mobile View on Map Button -->
-    <div class="lg:hidden p-4 border-t" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
+    <div class="md:hidden fixed bottom-4 left-0 right-0 px-4 z-10">
       <button
         @click="emits('toggle-map')"
-        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700"
+        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 shadow-lg"
       >
         <MapPin class="w-4 h-4" />
         View on Map

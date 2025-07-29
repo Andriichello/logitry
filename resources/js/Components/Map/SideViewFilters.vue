@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { computed, PropType } from 'vue';
   import { MapFilters } from '@/stores/map';
+  import { useThemeStore } from '@/stores/theme';
   import { Deferred } from '@inertiajs/vue3';
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { Calendar, ChevronRight, MapPin, Route } from 'lucide-vue-next';
@@ -14,6 +15,8 @@
     },
     countries: Object as PropType<Record<string, string>> | null,
   });
+
+  const themeStore = useThemeStore();
 
   const hasTrips = computed(() => {
     return props.filters?.has_trips;
@@ -59,103 +62,86 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-start items-start gap-1">
-<!--    <p class="text-md opacity-80">-->
-<!--      Countries to search routes for-->
-<!--    </p>-->
+  <div class="w-full flex flex-col gap-4">
+    <!-- Date Filter -->
+    <div class="mb-4">
+      <button
+        @click="emits('open-calendar')"
+        class="w-full flex items-center justify-between p-3 border rounded-lg"
+        :class="themeStore.isDark
+          ? 'border-gray-600 hover:bg-gray-800 text-gray-200'
+          : 'border-gray-300 hover:bg-gray-50 text-gray-700'"
+      >
+        <div class="flex items-center gap-2">
+          <Calendar class="w-4 h-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-500'" />
+          <span class="text-sm">
+            <template v-if="props.filters.beg && props.filters.end">
+              {{ props.filters.beg?.format('ddd, DD MMM') }} - {{ props.filters.end?.format('ddd, DD MMM') }}
+            </template>
+            <template v-else-if="props.filters.beg">
+              {{ props.filters.beg?.format('ddd, DD MMM') }} - Future
+            </template>
+            <template v-else>
+              Start date - End date
+            </template>
+          </span>
+        </div>
+        <ChevronRight class="w-4 h-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-400'" />
+      </button>
+    </div>
 
-    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0"
-            v-if="false">
-      <div class="min-h-11 w-full flex flex-row justify-between items-center gap-2 py-1 font-normal"
-           @click="emits('open-from')">
-        <MapPin class="w-6 h-6" v-if="!from?.length"/>
+    <!-- Routes with trips toggle -->
+    <div class="flex items-center justify-between">
+      <span class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">Only routes with trips</span>
+      <button
+        @click="emits('toggle-has-trips', hasTrips)"
+        :class="[
+          'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+          hasTrips
+            ? 'bg-purple-600'
+            : themeStore.isDark
+              ? 'bg-gray-600'
+              : 'bg-gray-200'
+        ]"
+      >
+        <span
+          :class="[
+            'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+            hasTrips ? 'translate-x-6' : 'translate-x-1'
+          ]"
+        />
+      </button>
+    </div>
 
-        <Deferred data="countries">
-          <template #fallback>
-            <div v-for="a2 in from" :key="a2">
-              <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(a2.toUpperCase()) }}</div>
-              <div>
-                <span class="loading loading-dots loading-xs mt-1"/>
-                {{ a2.toUpperCase() }}
-              </div>
-            </div>
-          </template>
-
-          <div class="w-full flex flex-wrap flex-row justify-start items-start pt-1" v-if="fromCountries?.length">
-            <div v-for="(country, index) in fromCountries" :key="country.a2"
-                 class="flex justify-center items-center gap-1">
-              <div class="flex justify-center items-center">{{ getUnicodeFlagIcon(country.a2?.toUpperCase()) }}</div>
-              <div>{{ country.a2?.toUpperCase() ?? country.name ?? '' }}</div>
-              <div class="pr-2"
-                   v-if="index !== fromCountries.length - 1">,</div>
-            </div>
-          </div>
-
-          <div class="w-full flex flex-wrap flex-row justify-start items-center gap-1"
-               v-else>
-            <span class="mt-1">Countries</span>
-          </div>
-        </Deferred>
-
-        <ChevronRight class="w-6 h-6"/>
-      </div>
-    </button>
-
-<!--    <p class="text-md opacity-80">-->
-<!--      Departure date or an interval-->
-<!--    </p>-->
-
-    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0 hover:bg-base-300/60 hover:border-base-content/30 hover:shadow-xs"
-         @click="emits('open-calendar')">
-      <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal">
-        <Calendar class="w-6 h-6"/>
-
-        <span class="w-full text-start mt-0.5">
-          <template v-if="props.filters.beg && props.filters.end">
-            <div class="w-full flex justify-start items-center gap-2 mt-1">
-              <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
-
-              <template v-if="!props.filters.beg?.isSame(props.filters.end, 'day')">
-                <div class="font-normal px-2">-</div>
-                <div>{{ props.filters.end?.format('ddd, DD MMM') ?? 'End Date' }}</div>
+    <!-- Countries filter (hidden) -->
+    <div v-if="false" class="mb-4">
+      <button
+        @click="emits('open-from')"
+        class="w-full flex items-center justify-between p-3 border rounded-lg"
+        :class="themeStore.isDark
+          ? 'border-gray-600 hover:bg-gray-800 text-gray-200'
+          : 'border-gray-300 hover:bg-gray-50 text-gray-700'"
+      >
+        <div class="flex items-center gap-2">
+          <MapPin class="w-4 h-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-500'" />
+          <span class="text-sm">
+            <Deferred data="countries">
+              <template #fallback>
+                <span>Loading countries...</span>
               </template>
-            </div>
-          </template>
 
-          <template v-else-if="props.filters.beg">
-            <div class="w-full flex justify-start items-center gap-2 mt-1">
-              <div>{{ props.filters.beg?.format('ddd, DD MMM') ?? 'Start date' }}</div>
-              <div class="font-normal px-2">-</div>
-              <div>Future</div>
-            </div>
-          </template>
-
-          <template v-else>
-            <div class="w-full flex justify-start items-center gap-2 mt-1">
-              <div>Start date</div>
-              <div class="font-normal px-2">-</div>
-              <div>End date</div>
-            </div>
-          </template>
-        </span>
-
-        <ChevronRight class="w-6 h-6"/>
-      </div>
-    </button>
-
-    <button class="btn btn-lg h-fit btn-outline w-full flex flex-row justify-between items-center gap-2 px-3 border-base-content/0 hover:bg-base-300/60 hover:border-base-content/30 hover:shadow-xs">
-      <div class="min-h-11 w-full w-full flex flex-row justify-between items-center gap-3 py-1 font-normal"
-           @click="emits('toggle-has-trips', hasTrips)">
-        <Route class="w-6 h-6" :class="{'opacity-50': !hasTrips}"/>
-
-        <span class="w-full text-start mt-0.5"
-          :class="{'opacity-50': !hasTrips}">
-          Only routes with trips
-        </span>
-
-        <input id="with_trips" type="checkbox" class="toggle" v-model="hasTrips"
-          @change="emits('toggle-has-trips', !$event.target.checked)"/>
-      </div>
-    </button>
+              <span v-if="fromCountries?.length">
+                <span v-for="(country, index) in fromCountries" :key="country.a2">
+                  {{ getUnicodeFlagIcon(country.a2?.toUpperCase()) }} {{ country.a2?.toUpperCase() }}
+                  <span v-if="index !== fromCountries.length - 1">, </span>
+                </span>
+              </span>
+              <span v-else>Countries</span>
+            </Deferred>
+          </span>
+        </div>
+        <ChevronRight class="w-4 h-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-400'" />
+      </button>
+    </div>
   </div>
 </template>

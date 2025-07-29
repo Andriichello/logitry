@@ -1,9 +1,10 @@
 <script setup lang="ts">
   import { computed, PropType, ref } from 'vue';
   import { Route, Trip } from '@/api';
-  import {ArrowLeft, ChevronRight, FilterX, Route as RouteIcon} from 'lucide-vue-next';
+  import {ArrowLeft, ChevronRight, FilterX, Route as RouteIcon, MapPin} from 'lucide-vue-next';
   import { minutesToHumanReadable } from '@/helpers';
   import { MapFilters } from '@/stores/map';
+  import { useThemeStore } from '@/stores/theme';
   import {Deferred, router} from '@inertiajs/vue3';
   import SideViewFilters from '@/Components/Map/SideViewFilters.vue';
   import dayjs from 'dayjs';
@@ -21,6 +22,7 @@
     'clear-filters',
     'route-clicked',
     'back-to-company',
+    'toggle-map',
   ]);
 
   const props = defineProps({
@@ -46,6 +48,7 @@
   });
 
   const toast = useToast();
+  const themeStore = useThemeStore();
 
   const isClearFiltersModal = ref(false);
   const showClearFilters = computed(() => {
@@ -99,195 +102,147 @@
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-center">
-    <ContactMe class="shadow-sm" v-if="false"/>
-
-    <div class="w-full flex flex-col justify-start items-center px-4 font-mono">
-      <div class="w-full max-w-lg flex flex-col justify-start items-center">
-        <div class="w-full flex flex-col justify-start items-start gap-2 pt-3.5 pb-2.5">
-          <div class="w-full max-w-lg flex justify-start items-center">
-            <div class="w-fit flex justify-start items-center gap-1 text-md font-weight-light cursor-pointer opacity-80"
-                 @click="emits('back-to-company')">
-              <ArrowLeft class="w-5 h-5 pb-1"/>
-              <p>Routes</p>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="w-full h-full flex flex-col">
+    <!-- Back Button -->
+    <div class="p-4 border-b" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
+      <button
+        @click="emits('back-to-company')"
+        class="flex items-center gap-2"
+        :class="themeStore.isDark ? 'text-gray-200 hover:text-white' : 'text-gray-600 hover:text-gray-900'"
+      >
+        <ArrowLeft class="w-4 h-4" />
+        Routes
+      </button>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center">
-      <div class="w-full h-[1px]">
-        <div class="w-full h-full bg-base-content opacity-10"></div>
+    <!-- Filters -->
+    <div class="p-4 border-b" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Filters</h3>
+        <button
+          v-if="showClearFilters || (!routes.length && meta?.total > 1)"
+          @click="showClearFilters ? isClearFiltersModal = true : emits('clear-filters')"
+          class="text-sm border px-3 py-1 rounded flex items-center gap-1"
+          :class="themeStore.isDark ? 'text-gray-300 border-gray-600 hover:bg-gray-800' : 'text-gray-500 border-gray-300 hover:bg-gray-50'"
+        >
+          <FilterX class="w-3 h-3" />
+          Clear
+        </button>
       </div>
+
+      <SideViewFilters
+        :filters="filters"
+        :countries="countries"
+        @toggle-has-trips="toggleHasTrips"
+        @swap-from-and-where="emits('swap-from-and-where')"
+        @open-from="emits('open-from')"
+        @open-where="emits('open-where')"
+        @open-calendar="emits('open-calendar')"
+      />
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center px-4 pt-5">
-      <div class="w-full max-w-lg flex flex-col justify-center items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right gap-4 font-mono">
-          <div class="w-full flex flex-col justify-start items-start gap-2">
-            <div class="w-full flex flex-row justify-between items-end gap-2">
-              <h3 class="text-2xl font-semibold">Filters</h3>
+    <!-- Routes List -->
+    <div class="flex-1 overflow-y-auto">
+      <div class="p-4">
+        <h3 class="font-semibold mb-2" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Routes</h3>
+        <p class="text-sm mb-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">Here are your search results</p>
 
-              <template v-if="showClearFilters">
-                <OutlineButton right-icon="FilterX" size="md"
-                               icon-size="8"
-                               :invisible-offset="false"
-                               class="btn-error border-error gap-0 max-h-8"
-                               v-if="showClearFilters || (!routes.length && meta?.total > 1)"
-                                @click="isClearFiltersModal = true">
-                  Clear
-                </OutlineButton>
-              </template>
-
-              <template v-else>
-                <OutlineButton right-icon="FilterX" size="lg"
-                               class="w-full btn-error border-error"
-                               v-if="showClearFilters || (!routes.length && meta?.total > 1)"
-                               @click="emits('clear-filters')">
-                  Clear
-                </OutlineButton>
-              </template>
-            </div>
-
-            <SideViewFilters :filters="filters"
-                             :countries="countries"
-                             @toggle-has-trips="toggleHasTrips"
-                             @swap-from-and-where="emits('swap-from-and-where')"
-                             @open-from="emits('open-from')"
-                             @open-where="emits('open-where')"
-                             @open-calendar="emits('open-calendar')"/>
-          </div>
-
-          <!-- Put this part before </body> tag -->
-          <input type="checkbox" id="clear_filters" class="modal-toggle"
-            v-model="isClearFiltersModal"/>
-          <div class="modal z-[3000]" role="dialog">
-            <div class="modal-box max-w-xs">
-              <h3 class="text-lg font-bold">Clear all filters?</h3>
-              <div class="w-full flex flex-row justify-start items-baseline gap-2 pt-5">
-                <OutlineButton size="lg"
-                               class="grow"
-                               @click="isClearFiltersModal = false">
-                  No
-                </OutlineButton>
-
-                <OutlineButton size="lg"
-                               class="grow btn-error border-error"
-                               @click="emits('clear-filters'); (isClearFiltersModal = false)">
-                  Yes
-                </OutlineButton>
-              </div>
-            </div>
-            <label id="close_filters" class="modal-backdrop" for="clear_filters">Close</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="w-full grow flex flex-col justify-start items-center px-4 pt-2 pb-20">
-      <div class="w-full h-full max-w-lg flex flex-col justify-start items-center">
-        <div class="w-full flex flex-col justify-between items-between rounded-right rounded-xl py-3 font-mono">
-          <div class="w-full flex flex-col justify-start items-start gap-2">
-            <h3 class="text-2xl font-semibold font-mono">Routes</h3>
-            <p class="text-md opacity-80">
-              Here are your search results
-            </p>
-          </div>
-
-          <ul class="w-full list bg-base-200/60 rounded gap-2.5 pt-2"
-              v-if="props.routes?.length">
-
-            <template v-for="(route, index) in props.routes" :key="route.id">
-              <li class="list-row pt-3 pb-2 px-4 rounded border border-base-content/30 rounded-xl cursor-pointer hover:bg-base-300/60 hover:border-base-content/50 hover:shadow-xs"
-                  @click="emits('route-clicked', route)">
-                <div class="list-col-grow">
-                  <div class="text-xl font-semibold font-mono pb-3">{{ route.name }}</div>
-                  <div class="w-full flex flex-wrap flex-row justify-start items-baseline self-start gap-2 opacity-75 translate-y-[-4px]">
-                    <Deferred data="trips">
-                      <template #fallback>
-                        <div class="flex flex-row justify-center items-center gap-2 p-0.5 pr-2 rounded">
-                          <span class="text-md"><span class="loading loading-dots loading-xs mr-1"/>trips</span>
-                        </div>
-                      </template>
-
-                      <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
-                           v-if="trips?.filter(trip => trip.route_id === route.id)?.length">
-                        <span class="text-md">{{ trips?.filter(trip => trip.route_id === route.id)?.length }} {{ trips?.filter(trip => trip.route_id === route.id)?.length > 1 ? 'trips' : 'trip' }}<span class="opacity-0" v-if="trips?.filter(trip => trip.route_id === route.id)?.length === 1">s</span> </span>
-                      </div>
-
-                      <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
-                           v-else>
-                        <span class="text-md">No trips</span>
-                      </div>
-                    </Deferred>
-
-                    <div class="flex flex-row justify-start items-center p-0.5 px-2 rounded"
-                         v-if="route.points?.length">
-                      <span class="text-md">{{ route.points?.length }} stops</span>
-                    </div>
-
-                    <div class="flex flex-row justify-center items-center p-0.5 px-2 rounded"
-                         v-if="route.travel_time">
-                      <span class="text-md">{{ minutesToHumanReadable(route.travel_time) }}</span>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            </template>
-          </ul>
-
-          <div class="w-full h-full grow flex flex-col justify-start items-center"
-               v-else>
-            <div class="w-full flex flex-col justify-start items-center pt-8 pb-3 gap-3">
-              <RouteIcon class="w-8 h-8"/>
-
-              <span class="text-xl font-bold">No routes found</span>
-            </div>
-
-            <OutlineButton right-icon="FilterX" size="lg"
-                           class="w-full btn-error border-error px-3"
-                           v-if="showClearFilters || (!routes.length && meta?.total > 1)"
-                           @click="emits('clear-filters')">
-              Clear all filters
-            </OutlineButton>
-          </div>
-
-          <div v-if="routes.length && meta?.total > 1"
-              class="w-full h-full flex flex-col justify-between items-end px-4 pt-2 gap-1">
-
-            <span class="w-full text-sm text-center opacity-60 pr-4.5">
-              Showing {{ meta.from }}-{{ meta.to }} of {{ meta.total }}
-            </span>
-
-            <div v-if="meta.last_page !== 1"
-              class="w-full h-full grow flex flex-row justify-end items-center gap-4 pl-1 pt-1">
-              <span class="text-md opacity-80 mt-0.5">Page: </span>
-
-              <div class="flex flex-row justify-center items-center gap-2">
-                <template v-for="page in paginationPages" :key="page">
-                  <!-- Dynamic Pagination Buttons -->
-                  <button v-if="page !== '...'"
-                          class="btn btn-md"
-                          :class="{'btn-active': page === meta.curent_page, 'btn-ghost opacity-50 hover:opacity-100': page !== meta.current_page}"
-                          @click="page !== meta.current_page && emits('change-page', page)">
-                    {{ page }}
-                  </button>
-
-                  <button v-else class="btn btn-ghost user-select-none w-6" disabled>
-                    {{ page }}
-                  </button>
+        <div class="space-y-3" v-if="props.routes?.length">
+          <div
+            v-for="route in props.routes"
+            :key="route.id"
+            @click="emits('route-clicked', route)"
+            class="p-4 border rounded-lg cursor-pointer"
+            :class="themeStore.isDark
+              ? 'border-gray-700 hover:bg-gray-800'
+              : 'border-gray-200 hover:bg-gray-50'"
+          >
+            <h4 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.name }}</h4>
+            <div class="flex items-center gap-4 mt-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+              <Deferred data="trips">
+                <template #fallback>
+                  <span><span class="loading loading-dots loading-xs mr-1"/>trips</span>
                 </template>
-              </div>
+
+                <span v-if="trips?.filter(trip => trip.route_id === route.id)?.length">
+                  {{ trips?.filter(trip => trip.route_id === route.id)?.length }} {{ trips?.filter(trip => trip.route_id === route.id)?.length > 1 ? 'trips' : 'trip' }}
+                </span>
+                <span v-else>No trips</span>
+              </Deferred>
+              <span v-if="route.points?.length">{{ route.points?.length }} stops</span>
+              <span v-if="route.travel_time">{{ minutesToHumanReadable(route.travel_time) }}</span>
             </div>
+          </div>
+        </div>
+
+        <div v-else class="flex flex-col items-center justify-center py-8">
+          <RouteIcon class="w-8 h-8 mb-3" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-500'" />
+          <span class="text-lg font-semibold mb-4" :class="themeStore.isDark ? 'text-gray-200' : 'text-gray-700'">No routes found</span>
+          <button
+            v-if="showClearFilters || (!routes.length && meta?.total > 1)"
+            @click="emits('clear-filters')"
+            class="px-4 py-2 border rounded-lg flex items-center gap-2"
+            :class="themeStore.isDark ? 'border-gray-600 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-600 hover:bg-gray-50'"
+          >
+            <FilterX class="w-4 h-4" />
+            Clear all filters
+          </button>
+        </div>
+
+        <p v-if="routes.length && meta?.total > 1" class="text-xs text-gray-500 mt-4">
+          Showing {{ meta.from }}-{{ meta.to }} of {{ meta.total }}
+        </p>
+
+        <div v-if="routes.length && meta?.total > 1 && meta.last_page !== 1" class="flex justify-center mt-4">
+          <div class="flex items-center gap-2">
+            <template v-for="page in paginationPages" :key="page">
+              <button
+                v-if="page !== '...'"
+                @click="page !== meta.current_page && emits('change-page', page)"
+                class="w-8 h-8 flex items-center justify-center rounded"
+                :class="page === meta.current_page
+                  ? (themeStore.isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-800')
+                  : (themeStore.isDark ? 'text-gray-300 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-100')"
+              >
+                {{ page }}
+              </button>
+              <span v-else class="text-gray-500">...</span>
+            </template>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="w-full flex flex-col justify-center items-center">
-      <div class="w-full h-[1px]">
-        <div class="w-full h-full bg-base-content opacity-10"></div>
+    <!-- Mobile View on Map Button -->
+    <div class="lg:hidden p-4 border-t" :class="themeStore.isDark ? 'border-gray-700' : 'border-gray-200'">
+      <button
+        @click="emits('toggle-map')"
+        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700"
+      >
+        <MapPin class="w-4 h-4" />
+        View on Map
+      </button>
+    </div>
+
+    <!-- Clear Filters Modal -->
+    <div v-if="isClearFiltersModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 max-w-xs w-full" :class="themeStore.isDark ? 'bg-gray-800' : 'bg-white'">
+        <h3 class="text-lg font-bold mb-4" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Clear all filters?</h3>
+        <div class="flex gap-3">
+          <button
+            @click="isClearFiltersModal = false"
+            class="flex-1 py-2 border rounded"
+            :class="themeStore.isDark ? 'border-gray-600 text-gray-300 hover:bg-gray-700' : 'border-gray-300 text-gray-600 hover:bg-gray-50'"
+          >
+            No
+          </button>
+          <button
+            @click="emits('clear-filters'); isClearFiltersModal = false"
+            class="flex-1 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Yes
+          </button>
+        </div>
       </div>
     </div>
   </div>

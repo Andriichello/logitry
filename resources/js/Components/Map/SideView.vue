@@ -21,6 +21,7 @@
     'route-closed',
     'trip-clicked',
     'trip-closed',
+    'toggle-map',
   ]);
 
   const props = defineProps({
@@ -84,53 +85,54 @@
   function toggleHasTrips(hasTrips: boolean) {
     emits('toggle-has-trips', hasTrips);
   }
+
+  function toggleMap() {
+    emits('toggle-map');
+  }
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col justify-start items-start bg-base-100 overflow-y-auto">
-    <div class="w-full flex flex-col justify-start items-start bg-base-100 sticky top-0 z-[1001]">
-
-      <div class="w-full flex justify-between items-center px-2 pt-2 pb-2.5 shadow-lg">
-        <CompanyInfo class="w-fit cursor-pointer px-0 py-0"
-                     :company="props.company"
-                     @click="router.visit(`/${company?.abbreviation}`)"/>
-      </div>
-
-      <div class="w-full flex flex-col justify-center items-center">
-        <div class="w-full h-[1px]">
-          <div class="w-full h-full bg-base-content opacity-10"></div>
-        </div>
-      </div>
+  <div class="w-full h-full flex flex-col overflow-y-auto">
+    <!-- Trip Details View -->
+    <div v-if="mapStore.trip" class="flex flex-col h-full">
+      <SideViewTrip
+        :route="mapStore.route"
+        :trip="mapStore.trip"
+        :countries="props.countries"
+        @trip-closed="tripClosed"
+        @toggle-map="toggleMap"/>
     </div>
 
-    <SideViewTrip v-if="mapStore.trip"
-                  :route="mapStore.route"
-                  :trip="mapStore.trip"
-                  :countries="props.countries"
-                  @trip-closed="tripClosed"/>
+    <!-- Route Details View -->
+    <div v-else-if="mapStore.route" class="flex flex-col h-full">
+      <SideViewRoute
+        :route="mapStore.route"
+        :trips="props.trips?.filter(trip => trip.route_id === mapStore.route?.id)"
+        :countries="props.countries"
+        @route-closed="routeClosed"
+        @trip-clicked="tripClicked"
+        @trip-closed="tripClosed"
+        @toggle-map="toggleMap"/>
+    </div>
 
-    <SideViewRoute v-else-if="mapStore.route"
-                   :route="mapStore.route"
-                   :trips="props.trips?.filter(trip => trip.route_id === mapStore.route?.id)"
-                   :countries="props.countries"
-                   @route-closed="routeClosed"
-                   @trip-clicked="tripClicked"
-                   @trip-closed="tripClosed"/>
-
-    <SideViewRoutes v-else
-                    :routes="props.routes"
-                    :trips="props.trips"
-                    :countries="props.countries"
-                    :meta="props.meta"
-                    :filters="props.company ? mapStore.filters : null"
-                    @toggle-has-trips="toggleHasTrips"
-                    @change-page="changePage"
-                    @open-from="openFrom"
-                    @open-where="openWhere"
-                    @swap-from-and-where="emits('swap-from-and-where')"
-                    @open-calendar="openCalendar"
-                    @clear-filters="clearFilters"
-                    @route-clicked="routeClicked"
-                    @back-to-company="router.visit(`/${company?.abbreviation}`)"/>
+    <!-- Routes View -->
+    <div v-else class="flex flex-col h-full">
+      <SideViewRoutes
+        :routes="props.routes"
+        :trips="props.trips"
+        :countries="props.countries"
+        :meta="props.meta"
+        :filters="props.company ? mapStore.filters : null"
+        @toggle-has-trips="toggleHasTrips"
+        @change-page="changePage"
+        @open-from="openFrom"
+        @open-where="openWhere"
+        @swap-from-and-where="emits('swap-from-and-where')"
+        @open-calendar="openCalendar"
+        @clear-filters="clearFilters"
+        @route-clicked="routeClicked"
+        @back-to-company="router.visit(`/${company?.abbreviation}`)"
+        @toggle-map="toggleMap"/>
+    </div>
   </div>
 </template>

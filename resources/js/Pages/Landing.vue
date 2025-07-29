@@ -12,13 +12,11 @@
   import { router } from '@inertiajs/vue3';
   import { onMounted, onUnmounted, PropType, ref } from 'vue';
   import { useMapStore } from '@/stores/map';
+  import { useThemeStore } from '@/stores/theme';
   import {Bounds, Company, Route} from '@/api';
   import RouteOnMap from '@/Components/Map/RouteOnMap.vue';
   import { useToast } from 'vue-toastification';
-  import OutlineButton from '@/Components/Reusable/OutlineButton.vue';
-  import TitleAndDescription from '@/Components/Landing/TitleAndDescription.vue';
-  import SectionDivider from '@/Components/Landing/SectionDivider.vue';
-  import Section from '@/Components/Landing/Section.vue';
+  import { MapPin, ChevronRight } from 'lucide-vue-next';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -28,13 +26,13 @@
 
   const toast = useToast();
   const mapStore = useMapStore();
+  const themeStore = useThemeStore();
 
   const map = ref(null as L.Map | null);
-
   const darkMap = ref(null);
   const lightMap = ref(null);
-
   const isNarrowScreen = ref(false);
+  const showMap = ref(false);
 
   onMounted(() => {
     onResize();
@@ -80,7 +78,7 @@
   });
 
   function onResize() {
-    isNarrowScreen.value = window.innerWidth < 800;
+    isNarrowScreen.value = window.innerWidth < 799;
   }
 
   function toBounds(given) {
@@ -111,75 +109,55 @@
 
     map.value.fitBounds(b);
   }
+
+  function toggleMap() {
+    showMap.value = !showMap.value;
+  }
 </script>
 
 <template>
-  <div class="w-full h-full grow flex flex-col justify-start items-start pb-20">
-
-    <Section class="shadow-sm" v-if="false">
-      <TitleAndDescription>
-        <template #title>
-          Contact Me
-        </template>
-
-        <template #description>
-          Fill out your details for our manager to contact you regarding pickup, destination, date, time, and seats.
-        </template>
-      </TitleAndDescription>
-
-      <OutlineButton right-icon="ChevronRight" size="lg" class="w-full py-1"
-                     @click="toast.info('Not implemented yet.', {timeout: 2000})">
-        Contact Me
-      </OutlineButton>
-    </Section>
-
-    <SectionDivider/>
-
-    <Section class="bg-base-200/60 shadow-sm">
-      <div id="map" class="w-full min-h-[200px] mb-3 rounded-lg shadow-lg cursor-pointer"
-           @click="router.visit(`/${props.company?.abbreviation}/map`)"
-           style="border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-        <template v-for="route in (props.routes ?? [])" :key="route.id" v-if="map">
-          <RouteOnMap :route="route"
-                      :map="map"
-                      :selected="true"/>
-        </template>
+  <div class="p-6 flex-1 overflow-y-auto">
+    <div class="space-y-6">
+      <!-- Map Preview -->
+      <div class="bg-gray-100 rounded-lg p-4 h-48 flex items-center justify-center relative">
+        <div id="map" class="absolute inset-0 rounded-lg">
+          <template v-for="route in (props.routes ?? [])" :key="route.id" v-if="map">
+            <RouteOnMap :route="route"
+                        :map="map"
+                        :selected="true"/>
+          </template>
+        </div>
+        <div class="text-center">
+          <MapPin class="w-8 h-8 text-purple-600 mx-auto mb-2" />
+          <p class="text-sm" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">Map preview of our most popular routes</p>
+        </div>
       </div>
 
-      <TitleAndDescription>
-        <template #title>
-          Our routes
-        </template>
+      <!-- Our Routes Section -->
+      <div class="text-center">
+        <h2 class="text-2xl font-bold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Our routes</h2>
+        <p class="mb-4" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">Map preview of our most popular routes.</p>
+        <button
+          @click="router.visit(`/${props.company?.abbreviation}/map`)"
+          class="w-full border py-3 px-4 rounded-lg flex items-center justify-center gap-2"
+          :class="themeStore.isDark
+            ? 'bg-gray-800 border-gray-600 text-gray-200 hover:bg-gray-700'
+            : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'"
+        >
+          View Routes
+          <ChevronRight class="w-4 h-4" />
+        </button>
+      </div>
 
-        <template #description>
-          Map preview of our most popular routes.
-        </template>
-      </TitleAndDescription>
-
-      <OutlineButton right-icon="ChevronRight" size="lg" class="w-full py-1 hover:bg-base-300/60 hover:border-base-content/30 hover:shadow-xs"
-                     @click="router.visit(`/${props.company?.abbreviation}/map`)">
-        View Routes
-      </OutlineButton>
-    </Section>
-
-    <SectionDivider/>
-
-    <Section>
-      <TitleAndDescription>
-        <template #title>
-          About Us
-        </template>
-
-        <template #description>
-          We are a company dedicated to providing reliable and efficient transportation services.
-          <br><br>
-          With a focus on customer satisfaction, our goal is to offer seamless travel experiences
-          for all our clients.
-          <br><br>
-          From carefully planned routes to exceptional service, we strive to
-          make your journey safe, comfortable, and enjoyable.
-        </template>
-      </TitleAndDescription>
-    </Section>
+      <!-- About Us -->
+      <div>
+        <h3 class="text-xl font-bold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">About Us</h3>
+        <div class="space-y-3 text-sm" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">
+          <p>We are a company dedicated to providing reliable and efficient transportation services.</p>
+          <p>With a focus on customer satisfaction, our goal is to offer seamless travel experiences for all our clients.</p>
+          <p>From carefully planned routes to exceptional service, we strive to make your journey safe, comfortable, and enjoyable.</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>

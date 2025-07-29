@@ -3,58 +3,46 @@
   import { PropType } from 'vue';
   import { Company } from '@/api';
   import { useThemeStore } from '@/stores/theme';
-  import SideDrawer from '@/Components/Menu/SideDrawer.vue';
-  import MenuButton from '@/Components/Menu/MenuButton.vue';
-  import CompanyInfo from '@/Components/Map/CompanyInfo.vue';
+  import { Truck, Moon, Sun } from 'lucide-vue-next';
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
   });
 
   const themeStore = useThemeStore();
-
-  function clickDrawer() {
-    document.getElementById('landing-drawer')?.click();
-  }
 </script>
 
 <template>
-  <main class="w-full h-full">
-    <input type="checkbox" value="light" class="toggle theme-controller mt-1"
-           :checked="!themeStore.isDark"
-           @change="themeStore.toggle" hidden/>
-
-    <div class="drawer drawer-end">
-      <input id="landing-drawer" type="checkbox" class="drawer-toggle"/>
-
-      <SideDrawer class="z-[1005] min-w-[25vw]"
-                  target="landing-drawer"
-                  @collapse="clickDrawer"/>
-    </div>
-
-    <div class="w-full h-full flex flex-col justify-start overflow-auto"
-         id="landing-page">
-
-      <div class="w-full flex flex-col justify-start items-start bg-base-100 sticky top-0 z-[1001]">
-        <div class="w-full flex justify-between items-center px-2 pt-2 pb-2.5 shadow-lg">
-          <CompanyInfo class="max-w-3/4 px-0 py-0"
-                       :company="props.company"/>
-
-          <MenuButton id="menu-button"
-                      @click="clickDrawer"/>
-        </div>
-
-        <div class="w-full flex flex-col justify-center items-center">
-          <div class="w-full h-[1px]">
-            <div class="w-full h-full bg-base-content opacity-10"></div>
+  <div id="app" class="min-h-screen" :class="themeStore.isDark ? 'bg-gray-900' : 'bg-gray-50'">
+    <!-- Header -->
+    <header class="shadow-sm border-b" :class="themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'">
+      <div class="flex items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-purple-600 rounded flex items-center justify-center">
+            <Truck class="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ props.company?.name || 'Haul Auto' }}</h1>
+            <p class="text-xs text-gray-500">{{ props.company?.abbreviation || 'haul-auto' }}</p>
           </div>
         </div>
+        <div class="flex items-center gap-2">
+          <!-- Theme toggle button -->
+          <button
+            @click="themeStore.toggle"
+            class="p-2 rounded flex items-center gap-2 text-sm"
+            :class="themeStore.isDark ? 'hover:bg-gray-800 text-gray-300' : 'hover:bg-gray-100 text-gray-700'"
+          >
+            <Moon v-if="!themeStore.isDark" class="w-4 h-4" />
+            <Sun v-else class="w-4 h-4" />
+          </button>
+        </div>
       </div>
+    </header>
 
-      <div class="w-full h-full flex flex-col justify-start">
-        <slot/>
-      </div>
-
+    <!-- Main Content -->
+    <div class="flex-1">
+      <slot/>
     </div>
-  </main>
+  </div>
 </template>

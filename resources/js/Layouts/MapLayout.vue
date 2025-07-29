@@ -9,7 +9,16 @@
   import SideDrawer from '@/Components/Menu/SideDrawer.vue';
   import MenuButton from '@/Components/Menu/MenuButton.vue';
   import SideView from '@/Components/Map/SideView.vue';
-  import { X, MapPinned, Route as RouteIcon } from 'lucide-vue-next';
+  import {
+    X,
+    MapPinned,
+    Route as RouteIcon,
+    Truck,
+    Moon,
+    Sun,
+    Menu,
+    ArrowRight
+  } from 'lucide-vue-next';
   import dayjs from 'dayjs';
   import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
   import {Deferred, useForm} from '@inertiajs/vue3';
@@ -89,7 +98,7 @@
   }
 
   function onResize() {
-    isNarrowScreen.value = window.innerWidth < 800;
+    isNarrowScreen.value = window.innerWidth < 799;
   }
 
   function toBounds(given) {
@@ -390,128 +399,140 @@
 </script>
 
 <template>
-  <main class="w-full h-full overflow-hidden">
-    <input type="checkbox" value="light" class="toggle theme-controller mt-1"
-           :checked="!themeStore.isDark"
-           @change="themeStore.toggle" hidden/>
-
-    <div class="drawer drawer-end">
-      <input id="map-drawer" type="checkbox" class="drawer-toggle"/>
-
-      <SideDrawer class="z-[1005] min-w-[25vw]"
-                  target="map-drawer"
-                  @collapse="clickDrawer"/>
-    </div>
-
-    <div id="map-page" class="w-full h-full flex flex-row-reverse relative">
-      <div id="map" class="h-full relative">
-        <slot/>
+  <div id="app" class="min-h-screen" :class="themeStore.isDark ? 'bg-gray-900' : 'bg-gray-50'">
+    <!-- Header -->
+    <header class="shadow-sm border-b" :class="themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'">
+      <div class="flex items-center justify-between px-4 py-3">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-purple-600 rounded flex items-center justify-center">
+            <Truck class="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h1 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ props.company?.name || 'Haul Auto' }}</h1>
+            <p class="text-xs text-gray-500">{{ props.company?.abbreviation || 'haul-auto' }}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Theme toggle button -->
+          <button
+            @click="themeStore.toggle"
+            class="p-2 rounded flex items-center gap-2 text-sm"
+            :class="themeStore.isDark ? 'hover:bg-gray-800 text-gray-300' : 'hover:bg-gray-100 text-gray-700'"
+          >
+            <Moon v-if="!themeStore.isDark" class="w-4 h-4" />
+            <Sun v-else class="w-4 h-4" />
+          </button>
+        </div>
       </div>
+    </header>
 
-      <template v-if="isShowingCalendar">
-        <div class="side w-full px-4 py-4">
-          <BookingCalendar :months="5"
-                           :beg="mapStore.filters.beg"
-                           :end="mapStore.filters.end"
-                           :dotted-dates="trip_highlights"
-                           @apply-calendar="applyCalendar"
-                           @close-calendar="closeCalendar"/>
-        </div>
-      </template>
-
-      <template v-else-if="isShowingFrom">
-        <div class="side w-full px-4 py-4">
-          <SideViewFrom title="Countries"
-                        :from="mapStore.filters.from?.length ? mapStore.filters.from.split(',') : []"
-                        :countries="props.countries"
-                        @apply-from="applyFrom"
-                        @close-from="closeFrom"/>
-        </div>
-      </template>
-
-      <template v-else>
-        <SideView class="side" id="side"
-                  v-if="!isShowingMap || !isNarrowScreen"
-                  :company="props.company"
-                  :routes="props.routes"
-                  :trips="props?.trips"
-                  :meta="props.meta"
-                  :countries="props.countries"
-                  @change-page="changePage"
-                  @toggle-has-trips="toggleHasTrips"
-                  @open-from="openFrom"
-                  @open-calendar="openCalendar"
-                  @clear-filters="clearFilters"
-                  @route-clicked="routeClicked"
-                  @route-closed="routeClosed"
-                  @trip-clicked="tripClicked"
-                  @trip-closed="tripClosed"/>
-
-        <MenuButton id="menu-button" class="absolute top-2 right-2 z-[1001] text-xs"
-                    @click="clickDrawer"/>
-
-        <CompassButton id="compass" class="absolute bottom-6 right-2 z-[1001] hidden"
-                       @click="fitBounds(mapStore.route?.bounds ?? props.bounds)"/>
-
-        <template v-if="isNarrowScreen">
-          <div class="absolute bottom-3 left-2 right-2 bg-base-100/90 z-[400] rounded px-3 pt-2 pb-16"
-               v-if="isShowingMap && mapStore.route">
-
-            <div class="w-full flex flex-row justify-between items-start gap-2">
-              <div class="list-col-grow">
-                <div class="text-xl font-semibold font-mono pb-3">{{ mapStore.route.name }}</div>
-                <div class="w-full flex flex-wrap flex-row justify-start items-baseline self-start gap-2 opacity-75 translate-y-[-4px]">
-                  <Deferred data="trips">
-                    <template #fallback>
-                      <div class="flex flex-row justify-center items-center gap-2 p-0.5 pr-2 rounded">
-                        <span class="text-md"><span class="loading loading-dots loading-xs mr-1"/>trips</span>
-                      </div>
-                    </template>
-
-                    <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
-                         v-if="trips?.filter(trip => trip.route_id === mapStore.route.id)?.length">
-                      <span class="text-md">{{ trips?.filter(trip => trip.route_id === mapStore.route.id)?.length }} {{ trips?.filter(trip => trip.route_id === mapStore.route.id)?.length > 1 ? 'trips' : 'trip' }}<span class="opacity-0" v-if="trips?.filter(trip => trip.route_id === mapStore.route.id)?.length === 1">s</span> </span>
-                    </div>
-
-                    <div class="flex flex-row justify-start items-center p-0.5 pr-2 rounded"
-                         v-else>
-                      <span class="text-md">No trips</span>
-                    </div>
-                  </Deferred>
-
-                  <div class="flex flex-row justify-start items-center p-0.5 px-2 rounded"
-                       v-if="mapStore.route.points?.length">
-                    <span class="text-md">{{ mapStore.route.points?.length }} stops</span>
-                  </div>
-
-                  <div class="flex flex-row justify-center items-center p-0.5 px-2 rounded"
-                       v-if="mapStore.route.travel_time">
-                    <span class="text-md">{{ minutesToHumanReadable(mapStore.route.travel_time) }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <X class="w-8 h-8 p-1 cursor-pointer" @click="routeClosed(mapStore.route)"/>
-            </div>
-          </div>
-
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 left-4 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
-               v-if="isShowingMap"
-               @click="toggleMap">
-            <span class="text-md pt-1 pb-0.5">{{ mapStore.route ? mapStore.trip ? 'Trip Details' : 'Route Details' : 'Routes List' }}</span>
-            <RouteIcon class="w-5 h-5"/>
-          </div>
-
-          <div id="map-switcher" class="flex btn btn-md btn-primary absolute bottom-5.5 left-4 right-4 z-[400] opacity-90 hover:opacity-100 gap-3"
-               v-else-if="routes?.length"
-               @click="toggleMap">
-            <span class="text-md pt-1 pb-0.5">View on Map</span>
-            <MapPinned class="w-6 h-6"/>
+    <!-- Main Content -->
+    <div class="flex h-[calc(100vh-73px)] relative">
+      <!-- Side Panel -->
+      <div
+        :class="[
+          'transition-all duration-300 flex flex-col border-r lg:relative absolute inset-y-0 left-0 z-20',
+          isShowingMap ? 'w-0 overflow-hidden lg:w-0' : 'w-full lg:w-80 xl:w-96',
+          themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
+        ]"
+      >
+        <template v-if="isShowingCalendar">
+          <div class="side w-full px-4 py-4">
+            <BookingCalendar :months="5"
+                            :beg="mapStore.filters.beg"
+                            :end="mapStore.filters.end"
+                            :dotted-dates="trip_highlights"
+                            @apply-calendar="applyCalendar"
+                            @close-calendar="closeCalendar"/>
           </div>
         </template>
-      </template>
+
+        <template v-else-if="isShowingFrom">
+          <div class="side w-full px-4 py-4">
+            <SideViewFrom title="Countries"
+                          :from="mapStore.filters.from?.length ? mapStore.filters.from.split(',') : []"
+                          :countries="props.countries"
+                          @apply-from="applyFrom"
+                          @close-from="closeFrom"/>
+          </div>
+        </template>
+
+        <template v-else>
+          <SideView class="side" id="side"
+                    :company="props.company"
+                    :routes="props.routes"
+                    :trips="props?.trips"
+                    :meta="props.meta"
+                    :countries="props.countries"
+                    @change-page="changePage"
+                    @toggle-has-trips="toggleHasTrips"
+                    @open-from="openFrom"
+                    @open-calendar="openCalendar"
+                    @clear-filters="clearFilters"
+                    @route-clicked="routeClicked"
+                    @route-closed="routeClosed"
+                    @trip-clicked="tripClicked"
+                    @trip-closed="tripClosed"
+                    @toggle-map="toggleMap"/>
+        </template>
+      </div>
+
+      <!-- Map Area -->
+      <div id="map" class="flex-1 relative bg-gray-100 opacity-20" :class="isShowingMap ? '' : 'lg:block hidden'">
+        <slot/>
+
+        <!-- Desktop Collapse button -->
+        <button
+          @click="toggleMap"
+          class="hidden lg:block absolute top-4 left-4 bg-purple-600 text-white px-3 py-2 rounded text-sm"
+        >
+          {{ isShowingMap ? '»' : '«' }} {{ isShowingMap ? 'Expand' : 'Collapse' }}
+        </button>
+
+        <!-- Mobile Route Info Overlay -->
+        <div v-if="mapStore.route && !isShowingMap" class="lg:hidden absolute bottom-0 left-0 right-0 bg-white p-4 rounded-t-lg shadow-lg"
+             :class="themeStore.isDark ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-semibold">{{ mapStore.route.name }}</h3>
+            <button @click="routeClosed(mapStore.route)">
+              <X class="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+          <div class="flex items-center gap-4 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+            <Deferred data="trips">
+              <template #fallback>
+                <span><span class="loading loading-dots loading-xs mr-1"/>trips</span>
+              </template>
+
+              <span v-if="trips?.filter(trip => trip.route_id === mapStore.route.id)?.length">
+                {{ trips?.filter(trip => trip.route_id === mapStore.route.id)?.length }} {{ trips?.filter(trip => trip.route_id === mapStore.route.id)?.length > 1 ? 'trips' : 'trip' }}
+              </span>
+              <span v-else>No trips</span>
+            </Deferred>
+            <span v-if="mapStore.route.points?.length">{{ mapStore.route.points?.length }} stops</span>
+            <span v-if="mapStore.route.travel_time">{{ minutesToHumanReadable(mapStore.route.travel_time) }}</span>
+          </div>
+          <button
+            @click="toggleMap"
+            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 mt-3"
+          >
+            <ArrowRight class="w-4 h-4" />
+            {{ mapStore.trip ? 'Trip Details' : 'Route Details' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Toggle Button -->
+      <button
+        v-if="isShowingMap"
+        @click="toggleMap"
+        class="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-30"
+      >
+        <Menu class="w-4 h-4" />
+        {{ mapStore.trip ? 'Trip Details' : (mapStore.route ? 'Route Details' : 'Routes List') }}
+      </button>
     </div>
-  </main>
+  </div>
 </template>
 
 <style scoped>
@@ -531,7 +552,7 @@
     @apply flex-1;
   }
 
-  @media (max-width: 800px) {
+  @media (max-width: 799px) {
     .side {
       @apply h-full max-h-full;
 

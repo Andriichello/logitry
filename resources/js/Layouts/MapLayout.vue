@@ -326,6 +326,7 @@
     console.log('route closed', route);
 
     selectRoute(null);
+    selectTrip(null);
     fitBounds(props.bounds);
   }
 

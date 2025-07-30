@@ -161,52 +161,11 @@
         </div>
         <p class="text-sm mb-3" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">{{ minutesToHumanReadable(route.travel_time) }} travel time</p>
 
-        <div v-if="!mapStore.arePointsHidden" class="space-y-3">
-          <!-- Start Stop -->
-          <div class="flex items-start gap-3" v-if="route.points.length > 0">
-            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-            </div>
-            <div>
-              <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.points[0].name }}</p>
-              <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                <span class="w-4 h-2 bg-red-500 rounded"></span>
-                <span>{{ route.points[0].country }}</span>
-              </div>
-              <p class="text-sm text-gray-500">Start point</p>
-            </div>
-          </div>
-
-          <!-- Middle Stops -->
-          <div v-for="(point, index) in route.points.slice(1, -1)" :key="index" class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-            </div>
-            <div>
-              <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ point.name }}</p>
-              <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                <span class="w-4 h-2 bg-red-500 rounded"></span>
-                <span>{{ point.country }}</span>
-              </div>
-              <p class="text-sm text-gray-500">{{ point.travel_time ? minutesToHumanReadable(point.travel_time) + ' from start' : '' }}</p>
-            </div>
-          </div>
-
-          <!-- End Stop -->
-          <div class="flex items-start gap-3" v-if="route.points.length > 1">
-            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-            </div>
-            <div>
-              <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.points[route.points.length - 1].name }}</p>
-              <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                <span class="w-4 h-2 bg-red-500 rounded"></span>
-                <span>{{ route.points[route.points.length - 1].country }}</span>
-              </div>
-              <p class="text-sm text-gray-500">Final destination</p>
-            </div>
-          </div>
-        </div>
+        <SideViewStops
+          v-if="!mapStore.arePointsHidden"
+          :route="route"
+          :countries="countries"
+        />
       </div>
 
       <!-- Prices -->

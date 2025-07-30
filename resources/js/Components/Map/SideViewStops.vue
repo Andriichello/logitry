@@ -5,9 +5,12 @@
   import getUnicodeFlagIcon from 'country-flag-icons/unicode';
   import { minutesToHumanReadable, toHumanDate, toHumanTime, toHumanWeekday } from '@/helpers';
   import { Deferred } from '@inertiajs/vue3';
+  import { useThemeStore } from '@/stores/theme';
   import dayjs from 'dayjs';
 
   const emits = defineEmits([]);
+
+  const themeStore = useThemeStore();
 
   const props = defineProps({
     route: {
@@ -93,61 +96,85 @@
 </script>
 
 <template>
-  <ul class="timeline timeline-snap-icon timeline-compact timeline-vertical">
-    <template v-for="(point, index) in pointsInOrder" :key="point.id">
-      <li>
-        <hr class="bg-current opacity-20"
-            v-if="index !== 0"/>
-
-        <div class="timeline-middle">
-          <div class="px-1 pb-1"
-               :class="{'pt-1': index !== 0}">
-            <MapPinHouse class="w-6 h-6 translate-x-[2px]"
-                         v-if="index === 0 || index === pointsInOrder.length - 1"/>
-            <MapPin class="w-6 h-6 opacity-80"
-                    v-else/>
-          </div>
-        </div>
-
-        <div class="timeline-start"
-             :class="{'pt-1': index !== 0}">
-          <time class="font-mono italic"
-                v-if="timesInOrder?.[index]">
-            {{ toHumanTime(timesInOrder[index]) }}<span class="text-sm"> ({{ toHumanWeekday(timesInOrder[index]) }}, {{ toHumanDate(timesInOrder[index]) }})</span>
-          </time>
-          <div class="w-full flex justify-start items-start"
-               v-if="point.city">
-            <div class="w-full flex flex-col justify-start items-start">
-              <span class="text-lg font-semibold grow pt-1">{{ point.city }}</span>
-
-              <Deferred data="countries">
-                <template #fallback>
-                  <span class="text-md opacity-80">{{ getUnicodeFlagIcon(point.country) }} {{ point.country }} </span>
-                </template>
-
-                <span class="text-md font-light opacity-90">{{ getUnicodeFlagIcon(point.country) }} {{ countries?.[point.country] ?? point.country?.toUpperCase() }} </span>
-              </Deferred>
-            </div>
-          </div>
-
-          <div v-else>
-            <span class="text-lg">{{ point.name }}</span>
-          </div>
-
-          <template v-if="trip?.reversed">
-            <template v-if="index < (route.points.length - 1)">
-              <time class="font-mono opacity-90" v-if="route.points[index + 1].travel_time">{{ minutesToHumanReadable(point.travel_time) }}</time>
+  <div class="space-y-4">
+    <!-- Start Stop -->
+    <div class="flex items-start gap-3" v-if="pointsInOrder.length > 0">
+      <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+      </div>
+      <div>
+        <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'" v-if="timesInOrder?.[0]">
+          {{ toHumanTime(timesInOrder[0]) }} ({{ toHumanWeekday(timesInOrder[0]) }}, {{ toHumanDate(timesInOrder[0]) }})
+        </p>
+        <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">
+          {{ pointsInOrder[0].city || pointsInOrder[0].name }}
+        </p>
+        <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+          <span>{{ getUnicodeFlagIcon(pointsInOrder[0].country) }}</span>
+          <Deferred data="countries">
+            <template #fallback>
+              <span>{{ pointsInOrder[0].country }}</span>
             </template>
-          </template>
-
-          <template v-else>
-            <time class="font-mono opacity-90" v-if="index < (route.points?.length - 1) && route.points[index + 1].travel_time">{{ minutesToHumanReadable(route.points[index + 1].travel_time) }}</time>
-          </template>
+            <span>{{ countries?.[pointsInOrder[0].country] ?? pointsInOrder[0].country?.toUpperCase() }}</span>
+          </Deferred>
         </div>
+        <p class="text-sm text-gray-500">{{ trip ? 'Departure' : 'Start point' }}</p>
+      </div>
+    </div>
 
-        <hr class="bg-current opacity-20"
-            v-if="index !== route.points.length - 1"/>
-      </li>
-    </template>
-  </ul>
+    <!-- Middle Stops -->
+    <div v-for="(point, index) in pointsInOrder.slice(1, -1)" :key="point.id" class="flex items-start gap-3">
+      <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+      </div>
+      <div>
+        <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'" v-if="timesInOrder?.[index + 1]">
+          {{ toHumanTime(timesInOrder[index + 1]) }} ({{ toHumanWeekday(timesInOrder[index + 1]) }}, {{ toHumanDate(timesInOrder[index + 1]) }})
+        </p>
+        <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'" v-else-if="point.travel_time">
+          {{ minutesToHumanReadable(point.travel_time) + ' from start' }}
+        </p>
+        <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">
+          {{ point.city || point.name }}
+        </p>
+        <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+          <span>{{ getUnicodeFlagIcon(point.country) }}</span>
+          <Deferred data="countries">
+            <template #fallback>
+              <span>{{ point.country }}</span>
+            </template>
+            <span>{{ countries?.[point.country] ?? point.country?.toUpperCase() }}</span>
+          </Deferred>
+        </div>
+        <p class="text-sm text-gray-500" v-if="point.travel_time && !timesInOrder?.[index + 1]">
+          {{ minutesToHumanReadable(point.travel_time) }}
+        </p>
+      </div>
+    </div>
+
+    <!-- End Stop -->
+    <div class="flex items-start gap-3" v-if="pointsInOrder.length > 1">
+      <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+        <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+      </div>
+      <div>
+        <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'" v-if="timesInOrder?.[pointsInOrder.length - 1]">
+          {{ toHumanTime(timesInOrder[pointsInOrder.length - 1]) }} ({{ toHumanWeekday(timesInOrder[pointsInOrder.length - 1]) }}, {{ toHumanDate(timesInOrder[pointsInOrder.length - 1]) }})
+        </p>
+        <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">
+          {{ pointsInOrder[pointsInOrder.length - 1].city || pointsInOrder[pointsInOrder.length - 1].name }}
+        </p>
+        <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+          <span>{{ getUnicodeFlagIcon(pointsInOrder[pointsInOrder.length - 1].country) }}</span>
+          <Deferred data="countries">
+            <template #fallback>
+              <span>{{ pointsInOrder[pointsInOrder.length - 1].country }}</span>
+            </template>
+            <span>{{ countries?.[pointsInOrder[pointsInOrder.length - 1].country] ?? pointsInOrder[pointsInOrder.length - 1].country?.toUpperCase() }}</span>
+          </Deferred>
+        </div>
+        <p class="text-sm text-gray-500">{{ trip ? 'Arrival' : 'Final destination' }}</p>
+      </div>
+    </div>
+  </div>
 </template>

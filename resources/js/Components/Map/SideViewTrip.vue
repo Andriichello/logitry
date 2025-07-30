@@ -94,61 +94,12 @@
         </div>
         <p class="text-sm mb-3" :class="themeStore.isDark ? 'text-gray-400' : 'text-gray-600'">{{ minutesToHumanReadable(route.travel_time) }} travel time</p>
 
-        <div v-if="!mapStore.arePointsHidden" class="space-y-4">
-          <!-- Start Stop -->
-          <div class="flex items-start gap-3" v-if="pointsInOrder.length > 0">
-            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-            </div>
-            <div>
-              <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                {{ toHumanTime(trip.departs_at) }} ({{ toHumanWeekday(trip.departs_at) }}, {{ toHumanDate(trip.departs_at) }})
-              </p>
-              <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ pointsInOrder[0].name }}</p>
-              <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                <span class="w-4 h-2 bg-red-500 rounded"></span>
-                <span>{{ pointsInOrder[0].country }}</span>
-              </div>
-              <p class="text-sm text-gray-500">Departure</p>
-            </div>
-          </div>
-
-          <!-- Middle Stops -->
-          <div v-for="(point, index) in pointsInOrder.slice(1, -1)" :key="index" class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-            </div>
-            <div>
-              <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                {{ point.travel_time ? minutesToHumanReadable(point.travel_time) + ' from start' : '' }}
-              </p>
-              <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ point.name }}</p>
-              <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                <span class="w-4 h-2 bg-red-500 rounded"></span>
-                <span>{{ point.country }}</span>
-              </div>
-              <p class="text-sm text-gray-500">{{ point.travel_time ? minutesToHumanReadable(point.travel_time) : '' }}</p>
-            </div>
-          </div>
-
-          <!-- End Stop -->
-          <div class="flex items-start gap-3" v-if="pointsInOrder.length > 1">
-            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
-            </div>
-            <div>
-              <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                {{ trip.arrives_at ? toHumanTime(trip.arrives_at) + ' (' + toHumanWeekday(trip.arrives_at) + ', ' + toHumanDate(trip.arrives_at) + ')' : '' }}
-              </p>
-              <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ pointsInOrder[pointsInOrder.length - 1].name }}</p>
-              <div class="flex items-center gap-2 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-                <span class="w-4 h-2 bg-red-500 rounded"></span>
-                <span>{{ pointsInOrder[pointsInOrder.length - 1].country }}</span>
-              </div>
-              <p class="text-sm text-gray-500">Arrival</p>
-            </div>
-          </div>
-        </div>
+        <SideViewStops
+          v-if="!mapStore.arePointsHidden"
+          :route="route"
+          :trip="trip"
+          :countries="countries"
+        />
       </div>
 
       <!-- Prices -->

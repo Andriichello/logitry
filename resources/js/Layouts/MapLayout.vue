@@ -86,7 +86,9 @@
   }
 
   function onResize() {
-    isNarrowScreen.value = window.innerWidth < 600;
+    console.log('onResize', window.innerWidth);
+
+    isNarrowScreen.value = window.innerWidth < 800;
   }
 
   function toBounds(given) {
@@ -413,12 +415,12 @@
     </header>
 
     <!-- Main Content -->
-    <div class="flex h-[calc(100vh-73px)] relative">
+    <div class="flex h-[calc(100vh-64px)] relative">
       <!-- Side Panel -->
       <div
         :class="[
-          'transition-all duration-300 flex flex-col border-r lg:relative absolute inset-y-0 left-0 z-20 overflow-auto overflow-x-hidden',
-          isShowingMap ? 'w-0 overflow-hidden lg:w-0' : isNarrowScreen ? 'w-full max-w-[100%] w-[100%]' : 'w-full max-w-[33%] w-[33%]',
+          'transition-all duration-300 flex flex-col border-r inset-y-0 left-0 z-20 overflow-auto overflow-x-hidden',
+          isShowingMap ? 'w-0 overflow-hidden lg:w-0' : isNarrowScreen ? 'absolute w-full max-w-[100%] w-[100%]' : 'relative w-[400px] max-w-[400px]',
           themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
         ]"
       >
@@ -463,27 +465,27 @@
       </div>
 
       <!-- Map Area -->
-      <div id="map" class="flex-1 relative bg-gray-100 lg:block z-[1]">
+      <div id="map" class="block flex-1 relative bg-gray-100 z-[1]">
         <slot/>
 
         <!-- Desktop Collapse button -->
         <button
           @click="toggleMap"
-          class="hidden lg:block absolute top-4 left-4 bg-purple-600 text-white px-3 py-2 rounded text-sm z-[1000]"
+          class="absolute top-4 left-4 bg-purple-600 text-white px-3 py-2 rounded text-sm z-[1000]"
+          :class="isNarrowScreen ? 'hidden' : ''"
         >
           {{ isShowingMap ? '»' : '«' }} {{ isShowingMap ? 'Expand' : 'Collapse' }}
         </button>
 
-        <!-- Mobile Route Info Overlay -->
-        <div v-if="mapStore.route && !isShowingMap" class="lg:hidden absolute bottom-0 left-0 right-0 bg-white p-4 rounded-t-lg shadow-lg"
-             :class="themeStore.isDark ? 'bg-gray-800 text-gray-100' : 'bg-white text-gray-900'">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="font-semibold">{{ mapStore.route.name }}</h3>
-            <button @click="routeClosed(mapStore.route)">
-              <X class="w-5 h-5 text-gray-500" />
-            </button>
-          </div>
-          <div class="flex items-center gap-4 text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+        <div class="left-2 right-2 bottom-2 pt-2 pl-4 pr-2 pb-18 rounded-lg absolute z-[1000]"
+             :class="themeStore.isDark ? 'bg-gray-900/80 border-gray-700 text-gray-300' : 'bg-white/80 border-gray-200 text-gray-700'"
+             v-if="isNarrowScreen && isShowingMap && mapStore.route">
+           <div class="flex justify-between gap-4">
+             <h4 class="font-semibold text-xl">{{ mapStore.route.name }}</h4>
+             <X @click="routeClosed(mapStore.route)" class="w-7 h-7 p-1 pr-0 pt-0" />
+           </div>
+
+          <div class="flex items-center gap-4 mt-2 text-sm">
             <Deferred data="trips">
               <template #fallback>
                 <span><span class="loading loading-dots loading-xs mr-1"/>trips</span>
@@ -497,20 +499,14 @@
             <span v-if="mapStore.route.points?.length">{{ mapStore.route.points?.length }} stops</span>
             <span v-if="mapStore.route.travel_time">{{ minutesToHumanReadable(mapStore.route.travel_time) }}</span>
           </div>
-<!--          <button-->
-<!--            @click="toggleMap"-->
-<!--            class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 mt-3"-->
-<!--          >-->
-<!--            <ArrowRight class="w-4 h-4" />-->
-<!--            {{ mapStore.trip ? 'Trip Details' : 'Route Details' }}-->
-<!--          </button>-->
         </div>
       </div>
 
-<!--       Mobile Toggle Button -->
+      <!-- Mobile Toggle Button -->
       <button
         @click="toggleMap"
-        class="lg:hidden fixed bottom-4 left-4 right-4 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-50 flex justify-center"
+        class="fixed bottom-4 left-4 right-4 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-50 flex justify-center"
+        :class="isNarrowScreen ? '' : 'hidden'"
         v-if="!isShowingCalendar"
       >
         <Menu class="w-4 h-4" v-if="isShowingMap" />
@@ -522,37 +518,4 @@
 </template>
 
 <style scoped>
-  .side {
-    @apply h-full max-h-full;
-
-    width: 25%;
-    max-width: 25%;
-  }
-
-  #side {
-    width: 25%;
-    max-width: 25%;
-  }
-
-  #map {
-    @apply flex-1;
-  }
-
-  @media (max-width: 600px) {
-    .side {
-      @apply h-full max-h-full max-w-full;
-
-      width: 100%;
-      max-width: 100%;
-    }
-
-    #side {
-      width: 100%;
-      max-width: 100%;
-    }
-
-    #map {
-      @apply w-full;
-    }
-  }
 </style>

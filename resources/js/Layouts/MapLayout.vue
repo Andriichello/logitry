@@ -1,29 +1,17 @@
 <script setup lang="ts">
   import L from 'leaflet';
   import 'leaflet/dist/leaflet.css';
-  import { onMounted, onUnmounted, PropType, provide, ref, watch } from 'vue';
-  import { Bounds, Company, Route, Trip, TripHighlight } from '@/api';
-  import CompassButton from '@/Components/Map/CompassButton.vue';
-  import { useThemeStore } from '@/stores/theme';
-  import { useMapStore } from '@/stores/map';
-  import SideDrawer from '@/Components/Menu/SideDrawer.vue';
-  import MenuButton from '@/Components/Menu/MenuButton.vue';
+  import {onMounted, onUnmounted, PropType, provide, ref, watch} from 'vue';
+  import {Bounds, Company, Route, Trip, TripHighlight} from '@/api';
+  import {useThemeStore} from '@/stores/theme';
+  import {useMapStore} from '@/stores/map';
   import SideView from '@/Components/Map/SideView.vue';
-  import {
-    X,
-    MapPinned,
-    Route as RouteIcon,
-    Truck,
-    Moon,
-    Sun,
-    Menu,
-    ArrowRight
-  } from 'lucide-vue-next';
+  import {MapPin, Menu, Moon, Sun, Truck, X} from 'lucide-vue-next';
   import dayjs from 'dayjs';
-  import BookingCalendar from '@/Components/Date/BookingCalendar.vue';
   import {Deferred, useForm} from '@inertiajs/vue3';
   import SideViewFrom from '@/Components/Map/SideViewFrom.vue';
   import {minutesToHumanReadable} from "@/helpers";
+  import SideViewCalendar from "@/Components/Map/SideViewCalendar.vue";
 
   const props = defineProps({
     company: Object as PropType<Company> | null,
@@ -435,14 +423,13 @@
         ]"
       >
         <template v-if="isShowingCalendar">
-          <div class="w-full w-sm px-4 py-4">
-            <BookingCalendar :months="5"
+          <SideViewCalendar class="w-full h-full"
+                            :months="5"
                             :beg="mapStore.filters.beg"
                             :end="mapStore.filters.end"
                             :dotted-dates="trip_highlights"
                             @apply-calendar="applyCalendar"
                             @close-calendar="closeCalendar"/>
-          </div>
         </template>
 
         <template v-else-if="isShowingFrom">
@@ -520,14 +507,15 @@
         </div>
       </div>
 
-      <!-- Mobile Toggle Button -->
+<!--       Mobile Toggle Button -->
       <button
         @click="toggleMap"
-        class="lg:hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-50"
-        v-if="isShowingMap"
+        class="lg:hidden fixed bottom-4 left-4 right-4 bg-purple-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg z-50 flex justify-center"
+        v-if="!isShowingCalendar"
       >
-        <Menu class="w-4 h-4" />
-        {{ isShowingMap ? (mapStore.trip ? 'Trip Details' : (mapStore.route ? 'Route Details' : 'Routes List')) : 'View Map' }}
+        <Menu class="w-4 h-4" v-if="isShowingMap" />
+        <MapPin class="w-4 h-4" v-else />
+        {{ isShowingMap ? (mapStore.trip ? 'Trip details' : (mapStore.route ? 'Route details' : 'Routes list')) : 'View on map' }}
       </button>
     </div>
   </div>
@@ -535,7 +523,7 @@
 
 <style scoped>
   .side {
-    @apply h-full max-h-full max-w-lg;
+    @apply h-full max-h-full;
 
     width: 25%;
     max-width: 25%;

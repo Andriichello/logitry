@@ -164,8 +164,8 @@
         <div v-if="!mapStore.arePointsHidden" class="space-y-3">
           <!-- Start Stop -->
           <div class="flex items-start gap-3" v-if="route.points.length > 0">
-            <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center mt-1">
-              <Play class="w-3 h-3 text-white fill-white" />
+            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
             </div>
             <div>
               <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.points[0].name }}</p>
@@ -179,8 +179,8 @@
 
           <!-- Middle Stops -->
           <div v-for="(point, index) in route.points.slice(1, -1)" :key="index" class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
             </div>
             <div>
               <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ point.name }}</p>
@@ -194,8 +194,8 @@
 
           <!-- End Stop -->
           <div class="flex items-start gap-3" v-if="route.points.length > 1">
-            <div class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center mt-1">
-              <Square class="w-3 h-3 text-white fill-white" />
+            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
             </div>
             <div>
               <p class="font-medium" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.points[route.points.length - 1].name }}</p>
@@ -332,17 +332,6 @@
           <span class="text-lg font-semibold" :class="themeStore.isDark ? 'text-gray-200' : 'text-gray-700'">No trips found</span>
         </div>
       </Deferred>
-    </div>
-
-    <!-- Mobile View on Map Button -->
-    <div class="md:hidden fixed bottom-4 left-0 right-0 px-4 z-10">
-      <button
-        @click="emits('toggle-map')"
-        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 shadow-lg"
-      >
-        <MapPin class="w-4 h-4" />
-        View on Map
-      </button>
     </div>
   </div>
 </template>

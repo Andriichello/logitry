@@ -65,15 +65,15 @@
     <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 pb-20">
       <div class="mb-4">
         <h2 class="text-xl font-bold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">{{ route.name }}</h2>
+        <span class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
+          {{ toHumanTime(trip.departs_at) }} ({{ toHumanWeekday(trip.departs_at) }}, {{ toHumanDate(trip.departs_at) }})
+        </span>
         <div class="flex items-center gap-2 mt-2">
           <ArrowRight v-if="!trip?.reversed" class="w-4 h-4 text-green-600" />
           <ArrowLeft v-else class="w-4 h-4 text-red-600" />
           <span class="px-2 py-1 rounded text-xs"
                 :class="trip?.reversed ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'">
             {{ trip?.reversed ? 'Return' : 'Forward' }}
-          </span>
-          <span class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
-            {{ toHumanTime(trip.departs_at) }} ({{ toHumanWeekday(trip.departs_at) }}, {{ toHumanDate(trip.departs_at) }})
           </span>
         </div>
       </div>
@@ -97,8 +97,8 @@
         <div v-if="!mapStore.arePointsHidden" class="space-y-4">
           <!-- Start Stop -->
           <div class="flex items-start gap-3" v-if="pointsInOrder.length > 0">
-            <div class="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center mt-1">
-              <Play class="w-3 h-3 text-white fill-white" />
+            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
             </div>
             <div>
               <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
@@ -115,8 +115,8 @@
 
           <!-- Middle Stops -->
           <div v-for="(point, index) in pointsInOrder.slice(1, -1)" :key="index" class="flex items-start gap-3">
-            <div class="w-6 h-6 rounded-full border-2 border-blue-500 flex items-center justify-center mt-1">
-              <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
             </div>
             <div>
               <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
@@ -133,8 +133,8 @@
 
           <!-- End Stop -->
           <div class="flex items-start gap-3" v-if="pointsInOrder.length > 1">
-            <div class="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center mt-1">
-              <Square class="w-3 h-3 text-white fill-white" />
+            <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center mt-1">
+              <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
             </div>
             <div>
               <p class="text-sm" :class="themeStore.isDark ? 'text-gray-300' : 'text-gray-600'">
@@ -170,15 +170,6 @@
       </div>
     </div>
 
-    <!-- Mobile View on Map Button -->
-    <div class="md:hidden fixed bottom-4 left-0 right-0 px-4 z-10">
-      <button
-        @click="emits('toggle-map')"
-        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 shadow-lg"
-      >
-        <MapPin class="w-4 h-4" />
-        View on Map
-      </button>
-    </div>
+
   </div>
 </template>

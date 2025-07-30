@@ -123,13 +123,14 @@
           <h3 class="font-semibold" :class="themeStore.isDark ? 'text-gray-100' : 'text-gray-900'">Filters</h3>
           <button
             v-if="showClearFilters || (!routes.length && meta?.total > 1)"
-            @click="showClearFilters ? isClearFiltersModal = true : emits('clear-filters')"
+            @click="emits('clear-filters')"
             class="text-sm border px-3 py-1 rounded flex items-center gap-1"
             :class="themeStore.isDark ? 'text-gray-300 border-gray-600 hover:bg-gray-800' : 'text-gray-500 border-gray-300 hover:bg-gray-50'"
           >
             <FilterX class="w-3 h-3" />
             Clear
           </button>
+          <!--            @click="showClearFilters ? isClearFiltersModal = true : emits('clear-filters')"-->
         </div>
 
         <SideViewFilters
@@ -211,17 +212,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Mobile View on Map Button -->
-    <div class="md:hidden fixed bottom-4 left-0 right-0 px-4 z-10">
-      <button
-        @click="emits('toggle-map')"
-        class="w-full bg-purple-600 text-white py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-purple-700 shadow-lg"
-      >
-        <MapPin class="w-4 h-4" />
-        View on Map
-      </button>
     </div>
 
     <!-- Clear Filters Modal -->

@@ -8,7 +8,7 @@
   import SideView from '@/Components/Map/SideView.vue';
   import {MapPin, Menu, Moon, Sun, Truck, X} from 'lucide-vue-next';
   import dayjs from 'dayjs';
-  import {Deferred, useForm} from '@inertiajs/vue3';
+  import {Deferred, router, useForm} from '@inertiajs/vue3';
   import SideViewFrom from '@/Components/Map/SideViewFrom.vue';
   import {minutesToHumanReadable} from "@/helpers";
   import SideViewCalendar from "@/Components/Map/SideViewCalendar.vue";
@@ -391,7 +391,8 @@
     <!-- Header -->
     <header class="shadow-sm border-b" :class="themeStore.isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'">
       <div class="flex items-center justify-between px-4 py-3">
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 cursor-pointer"
+             @click="router.visit('/' + props.company?.abbreviation)">
           <div class="w-8 h-8 bg-purple-600 rounded flex items-center justify-center">
             <Truck class="w-5 h-5 text-white" />
           </div>
